@@ -37,7 +37,7 @@ import {
 } from './utils/storage';
 
 // Components
-import { PondCanvas } from './components/PondCanvas';
+import { PondCanvas3D as PondCanvas } from './components/PondCanvas3D';
 import { TopBar } from './components/TopBar';
 import { FishCatchModal } from './components/FishCatchModal';
 import { UpgradesPanel } from './components/UpgradesPanel';
