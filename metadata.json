@@ -1,0 +1,6 @@
+{
+  "name": "Infinite Fishing Pond",
+  "description": "A cozy, endless idle fishing and collection game with lively animated ponds, 40+ fish species, rare mutations, equipment upgrades, and deep progression.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
