@@ -1210,7 +1210,7 @@ export default function App() {
   const currentRodTier = ROD_TIERS[Math.min((gameState.upgrades.fishing_rod || 1) - 1, ROD_TIERS.length - 1)];
 
   return (
-    <div className="flex flex-col w-screen h-screen bg-slate-950 font-sans text-slate-100 overflow-hidden select-none">
+    <div className="game-shell flex flex-col w-screen h-screen bg-slate-950 font-sans text-slate-100 overflow-hidden select-none">
       
       {/* 1. Top Resource & Navigation Bar */}
       <TopBar
@@ -1238,13 +1238,13 @@ export default function App() {
       />
 
       {/* 2. Main Game Viewport */}
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden p-3 gap-3">
+      <div className="game-main flex-1 flex flex-col md:flex-row overflow-hidden p-3 gap-3">
         
         {/* Left / Center: Interactive Animated Pond */}
-        <div className="flex-1 flex flex-col min-h-0 relative">
+        <div className="pond-column flex-1 flex flex-col min-h-0 relative">
           
           {/* Dynamic Day/Night, Weather, Season, and Zone Controls Bar */}
-          <div className="mb-2">
+          <div className="pond-toolbar mb-2">
             <PondEnvironmentControls
               timeOfDay={timeOfDay}
               weather={weather}
@@ -1278,7 +1278,7 @@ export default function App() {
             />
           </div>
 
-          <div className="flex-1 relative min-h-0">
+          <div className="pond-stage flex-1 relative min-h-0">
             <PondCanvas
               location={currentLocation}
               availableFish={availableSpecies}
@@ -1305,6 +1305,19 @@ export default function App() {
               onInteractBubbles={handleInteractBubbles}
               onInteractVisitor={() => setActiveModal('visitors')}
             />
+            <div className="aquarium-toggle absolute top-4 right-4 flex items-center gap-2">
+              <button
+                onClick={() => setIsAquariumMode(!isAquariumMode)}
+                className={`px-3 py-1.5 rounded-xl border text-xs font-bold shadow-md transition-colors flex items-center gap-1.5 cursor-pointer backdrop-blur-md ${
+                  isAquariumMode
+                    ? 'bg-cyan-950/90 border-cyan-400 text-cyan-200'
+                    : 'bg-slate-900/80 border-slate-700/80 text-slate-300 hover:text-white'
+                }`}
+              >
+                <Eye className="w-3.5 h-3.5 text-cyan-400" />
+                <span>{isAquariumMode ? 'Aquarium View (On)' : 'Wild Pond View'}</span>
+              </button>
+            </div>
           </div>
 
           {/* Toast Feed in bottom left corner of pond (compact, unobtrusive) */}
@@ -1320,27 +1333,13 @@ export default function App() {
             ))}
           </div>
 
-          {/* Aquarium View Toggle Button */}
-          <div className="absolute top-4 right-4 flex items-center gap-2">
-            <button
-              onClick={() => setIsAquariumMode(!isAquariumMode)}
-              className={`px-3 py-1.5 rounded-xl border text-xs font-bold shadow-md transition-colors flex items-center gap-1.5 cursor-pointer backdrop-blur-md ${
-                isAquariumMode
-                  ? 'bg-cyan-950/90 border-cyan-400 text-cyan-200'
-                  : 'bg-slate-900/80 border-slate-700/80 text-slate-300 hover:text-white'
-              }`}
-            >
-              <Eye className="w-3.5 h-3.5 text-cyan-400" />
-              <span>{isAquariumMode ? 'Aquarium View (On)' : 'Wild Pond View'}</span>
-            </button>
-          </div>
         </div>
 
         {/* Right: Equipment, Upgrades & Actions Dock */}
-        <div className="w-full md:w-96 flex flex-col bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-3xl overflow-hidden shadow-xl shrink-0">
+        <div className="angler-panel w-full md:w-96 flex flex-col bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-3xl overflow-hidden shadow-xl shrink-0">
           
           {/* Tabs Header */}
-          <div className="p-2 border-b border-slate-800 flex items-center gap-2 bg-slate-950/40">
+          <div className="panel-tabs p-2 border-b border-slate-800 flex items-center gap-2 bg-slate-950/40">
             <button
               onClick={() => setActiveTab('pond')}
               className={`flex-1 py-2 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all cursor-pointer ${
@@ -1365,10 +1364,10 @@ export default function App() {
 
           {/* Tab Content: Casting Dock */}
           {activeTab === 'pond' && (
-            <div className="flex-1 p-4 overflow-y-auto space-y-4">
+            <div className="angler-content flex-1 p-4 overflow-y-auto space-y-4">
               
               {/* Primary Cast Action Button & Fisherman Profile */}
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/80 text-center space-y-3 shadow-inner">
+              <div className="cast-card p-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/80 text-center space-y-3 shadow-inner">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-700/60 text-left">
                   <div className="flex items-center gap-2">
                     <span className="text-base">🎣</span>
