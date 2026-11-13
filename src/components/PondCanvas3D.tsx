@@ -428,18 +428,23 @@ function Fisherman({ customization, fishingState }: { customization: FishermanCu
   const beard = FACIAL_HAIR_STYLES.find((item) => item.id === customization.facialHairId) || FACIAL_HAIR_STYLES[0];
   const hat = HATS.find((item) => item.id === customization.hatId) || HATS[0];
 
-  useFrame(({ clock }) => {
+  useFrame(({ clock }, delta) => {
     const time = clock.getElapsedTime();
-    if (character.current) {
-      character.current.position.y = 0.63 + Math.sin(time * 1.15) * 0.018;
-      character.current.rotation.y = 0.18 + Math.sin(time * 0.48) * 0.018;
-      character.current.rotation.z = Math.sin(time * 0.72) * 0.012;
-    }
     const casting = fishingState === 'casting';
     const nibbling = fishingState === 'nibble';
     const hooked = fishingState === 'hooked';
     const reeling = fishingState === 'reeling';
     const action = casting ? Math.sin(time * 9) : reeling ? Math.sin(time * 7) : nibbling ? Math.sin(time * 5) : 0;
+    if (character.current) {
+      const actionBob = casting ? Math.max(0, Math.sin(time * 9)) * 0.045 : reeling ? Math.abs(Math.sin(time * 7)) * 0.035 : hooked ? 0.025 : 0;
+      const leanTarget = casting ? -0.055 + action * 0.018 : reeling ? 0.075 + action * 0.025 : hooked ? 0.045 : nibbling ? Math.sin(time * 5) * 0.012 : 0;
+      const swayTarget = Math.sin(time * 0.72) * 0.012 + (casting ? action * 0.018 : reeling ? action * 0.025 : hooked ? 0.018 : 0);
+      const smoothing = 1 - Math.exp(-delta * 8);
+      character.current.position.y += (0.63 + Math.sin(time * 1.15) * 0.018 + actionBob - character.current.position.y) * smoothing;
+      character.current.rotation.x += (leanTarget - character.current.rotation.x) * smoothing;
+      character.current.rotation.y = 0.18 + Math.sin(time * 0.48) * 0.018;
+      character.current.rotation.z += (swayTarget - character.current.rotation.z) * smoothing;
+    }
     if (leftArm.current) {
       leftArm.current.rotation.x = Math.sin(time * 0.9 + 0.4) * 0.018 + (casting ? -0.22 : reeling ? -0.12 : 0);
       leftArm.current.rotation.z = -Math.sin(time * 0.9 + 0.4) * 0.018 - (hooked || reeling ? 0.08 : 0);
