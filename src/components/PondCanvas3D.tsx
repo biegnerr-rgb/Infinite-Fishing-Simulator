@@ -394,6 +394,28 @@ function Fisherman({ customization }: { customization: FishermanCustomization })
       <mesh position={[0.22, 0.06, 0.09]} castShadow><boxGeometry args={[0.38, 0.15, 0.52]} /><meshStandardMaterial color="#6f4b36" roughness={0.75} /></mesh>
       <mesh position={[0, 0.94, 0]} castShadow><capsuleGeometry args={[0.39, 0.54, 5, 10]} /><meshStandardMaterial color={outfit.color} roughness={0.78} /></mesh>
       <mesh position={[0, 0.9, 0.37]}><boxGeometry args={[0.5, 0.08, 0.035]} /><meshStandardMaterial color={outfit.accentColor || '#d4b06b'} roughness={0.65} /></mesh>
+      <mesh position={[0, 0.58, 0.365]} castShadow>
+        <boxGeometry args={[0.64, 0.105, 0.055]} />
+        <meshStandardMaterial color="#65442f" roughness={0.82} />
+      </mesh>
+      <mesh position={[0, 0.58, 0.402]}>
+        <boxGeometry args={[0.13, 0.12, 0.035]} />
+        <meshStandardMaterial color="#e2b75e" metalness={0.32} roughness={0.48} />
+      </mesh>
+      {[-0.015, 0.15].map((y) => (
+        <mesh key={y} position={[0, y + 0.88, 0.405]}>
+          <sphereGeometry args={[0.035, 10, 8]} />
+          <meshStandardMaterial color={outfit.accentColor || '#e4c98c'} roughness={0.55} />
+        </mesh>
+      ))}
+      <mesh position={[0.2, 1.13, 0.365]} castShadow>
+        <boxGeometry args={[0.19, 0.2, 0.035]} />
+        <meshStandardMaterial color={outfit.accentColor || '#d4b06b'} roughness={0.78} />
+      </mesh>
+      <mesh position={[0.2, 1.12, 0.389]}>
+        <boxGeometry args={[0.13, 0.13, 0.018]} />
+        <meshStandardMaterial color={outfit.color} roughness={0.8} />
+      </mesh>
       <mesh position={[-0.48, 1.07, 0.02]} rotation={[0, 0, -0.75]} castShadow><capsuleGeometry args={[0.13, 0.46, 4, 8]} /><meshStandardMaterial color={outfit.color} roughness={0.78} /></mesh>
       <mesh position={[0.48, 1.1, 0.02]} rotation={[0, 0, 0.65]} castShadow><capsuleGeometry args={[0.13, 0.45, 4, 8]} /><meshStandardMaterial color={outfit.color} roughness={0.78} /></mesh>
       <mesh position={[-0.69, 0.79, 0.15]} castShadow><sphereGeometry args={[0.14, 12, 10]} /><meshStandardMaterial color={skin.color} roughness={0.62} /></mesh>
