@@ -120,6 +120,46 @@ function Terrain({ season, bedColor }: { season: SeasonType; bedColor: string })
         <circleGeometry args={[5.72, 72]} />
         <meshStandardMaterial color={grassColor} roughness={1} />
       </mesh>
+      {/* Soft, low mounds blend the pond bank into the surrounding meadow. */}
+      {Array.from({ length: 20 }, (_, index) => {
+        const angle = (index / 20) * Math.PI * 2;
+        const radius = 6.35 + Math.sin(index * 2.1) * 0.28;
+        const width = 0.9 + (index % 3) * 0.22;
+        return (
+          <mesh
+            key={`bank-mound-${index}`}
+            position={[Math.cos(angle) * radius, -0.34, Math.sin(angle) * radius]}
+            scale={[width, 0.24 + (index % 2) * 0.08, 0.82 + (index % 4) * 0.12]}
+            rotation={[0, -angle, 0]}
+            receiveShadow
+          >
+            <sphereGeometry args={[1, 12, 8]} />
+            <meshStandardMaterial color={grassColor} roughness={1} />
+          </mesh>
+        );
+      })}
+      {/* Layered hills and smaller tree silhouettes give the pond a real horizon. */}
+      {[
+        [-15, -0.45, -13, 7.2, 2.2, 3.2],
+        [-7, -0.62, -17, 8.5, 2.5, 3.4],
+        [4, -0.58, -18, 9.2, 2.7, 3.8],
+        [15, -0.5, -13, 7.4, 2.3, 3.1],
+        [-17, -0.58, 1, 5.8, 1.9, 4.2],
+        [17, -0.58, 2, 5.8, 1.9, 4.2],
+      ].map(([x, y, z, sx, sy, sz], index) => (
+        <mesh key={`distant-hill-${index}`} position={[x, y, z]} scale={[sx, sy, sz]} receiveShadow>
+          <sphereGeometry args={[1, 20, 12]} />
+          <meshStandardMaterial color={index % 2 ? '#83ad70' : '#91b77b'} roughness={1} />
+        </mesh>
+      ))}
+      {[
+        [-14, -10, 0.72], [-10, -14, 0.62], [-5, -16, 0.58],
+        [1, -17, 0.64], [8, -15, 0.7], [13, -11, 0.66],
+        [16, -5, 0.62], [-16, -4, 0.68], [-12, 4, 0.58],
+        [12, 5, 0.62],
+      ].map(([x, z, size], index) => (
+        <Tree key={`distant-tree-${index}`} position={[x, -0.28, z]} scale={size} leafColor={leafColor} />
+      ))}
       {rocks.map(([x, z, size], index) => (
         <mesh key={`shore-rock-${index}`} position={[x, 0.35, z]} scale={[size * 1.25, size * 0.78, size]} castShadow receiveShadow>
           <icosahedronGeometry args={[1, 1]} />
