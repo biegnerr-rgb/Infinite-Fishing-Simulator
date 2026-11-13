@@ -288,6 +288,23 @@ function LilyPad({ position, size, flowerColor, rotation }: { position: [number,
         <ringGeometry args={[size * 0.88, size * 0.94, 32]} />
         <meshStandardMaterial color="#a7cf55" roughness={0.44} side={2} />
       </mesh>
+      {Array.from({ length: 7 }, (_, index) => {
+        const angle = (index / 7) * Math.PI * 1.55 - Math.PI * 0.78 + rotation;
+        return (
+          <mesh
+            key={index}
+            position={[Math.cos(angle) * size * 0.39, 0.027, Math.sin(angle) * size * 0.39]}
+            rotation={[-Math.PI / 2, 0, angle]}
+          >
+            <boxGeometry args={[size * 0.58, 0.012, 0.012]} />
+            <meshStandardMaterial color="#a6ca63" roughness={0.55} />
+          </mesh>
+        );
+      })}
+      <mesh position={[size * 0.05, 0.03, size * 0.04]} rotation={[-Math.PI / 2, 0, rotation]}>
+        <circleGeometry args={[size * 0.055, 12]} />
+        <meshStandardMaterial color="#d2e58a" roughness={0.5} />
+      </mesh>
       {flowerColor && <Flower color={flowerColor} position={[size * 0.22, 0.12, size * 0.12]} scale={0.65} />}
     </group>
   );
@@ -456,6 +473,22 @@ function PondFish({
       <mesh position={[0, 0.31, 0]} rotation={[0, 0, -0.2]}>
         <coneGeometry args={[0.25, 0.43, 4]} />
         <meshStandardMaterial color={species.finColor} roughness={0.58} side={2} />
+      </mesh>
+      <mesh position={[-0.02, -0.3, 0]} rotation={[0, 0, Math.PI + 0.18]}>
+        <coneGeometry args={[0.15, 0.3, 4]} />
+        <meshStandardMaterial color={species.finColor} roughness={0.58} side={2} />
+      </mesh>
+      <mesh position={[-0.03, 0.02, 0.31]} rotation={[0.15, 0, -0.25]}>
+        <coneGeometry args={[0.13, 0.27, 4]} />
+        <meshStandardMaterial color={species.finColor} roughness={0.62} side={2} />
+      </mesh>
+      <mesh position={[-0.03, 0.02, -0.31]} rotation={[-0.15, 0, -0.25]}>
+        <coneGeometry args={[0.13, 0.27, 4]} />
+        <meshStandardMaterial color={species.finColor} roughness={0.62} side={2} />
+      </mesh>
+      <mesh position={[-0.19, -0.06, 0.355]} rotation={[0, 0, -0.2]}>
+        <torusGeometry args={[0.105, 0.012, 5, 16, Math.PI * 0.75]} />
+        <meshStandardMaterial color={species.accentColor} roughness={0.6} />
       </mesh>
       <group ref={tail} position={[-0.38, 0, 0]}>
         <mesh rotation={[0, 0, Math.PI / 2]}>
