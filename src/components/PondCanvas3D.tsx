@@ -417,10 +417,11 @@ function Rowboat({ position, tier }: { position: [number, number, number]; tier:
   );
 }
 
-function Fisherman({ customization }: { customization: FishermanCustomization }) {
+function Fisherman({ customization, fishingState }: { customization: FishermanCustomization; fishingState: PondCanvasProps['fishingState'] }) {
   const character = useRef<Group>(null);
   const leftArm = useRef<Group>(null);
   const rightArm = useRef<Group>(null);
+  const rod = useRef<Group>(null);
   const outfit = OUTFITS.find((item) => item.id === customization.outfitId) || OUTFITS[0];
   const skin = SKIN_TONES.find((item) => item.id === customization.skinId) || SKIN_TONES[1];
   const hair = HAIR_STYLES.find((item) => item.id === customization.hairId) || HAIR_STYLES[0];
@@ -434,13 +435,23 @@ function Fisherman({ customization }: { customization: FishermanCustomization })
       character.current.rotation.y = 0.18 + Math.sin(time * 0.48) * 0.018;
       character.current.rotation.z = Math.sin(time * 0.72) * 0.012;
     }
+    const casting = fishingState === 'casting';
+    const nibbling = fishingState === 'nibble';
+    const hooked = fishingState === 'hooked';
+    const reeling = fishingState === 'reeling';
+    const action = casting ? Math.sin(time * 9) : reeling ? Math.sin(time * 7) : nibbling ? Math.sin(time * 5) : 0;
     if (leftArm.current) {
-      leftArm.current.rotation.x = Math.sin(time * 0.9 + 0.4) * 0.025;
-      leftArm.current.rotation.z = -Math.sin(time * 0.9 + 0.4) * 0.025;
+      leftArm.current.rotation.x = Math.sin(time * 0.9 + 0.4) * 0.018 + (casting ? -0.22 : reeling ? -0.12 : 0);
+      leftArm.current.rotation.z = -Math.sin(time * 0.9 + 0.4) * 0.018 - (hooked || reeling ? 0.08 : 0);
     }
     if (rightArm.current) {
-      rightArm.current.rotation.x = Math.sin(time * 0.9 + 1.1) * 0.035;
-      rightArm.current.rotation.z = Math.sin(time * 0.72 + 0.8) * 0.035;
+      rightArm.current.rotation.x = Math.sin(time * 0.9 + 1.1) * 0.02 + (casting ? -0.32 + action * 0.08 : reeling ? -0.2 + action * 0.045 : hooked ? -0.13 : 0);
+      rightArm.current.rotation.z = Math.sin(time * 0.72 + 0.8) * 0.018 + (casting ? 0.16 : reeling ? 0.1 + action * 0.035 : hooked ? 0.07 : 0);
+    }
+    if (rod.current) {
+      const rodAction = casting ? -0.16 + action * 0.045 : reeling ? 0.12 + action * 0.035 : hooked ? 0.09 : nibbling ? Math.sin(time * 5) * 0.025 : 0;
+      rod.current.rotation.z = -0.2 + Math.sin(time * 0.65) * 0.008 + rodAction;
+      rod.current.rotation.x = Math.sin(time * 0.8) * 0.012 + (reeling ? Math.sin(time * 7) * 0.018 : 0);
     }
   });
 
@@ -498,25 +509,47 @@ function Fisherman({ customization }: { customization: FishermanCustomization })
           <mesh position={[0, 0.1, 0.052]}><boxGeometry args={[0.55, 0.055, 0.055]} /><meshStandardMaterial color={hat.accentColor || '#c79648'} roughness={0.7} /></mesh>
         </group>
       )}
-      <mesh position={[0.61, 1.55, -0.08]} rotation={[0, 0, -0.2]} castShadow>
-        <cylinderGeometry args={[0.035, 0.026, 2.65, 8]} />
-        <meshStandardMaterial color="#67462b" roughness={0.66} />
-      </mesh>
+      <group ref={rod} position={[0.61, 0.225, -0.08]} rotation={[0, 0, -0.2]}>
+        <mesh position={[0, 1.325, 0]} castShadow>
+          <cylinderGeometry args={[0.035, 0.026, 2.65, 8]} />
+          <meshStandardMaterial color="#67462b" roughness={0.66} />
+        </mesh>
+        <mesh position={[0.01, 2.705, -0.02]}>
+          <sphereGeometry args={[0.055, 8, 8]} />
+          <meshStandardMaterial color="#f3e9cd" roughness={0.4} />
+        </mesh>
+      </group>
       <mesh position={[0.59, 0.42, -0.1]}><cylinderGeometry args={[0.06, 0.045, 0.22, 8]} /><meshStandardMaterial color="#aa7140" roughness={0.66} /></mesh>
-      <mesh position={[0.62, 2.93, -0.1]}><sphereGeometry args={[0.055, 8, 8]} /><meshStandardMaterial color="#f3e9cd" roughness={0.4} /></mesh>
     </group>
   );
 }
 
-function FishingLine({ target, active }: { target: [number, number, number] | null; active: boolean }) {
+function FishingLine({ target, active, fishingState }: { target: [number, number, number] | null; active: boolean; fishingState: PondCanvasProps['fishingState'] }) {
   const geometry = useMemo(() => new BufferGeometry(), []);
   const line = useMemo(() => new Line(geometry), [geometry]);
   useFrame(({ clock }) => {
+    const time = clock.getElapsedTime();
     const point = active && target ? new Vector3(target[0], 0.34, target[2]) : new Vector3(-0.25, 0.34, 0.65);
-    const sway = Math.sin(clock.getElapsedTime() * 1.5) * 0.08;
-    geometry.setFromPoints([new Vector3(-0.63, 3.56, 1.9), new Vector3(point.x + sway, point.y, point.z)]);
+    const casting = fishingState === 'casting';
+    const reeling = fishingState === 'reeling';
+    const hooked = fishingState === 'hooked';
+    const nibbling = fishingState === 'nibble';
+    const tension = hooked || reeling;
+    const tip = new Vector3(-0.63 + (casting ? Math.sin(time * 9) * 0.045 : 0), 3.56 + (casting ? Math.sin(time * 9) * 0.16 : reeling ? Math.sin(time * 7) * 0.07 : 0), 1.9);
+    const sway = Math.sin(time * 1.15) * (tension ? 0.025 : 0.055);
+    const end = new Vector3(point.x + sway, point.y + (nibbling ? Math.sin(time * 5) * 0.055 : 0), point.z);
+    const sag = tension ? 0.08 : 0.34;
+    const points: Vector3[] = [];
+    for (let index = 0; index <= 10; index++) {
+      const t = index / 10;
+      const pointOnLine = tip.clone().lerp(end, t);
+      pointOnLine.y -= Math.sin(Math.PI * t) * sag;
+      pointOnLine.x += Math.sin(Math.PI * t) * Math.sin(time * 1.4) * 0.025;
+      points.push(pointOnLine);
+    }
+    geometry.setFromPoints(points);
   });
-  return <primitive object={line}><lineBasicMaterial attach="material" color="#fff1cf" transparent opacity={0.64} /></primitive>;
+  return <primitive object={line}><lineBasicMaterial attach="material" color="#fff1cf" transparent opacity={0.72} /></primitive>;
 }
 
 function PondFish({
@@ -769,8 +802,8 @@ function PondScene({
       <LilyPads />
       <FishSchool fish={availableFish} aquariumFish={aquariumFish} isAquariumMode={isAquariumMode} />
       <Dock boatTier={boatTier} />
-      <Fisherman customization={customization} />
-      <FishingLine target={castTarget} active={fishingState !== 'idle'} />
+      <Fisherman customization={customization} fishingState={fishingState} />
+      <FishingLine target={castTarget} active={fishingState !== 'idle'} fishingState={fishingState} />
       {hasEvent('giant_sighting') && <GiantShadow />}
       {hasFloatingBottle && onCollectBottle && <Collectible type="bottle" position={[3.1, 0.48, 0.5]} onCollect={onCollectBottle} />}
       {hasEvent('treasure_chest') && onCollectChest && <Collectible type="chest" position={[3.15, 0.66, 1.6]} onCollect={onCollectChest} />}
