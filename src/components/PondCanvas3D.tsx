@@ -217,11 +217,14 @@ function WaterSurface({
     for (let index = 0; index < positions.length; index += 3) {
       const x = basePositions[index];
       const y = basePositions[index + 1];
-      positions[index + 2] = Math.sin(x * 1.55 + time * 0.8) * 0.025 + Math.cos(y * 1.85 - time * 0.7) * 0.021;
+      const broadWave = Math.sin(x * 0.9 + y * 0.55 + time * 0.48) * 0.018;
+      const crossingWave = Math.cos(y * 1.15 - x * 0.42 - time * 0.62) * 0.014;
+      const smallWave = Math.sin(x * 1.8 + y * 1.35 + time * 0.85) * 0.006;
+      positions[index + 2] = broadWave + crossingWave + smallWave;
     }
     geometry.attributes.position.needsUpdate = true;
     geometry.computeVertexNormals();
-    if (waterRef.current) waterRef.current.position.y = 0.35 + Math.sin(time * 0.5) * 0.012;
+    if (waterRef.current) waterRef.current.position.y = 0.35 + Math.sin(time * 0.38) * 0.008;
   });
 
   return (
@@ -416,6 +419,8 @@ function Rowboat({ position, tier }: { position: [number, number, number]; tier:
 
 function Fisherman({ customization }: { customization: FishermanCustomization }) {
   const character = useRef<Group>(null);
+  const leftArm = useRef<Group>(null);
+  const rightArm = useRef<Group>(null);
   const outfit = OUTFITS.find((item) => item.id === customization.outfitId) || OUTFITS[0];
   const skin = SKIN_TONES.find((item) => item.id === customization.skinId) || SKIN_TONES[1];
   const hair = HAIR_STYLES.find((item) => item.id === customization.hairId) || HAIR_STYLES[0];
@@ -423,7 +428,20 @@ function Fisherman({ customization }: { customization: FishermanCustomization })
   const hat = HATS.find((item) => item.id === customization.hatId) || HATS[0];
 
   useFrame(({ clock }) => {
-    if (character.current) character.current.position.y = 0.63 + Math.sin(clock.getElapsedTime() * 1.6) * 0.025;
+    const time = clock.getElapsedTime();
+    if (character.current) {
+      character.current.position.y = 0.63 + Math.sin(time * 1.15) * 0.018;
+      character.current.rotation.y = 0.18 + Math.sin(time * 0.48) * 0.018;
+      character.current.rotation.z = Math.sin(time * 0.72) * 0.012;
+    }
+    if (leftArm.current) {
+      leftArm.current.rotation.x = Math.sin(time * 0.9 + 0.4) * 0.025;
+      leftArm.current.rotation.z = -Math.sin(time * 0.9 + 0.4) * 0.025;
+    }
+    if (rightArm.current) {
+      rightArm.current.rotation.x = Math.sin(time * 0.9 + 1.1) * 0.035;
+      rightArm.current.rotation.z = Math.sin(time * 0.72 + 0.8) * 0.035;
+    }
   });
 
   return (
@@ -456,10 +474,14 @@ function Fisherman({ customization }: { customization: FishermanCustomization })
         <boxGeometry args={[0.13, 0.13, 0.018]} />
         <meshStandardMaterial color={outfit.color} roughness={0.8} />
       </mesh>
-      <mesh position={[-0.48, 1.07, 0.02]} rotation={[0, 0, -0.75]} castShadow><capsuleGeometry args={[0.13, 0.46, 4, 8]} /><meshStandardMaterial color={outfit.color} roughness={0.78} /></mesh>
-      <mesh position={[0.48, 1.1, 0.02]} rotation={[0, 0, 0.65]} castShadow><capsuleGeometry args={[0.13, 0.45, 4, 8]} /><meshStandardMaterial color={outfit.color} roughness={0.78} /></mesh>
-      <mesh position={[-0.69, 0.79, 0.15]} castShadow><sphereGeometry args={[0.14, 12, 10]} /><meshStandardMaterial color={skin.color} roughness={0.62} /></mesh>
-      <mesh position={[0.66, 0.88, 0.18]} castShadow><sphereGeometry args={[0.14, 12, 10]} /><meshStandardMaterial color={skin.color} roughness={0.62} /></mesh>
+      <group ref={leftArm} position={[-0.34, 1.3, 0]}>
+        <mesh position={[-0.14, -0.23, 0.02]} rotation={[0, 0, -0.75]} castShadow><capsuleGeometry args={[0.13, 0.46, 4, 8]} /><meshStandardMaterial color={outfit.color} roughness={0.78} /></mesh>
+        <mesh position={[-0.35, -0.51, 0.15]} castShadow><sphereGeometry args={[0.14, 12, 10]} /><meshStandardMaterial color={skin.color} roughness={0.62} /></mesh>
+      </group>
+      <group ref={rightArm} position={[0.34, 1.3, 0]}>
+        <mesh position={[0.14, -0.2, 0.02]} rotation={[0, 0, 0.65]} castShadow><capsuleGeometry args={[0.13, 0.45, 4, 8]} /><meshStandardMaterial color={outfit.color} roughness={0.78} /></mesh>
+        <mesh position={[0.32, -0.42, 0.18]} castShadow><sphereGeometry args={[0.14, 12, 10]} /><meshStandardMaterial color={skin.color} roughness={0.62} /></mesh>
+      </group>
       <mesh position={[0, 1.74, 0.02]} castShadow><sphereGeometry args={[0.43, 20, 16]} /><meshStandardMaterial color={skin.color} roughness={0.72} /></mesh>
       <mesh position={[0, 1.51, 0.13]} scale={[0.82, 0.62, 0.7]} castShadow><sphereGeometry args={[0.35, 16, 12]} /><meshStandardMaterial color={beard.color === 'transparent' ? skin.color : beard.color} roughness={0.86} /></mesh>
       <mesh position={[-0.15, 1.78, 0.39]}><sphereGeometry args={[0.05, 10, 8]} /><meshStandardMaterial color="#fff8e7" /></mesh>
@@ -516,14 +538,29 @@ function PondFish({
 
   useFrame(({ clock }) => {
     if (!fish.current) return;
-    const time = clock.getElapsedTime() * 0.38 + phase;
-    fish.current.position.x = Math.sin(time) * (1.4 + (index % 2) * 0.45) + (index % 3 - 1) * 0.8;
-    fish.current.position.z = Math.cos(time * 0.8) * 0.66 + (index % 4 - 1.5) * 0.52;
+    const elapsed = clock.getElapsedTime();
+    const time = elapsed * 0.34 + phase;
+    const xRange = 1.4 + (index % 2) * 0.45;
+    const zRange = 0.66;
+    const nextX = Math.sin(time) * xRange + (index % 3 - 1) * 0.8;
+    const nextZ = Math.cos(time * 0.8) * zRange + (index % 4 - 1.5) * 0.52;
+    const velocityX = Math.cos(time) * xRange * 0.34;
+    const velocityZ = -Math.sin(time * 0.8) * zRange * 0.8 * 0.34;
+
+    fish.current.position.x = nextX;
+    fish.current.position.z = nextZ;
     fish.current.position.y = leaping
-      ? 0.12 + Math.abs(Math.sin(clock.getElapsedTime() * 4.2 + phase)) * 1.35
-      : -0.08 + Math.sin(time * 1.9) * 0.06;
-    fish.current.rotation.y = Math.cos(time) < 0 ? Math.PI : 0;
-    if (tail.current) tail.current.rotation.y = Math.sin(clock.getElapsedTime() * 8 + phase) * 0.35;
+      ? 0.12 + Math.pow(Math.max(0, Math.sin(elapsed * 2.1 + phase)), 1.7) * 1.05
+      : -0.08 + Math.sin(time * 1.35) * 0.035 + Math.sin(time * 0.55 + phase) * 0.012;
+
+    // Turn continuously with the swimming path instead of snapping between directions.
+    fish.current.rotation.y = Math.atan2(-velocityZ, velocityX);
+    fish.current.rotation.z = Math.sin(time * 1.5) * 0.035;
+    fish.current.rotation.x = Math.sin(time * 0.9 + phase) * 0.025;
+    if (tail.current) {
+      tail.current.rotation.y = Math.sin(elapsed * 6.5 + phase) * 0.48;
+      tail.current.rotation.z = Math.sin(elapsed * 3.25 + phase) * 0.07;
+    }
   });
 
   return (
