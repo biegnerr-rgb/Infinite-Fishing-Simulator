@@ -103,16 +103,24 @@ export const TopBar: React.FC<TopBarProps> = ({
         </div>
 
         <nav className="game-nav" aria-label="Game menu">
-          <button className="nav-icon-button" onClick={onOpenEncyclopedia} title="Fish collection" aria-label="Fish collection"><Fish /></button>
-          <button className="nav-icon-button" onClick={onOpenAchievements} title="Achievements" aria-label="Achievements"><Award /></button>
-          {onOpenStoryJournal && <button className="nav-icon-button journal-button" onClick={onOpenStoryJournal} title="Story journal" aria-label="Story journal"><BookOpen /></button>}
-          {onOpenVisitors && <button className="nav-icon-button visitor-button" onClick={onOpenVisitors} title="Pond visitors" aria-label="Pond visitors"><PawPrint /></button>}
-          {onOpenShipyard && <button className="nav-icon-button" onClick={onOpenShipyard} title="Shipyard" aria-label="Shipyard"><Anchor /></button>}
-          <button className="nav-icon-button" onClick={onOpenWardrobe} title="Outfits" aria-label="Outfits"><Shirt /></button>
-          <button className="nav-icon-button sound-button" onClick={onToggleSound} title={soundEnabled ? 'Mute sounds' : 'Enable sounds'} aria-label={soundEnabled ? 'Mute sounds' : 'Enable sounds'}>
-            {soundEnabled ? <Volume2 /> : <VolumeX />}
-          </button>
-          <button className="nav-icon-button settings-button" onClick={onOpenSettings} title="Settings" aria-label="Settings"><SettingsIcon /></button>
+          <div className="nav-group" aria-label="Collection">
+            <button className="nav-icon-button" onClick={onOpenEncyclopedia} title="Fish collection" aria-label="Fish collection"><Fish /></button>
+            <button className="nav-icon-button" onClick={onOpenAchievements} title="Achievements" aria-label="Achievements"><Award /></button>
+            {onOpenStoryJournal && <button className="nav-icon-button journal-button" onClick={onOpenStoryJournal} title="Story journal" aria-label="Story journal"><BookOpen /></button>}
+            {onOpenVisitors && <button className="nav-icon-button visitor-button" onClick={onOpenVisitors} title="Pond visitors" aria-label="Pond visitors"><PawPrint /></button>}
+          </div>
+          <span className="nav-divider" aria-hidden="true" />
+          <div className="nav-group" aria-label="World and style">
+            {onOpenShipyard && <button className="nav-icon-button" onClick={onOpenShipyard} title="Shipyard" aria-label="Shipyard"><Anchor /></button>}
+            <button className="nav-icon-button" onClick={onOpenWardrobe} title="Outfits" aria-label="Outfits"><Shirt /></button>
+          </div>
+          <span className="nav-divider" aria-hidden="true" />
+          <div className="nav-group" aria-label="Game settings">
+            <button className="nav-icon-button sound-button" onClick={onToggleSound} title={soundEnabled ? 'Mute sounds' : 'Enable sounds'} aria-label={soundEnabled ? 'Mute sounds' : 'Enable sounds'}>
+              {soundEnabled ? <Volume2 /> : <VolumeX />}
+            </button>
+            <button className="nav-icon-button settings-button" onClick={onOpenSettings} title="Settings" aria-label="Settings"><SettingsIcon /></button>
+          </div>
         </nav>
       </div>
     </header>
