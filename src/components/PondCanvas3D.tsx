@@ -247,7 +247,47 @@ function WaterSurface({
         <circleGeometry args={[3.95, 64]} />
         <meshStandardMaterial color={bedColor} roughness={0.98} transparent opacity={0.35} />
       </mesh>
+      <WaterGlints />
       <WaterRipples />
+    </group>
+  );
+}
+
+function WaterGlints() {
+  const glints = useRef<Array<Mesh | null>>([]);
+  const positions: Array<{ position: [number, number, number]; rotation: number; phase: number }> = [
+    { position: [-2.25, 0.385, -1.55], rotation: 0.35, phase: 0 },
+    { position: [-0.75, 0.385, -2.55], rotation: -0.5, phase: 1.1 },
+    { position: [1.55, 0.385, -2.0], rotation: 0.8, phase: 2.2 },
+    { position: [2.35, 0.385, 0.55], rotation: -0.25, phase: 0.7 },
+    { position: [0.55, 0.385, 1.65], rotation: 0.55, phase: 1.8 },
+    { position: [-1.95, 0.385, 1.65], rotation: -0.75, phase: 2.8 },
+  ];
+
+  useFrame(({ clock }) => {
+    const time = clock.getElapsedTime();
+    glints.current.forEach((glint, index) => {
+      if (!glint) return;
+      const pulse = (Math.sin(time * 1.15 + positions[index].phase) + 1) / 2;
+      glint.scale.set(0.65 + pulse * 0.45, 0.72 + pulse * 0.35, 1);
+      const material = glint.material as import('three').MeshBasicMaterial;
+      material.opacity = 0.035 + pulse * 0.12;
+    });
+  });
+
+  return (
+    <group>
+      {positions.map((item, index) => (
+        <mesh
+          key={index}
+          ref={(node) => { glints.current[index] = node; }}
+          position={item.position}
+          rotation={[-Math.PI / 2, 0, item.rotation]}
+        >
+          <circleGeometry args={[0.16, 20]} />
+          <meshBasicMaterial color="#e2fff8" transparent opacity={0.08} depthWrite={false} side={2} />
+        </mesh>
+      ))}
     </group>
   );
 }
