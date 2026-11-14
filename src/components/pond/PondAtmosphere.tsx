@@ -770,71 +770,87 @@ export function SoaringBirds({
 }) {
   const groupRef = useRef<Group>(null);
   const birdRefs = useRef<Array<Group | null>>([]);
-  const leftWings = useRef<Array<Mesh | null>>([]);
-  const rightWings = useRef<Array<Mesh | null>>([]);
+  const leftWings = useRef<Array<Group | null>>([]);
+  const rightWings = useRef<Array<Group | null>>([]);
+
+  const flock = useMemo(
+    () => Array.from({ length: 6 }, (_, idx) => ({
+      offset: idx * 2.65,
+      height: 5.5 + (idx % 3) * 0.58,
+      depth: -18 - (idx % 3) * 2.1,
+      scale: 0.72 + (idx % 3) * 0.13,
+      speed: 1.05 + (idx % 3) * 0.09,
+      phase: idx * 1.37,
+    })),
+    []
+  );
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     const isDark = paletteRef.current.nightFactor > 0.72 || weather === 'rain' || locationId === 'midnight_deep';
-    if (groupRef.current) {
-      groupRef.current.visible = !isDark;
-    }
+    if (groupRef.current) groupRef.current.visible = !isDark;
     if (isDark) return;
 
-    birdRefs.current.forEach((bird, idx) => {
+    flock.forEach((birdData, idx) => {
+      const bird = birdRefs.current[idx];
       if (!bird) return;
-      const angle = t * (0.14 + idx * 0.025) + idx * 2.1;
-      const rx = 12 + idx * 2.4;
-      const rz = 6 + idx * 1.4;
-      const nextX = Math.cos(angle) * rx;
-      const nextZ = -18 + Math.sin(angle) * rz;
-      const vx = -Math.sin(angle) * rx;
-      const vz = Math.cos(angle) * rz;
-      bird.position.set(nextX, 4.1 + idx * 0.55 + Math.sin(t * 0.9 + idx) * 0.22, nextZ);
-      bird.rotation.y = Math.atan2(-vz, vx);
-      bird.rotation.z = Math.sin(angle) * 0.14;
+      const travel = (t * birdData.speed + birdData.offset) % 38;
+      const x = travel - 19;
+      const y = birdData.height + Math.sin(t * 0.72 + birdData.phase) * 0.24;
+      const z = birdData.depth + Math.sin(t * 0.28 + birdData.phase) * 0.75;
+      bird.position.set(x, y, z);
+      bird.rotation.y = Math.sin(t * 0.28 + birdData.phase) * 0.12;
+      bird.rotation.z = Math.sin(t * 0.72 + birdData.phase) * 0.045;
 
-      const flap = Math.sin(t * 5.2 + idx * 1.7) * 0.42;
-      const lw = leftWings.current[idx];
-      const rw = rightWings.current[idx];
-      if (lw) lw.rotation.x = flap;
-      if (rw) rw.rotation.x = -flap;
+      const flap = Math.sin(t * 5.4 + birdData.phase) * 0.48;
+      const left = leftWings.current[idx];
+      const right = rightWings.current[idx];
+      if (left) left.rotation.x = flap;
+      if (right) right.rotation.x = -flap;
     });
   });
 
-  const birdColor = locationId === 'alien_waters' ? '#f0abfc' : '#2e3f3d';
+  const birdColor = locationId === 'alien_waters' ? '#f0abfc' : '#40534d';
+  const bellyColor = locationId === 'alien_waters' ? '#f5d0fe' : '#d9d7c4';
 
   return (
     <group ref={groupRef}>
-      {[0, 1, 2].map((idx) => (
+      {flock.map((bird, idx) => (
         <group
           key={`bird-${idx}`}
-          ref={(el) => {
-            birdRefs.current[idx] = el;
-          }}
-          scale={0.85 + idx * 0.12}
+          ref={(el) => { birdRefs.current[idx] = el; }}
+          scale={bird.scale}
         >
-          <mesh>
-            <boxGeometry args={[0.18, 0.04, 0.05]} />
+          {/* Rounded body and a soft contrasting underside read clearly against the sky */}
+          <mesh scale={[1, 0.72, 0.78]}>
+            <sphereGeometry args={[0.19, 10, 8]} />
             <meshBasicMaterial color={birdColor} />
           </mesh>
-          <mesh
-            ref={(el) => {
-              leftWings.current[idx] = el;
-            }}
-            position={[0, 0.01, 0.12]}
-          >
-            <boxGeometry args={[0.08, 0.02, 0.24]} />
+          <mesh position={[0.13, -0.055, 0]}>
+            <sphereGeometry args={[0.105, 8, 6]} />
+            <meshBasicMaterial color={bellyColor} />
+          </mesh>
+          {/* Tail feathers */}
+          <mesh position={[-0.2, 0.015, 0]} rotation={[0, 0, -0.2]}>
+            <coneGeometry args={[0.075, 0.22, 5]} />
             <meshBasicMaterial color={birdColor} />
           </mesh>
-          <mesh
-            ref={(el) => {
-              rightWings.current[idx] = el;
-            }}
-            position={[0, 0.01, -0.12]}
-          >
-            <boxGeometry args={[0.08, 0.02, 0.24]} />
-            <meshBasicMaterial color={birdColor} />
+          {/* Broad tapered wings pivot at the shoulders and gently flap */}
+          <group ref={(el) => { leftWings.current[idx] = el; }} position={[0, 0.035, 0.105]}>
+            <mesh position={[0.015, 0, 0.19]} rotation={[0.08, 0, -0.08]} scale={[0.78, 0.16, 1.0]}>
+              <sphereGeometry args={[0.25, 8, 6]} />
+              <meshBasicMaterial color={birdColor} />
+            </mesh>
+          </group>
+          <group ref={(el) => { rightWings.current[idx] = el; }} position={[0, 0.035, -0.105]}>
+            <mesh position={[0.015, 0, -0.19]} rotation={[-0.08, 0, -0.08]} scale={[0.78, 0.16, 1.0]}>
+              <sphereGeometry args={[0.25, 8, 6]} />
+              <meshBasicMaterial color={birdColor} />
+            </mesh>
+          </group>
+          <mesh position={[0.2, 0.025, 0]} rotation={[0, 0, -Math.PI / 2]}>
+            <coneGeometry args={[0.045, 0.11, 5]} />
+            <meshBasicMaterial color="#d6a66c" />
           </mesh>
         </group>
       ))}
@@ -1248,6 +1264,62 @@ export function AnimatedWeather({
         </mesh>
       ))}
     </group>
+  );
+}
+
+
+/**
+ * A light seasonal breeze carries small leaves across the foreground in autumn.
+ * Instanced meshes keep the effect inexpensive while each leaf tumbles independently.
+ */
+export function AutumnLeafDrift({ season }: { season: SeasonType }) {
+  const leavesRef = useRef<InstancedMesh>(null);
+  const leafCount = 28;
+  const seeds = useMemo(
+    () => Array.from({ length: leafCount }, (_, idx) => ({
+      x: ((idx * 47) % 180) / 10 - 9,
+      y: (idx * 1.73) % 7,
+      z: ((idx * 31) % 110) / 10 - 5.5,
+      speed: 0.42 + (idx % 5) * 0.12,
+      phase: idx * 1.19,
+      size: 0.62 + (idx % 4) * 0.14,
+    })),
+    []
+  );
+
+  useEffect(() => {
+    if (leavesRef.current) leavesRef.current.frustumCulled = false;
+  }, []);
+
+  useFrame(({ clock }) => {
+    if (!leavesRef.current || season !== 'autumn') return;
+    const t = clock.getElapsedTime();
+    seeds.forEach((leaf, idx) => {
+      const fall = (leaf.y + t * leaf.speed) % 7.2;
+      const x = leaf.x + Math.sin(t * 0.55 + leaf.phase) * 0.72 + fall * 0.12;
+      const y = 7.1 - fall;
+      const z = leaf.z + Math.cos(t * 0.38 + leaf.phase) * 0.46;
+      _dummy.position.set(x, y, z);
+      _dummy.rotation.set(
+        Math.sin(t * 1.15 + leaf.phase) * 0.7,
+        t * 0.72 + leaf.phase,
+        Math.cos(t * 0.9 + leaf.phase) * 0.55
+      );
+      _dummy.scale.set(leaf.size * 0.13, 0.025, leaf.size * 0.075);
+      _dummy.updateMatrix();
+      leavesRef.current!.setMatrixAt(idx, _dummy.matrix);
+      const colors = ['#d97706', '#ea580c', '#fbbf24', '#b45309', '#c2410c'];
+      leavesRef.current!.setColorAt(idx, _cA.set(colors[idx % colors.length]));
+    });
+    leavesRef.current.instanceMatrix.needsUpdate = true;
+    if (leavesRef.current.instanceColor) leavesRef.current.instanceColor.needsUpdate = true;
+  });
+
+  return (
+    <instancedMesh ref={leavesRef} args={[undefined, undefined, leafCount]} visible={season === 'autumn'}>
+      <sphereGeometry args={[1, 7, 5]} />
+      <meshBasicMaterial vertexColors />
+    </instancedMesh>
   );
 }
 
