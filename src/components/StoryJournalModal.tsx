@@ -741,7 +741,7 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
                       <div>
                         <div className="text-xs font-bold text-rose-200">{event.title}</div>
                         <p className="mt-1 text-xs text-slate-300">{event.text}</p>
-                        <span className="mt-1 block text-[10px] text-slate-500">A little moment from the pond</span>
+                        <span className="mt-1 block text-[10px] text-slate-500">{event.environmental ? 'A seasonal or weather moment from the pond' : 'A little moment from the pond'}</span>
                       </div>
                     </div>
                   ))}
