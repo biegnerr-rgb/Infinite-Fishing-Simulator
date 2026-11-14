@@ -1283,3 +1283,100 @@ button {
 @media (max-width: 640px) {
   .pond-story-journal-card { height: 94dvh !important; max-height: 94dvh !important; }
 }
+
+
+/* Persistent bottom-left wallet and fish bag shortcut. */
+.game-shell .pond-corner-wallet {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  z-index: 24;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  pointer-events: none;
+}
+.pond-corner-wallet-balance {
+  display: flex;
+  min-height: 35px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 11px;
+  border: 1px solid rgba(238, 208, 126, .34);
+  border-radius: 12px;
+  color: #f3d88f;
+  background: rgba(10, 29, 29, .86);
+  box-shadow: 0 5px 16px rgba(0, 12, 14, .25);
+  backdrop-filter: blur(10px);
+}
+.pond-corner-wallet-balance svg { flex: 0 0 auto; color: #f2ce70; }
+.pond-corner-wallet-label {
+  color: #b6c5a9;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .1em;
+}
+.pond-corner-wallet-balance strong {
+  color: #ffe6a4;
+  font-family: ui-monospace, monospace;
+  font-size: 13px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+.pond-corner-bag-button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  border: 1px solid rgba(202, 221, 174, .42);
+  border-radius: 13px;
+  color: #f4f1d9;
+  background: linear-gradient(135deg, rgba(38, 91, 68, .96), rgba(20, 61, 57, .96));
+  box-shadow: 0 7px 20px rgba(0, 12, 14, .32), inset 0 1px 0 rgba(255,255,255,.12);
+  backdrop-filter: blur(10px);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 850;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform .16s ease, filter .16s ease, border-color .16s ease;
+}
+.pond-corner-bag-button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  border-color: rgba(225, 225, 175, .72);
+}
+.pond-corner-bag-button:active { transform: scale(.97); }
+.pond-corner-bag-button:focus-visible {
+  outline: 2px solid #f1d991;
+  outline-offset: 3px;
+}
+.pond-corner-bag-button > svg { color: #f2d78e; }
+.pond-corner-bag-count {
+  display: grid;
+  min-width: 21px;
+  height: 21px;
+  place-items: center;
+  margin-left: 2px;
+  padding: 0 5px;
+  border-radius: 7px;
+  color: #183b31;
+  background: #d9e6ad;
+  font-size: 10px;
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
+}
+.game-shell .pond-catch-toast-feed {
+  bottom: 112px;
+  left: 18px;
+}
+@media (max-width: 560px) {
+  .game-shell .pond-corner-wallet { left: 10px; bottom: 10px; gap: 5px; }
+  .pond-corner-wallet-balance { min-height: 31px; padding-inline: 8px; gap: 5px; }
+  .pond-corner-wallet-label { font-size: 7px; }
+  .pond-corner-wallet-balance strong { font-size: 12px; }
+  .pond-corner-bag-button { min-height: 38px; padding-inline: 10px; }
+  .game-shell .pond-catch-toast-feed { left: 10px; bottom: 96px; max-width: min(210px, 55vw); }
+}
