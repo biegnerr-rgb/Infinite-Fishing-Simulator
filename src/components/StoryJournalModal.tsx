@@ -6,6 +6,7 @@ import {
   STORY_QUESTS, 
   STORY_ARTIFACTS,
   RANDOM_STORY_EVENTS,
+  HIDDEN_DISCOVERIES,
 } from '../data/storyData';
 import { StoryState, JournalPageDef, StoryCharacterDef } from '../types/story';
 import { LOCATIONS } from '../data/locationsData';
@@ -104,7 +105,7 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
         <div className="flex items-center gap-1.5 px-6 py-2.5 bg-slate-950/60 border-b border-slate-800 shrink-0 overflow-x-auto">
           {[
             { id: 'story', label: 'Main Story', icon: Scroll, count: `${storyState.completedChapters.length}/5` },
-            { id: 'discoveries', label: 'Discoveries', icon: BookOpen, count: `${storyState.collectedPageIds.length + storyState.collectedArtifactIds.length}` },
+            { id: 'discoveries', label: 'Discoveries', icon: BookOpen, count: `${storyState.collectedPageIds.length + storyState.collectedArtifactIds.length + (storyState.foundHiddenDiscoveryIds || []).length}` },
             { id: 'characters', label: 'Characters', icon: Users, count: `${STORY_CHARACTERS.length}` },
             { id: 'locations', label: 'Locations', icon: Map, count: `${unlockedLocations.length}/${LOCATIONS.length}` },
             { id: 'memories', label: 'Memories', icon: Heart, count: `${storyState.readPageIds.length + storyState.completedChapters.length}` },
@@ -635,6 +636,38 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
                     </div>
                   );
                 })}
+              <div className="mt-6 space-y-3">
+                <div className="flex items-center justify-between gap-3 border-t border-slate-800 pt-5">
+                  <div>
+                    <h4 className="text-sm font-black text-amber-100">Hidden Keepsakes</h4>
+                    <p className="mt-1 text-xs text-slate-400">Eight one-of-a-kind treasures are scattered across the waters. Each hint points toward a place, a cast zone or a time of day.</p>
+                  </div>
+                  <span className="rounded-full border border-amber-300/20 bg-amber-950/30 px-3 py-1 text-[10px] font-bold text-amber-200">
+                    ${(storyState.foundHiddenDiscoveryIds || []).length}/${HIDDEN_DISCOVERIES.length} found
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {HIDDEN_DISCOVERIES.map(secret => {
+                    const isFound = (storyState.foundHiddenDiscoveryIds || []).includes(secret.id);
+                    const isAvailable = secret.chapterRequired <= storyState.currentChapter;
+                    return (
+                      <div key={secret.id} className={`rounded-2xl border p-3 ${isFound ? 'border-amber-400/50 bg-amber-950/25' : 'border-slate-700 bg-slate-950/40'}`}>
+                        <div className="flex items-start gap-3">
+                          <div className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl border text-xl ${isFound ? 'border-amber-400/40 bg-amber-900/30' : 'border-slate-700 bg-slate-800'}`}>
+                            {isFound ? secret.icon : isAvailable ? '❔' : '🔒'}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h5 className="text-xs font-extrabold text-slate-100">{isFound ? secret.name : isAvailable ? 'Unknown Keepsake' : 'Uncharted Keepsake'}</h5>
+                            <p className="mt-1 text-[11px] leading-relaxed text-slate-300">{isFound ? secret.description : isAvailable ? secret.hint : `Unlocks in Chapter ${secret.chapterRequired}`}</p>
+                            {isFound && <p className="mt-2 text-[10px] italic text-amber-200/80">{secret.lore}</p>}
+                            {isFound && <p className="mt-1 text-[10px] font-bold text-emerald-300">Reward collected · +{secret.rewardCoins.toLocaleString()} coins · +{secret.rewardPearls} pearls</p>}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
               </div>
             </div>
           )}
