@@ -19,7 +19,7 @@ export interface BoatTierDef {
 export interface CharacterDialogue {
   id: string;
   chapterRequired: number;
-  speaker: 'old_finn' | 'bubbles' | 'milo' | 'keeper';
+  speaker: 'old_finn' | 'bubbles' | 'milo' | 'keeper' | 'frog_friend' | 'turtle_friend' | 'duck_friend' | 'otter_friend' | 'crab_friend' | 'raccoon_friend';
   text: string;
   responseOptions?: {
     label: string;
@@ -31,7 +31,7 @@ export interface CharacterDialogue {
 }
 
 export interface StoryCharacterDef {
-  id: 'old_finn' | 'bubbles' | 'milo' | 'keeper';
+  id: 'old_finn' | 'bubbles' | 'milo' | 'keeper' | 'frog_friend' | 'turtle_friend' | 'duck_friend' | 'otter_friend' | 'crab_friend' | 'raccoon_friend';
   name: string;
   title: string;
   avatar: string;
