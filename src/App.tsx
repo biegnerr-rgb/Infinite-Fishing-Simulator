@@ -38,6 +38,7 @@ import {
 
 // Components
 import { PondCanvas3D as PondCanvas } from './components/PondCanvas3D';
+import { TopBar } from './components/TopBar';
 import { FishCatchModal } from './components/FishCatchModal';
 import { UpgradesPanel } from './components/UpgradesPanel';
 import { EncyclopediaModal } from './components/EncyclopediaModal';
@@ -55,7 +56,6 @@ import { SettingsModal } from './components/SettingsModal';
 import { StoryJournalModal } from './components/StoryJournalModal';
 import { ShipyardModal } from './components/ShipyardModal';
 import { StoryDialogueModal } from './components/StoryDialogueModal';
-import { TopBar } from './components/TopBar';
 import {
   BOAT_TIERS,
   STORY_CHAPTERS,
@@ -68,8 +68,6 @@ import {
 import { StoryState, StoryCharacterDef, CharacterDialogue } from './types/story';
 
 import {
-  Menu,
-  X,
   Sparkles,
   ShoppingBag,
   Wrench,
@@ -85,9 +83,6 @@ import {
 } from 'lucide-react';
 
 export default function App() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [returnToMenu, setReturnToMenu] = useState(false);
-
   // Game Save State
   const [gameState, setGameState] = useState<GameSaveState>(() => {
     const { state } = loadGame();
@@ -112,16 +107,7 @@ export default function App() {
     | 'storyJournal'
     | 'shipyard'
     | 'storyDialogue'
-    | 'upgrades'
   >('none');
-
-  const closeActiveModal = () => {
-    setActiveModal('none');
-    if (returnToMenu) {
-      setReturnToMenu(false);
-      setIsMenuOpen(true);
-    }
-  };
 
   // Story & Companion State
   const [activeDialogueChar, setActiveDialogueChar] = useState<StoryCharacterDef | null>(null);
@@ -207,7 +193,7 @@ export default function App() {
     }, 3800);
   }, []);
 
-  // Automatic Day / Night Cycle (advances every 75s when autoCycle is true)
+  // Automatic Day / Night Cycle (advances every 24s per phase = ~96s full cycle when autoCycle is true)
   useEffect(() => {
     if (!autoCycle) return;
     const interval = setInterval(() => {
@@ -218,7 +204,7 @@ export default function App() {
         setGameState(g => ({ ...g, timeOfDay: nextTime }));
         return nextTime;
       });
-    }, 75000);
+    }, 24000);
     return () => clearInterval(interval);
   }, [autoCycle]);
 
@@ -792,7 +778,7 @@ export default function App() {
     setFishingState('casting');
     sound.playCast();
 
-    // After casting flight arc (~750ms)
+    // After casting wind-up, parabolic flight & splashdown (~900ms)
     setTimeout(() => {
       setFishingState('waiting');
 
@@ -814,7 +800,7 @@ export default function App() {
           sound.playBite();
         }, 850);
       }, waitTime);
-    }, 750);
+    }, 900);
   }, [fishingState, selectedZone, gameState.boatTier, gameState.storyState]);
 
   const handleReelIn = useCallback(() => {
@@ -853,7 +839,7 @@ export default function App() {
       if (!gameState.settings.fastCatchMode) {
         setActiveCatch(newCatch);
       }
-    }, 300);
+    }, 550);
   }, [fishingState, generateCatch, activeCastZone, gameState.settings, commitCatch, pushCatchFeed]);
 
   // Keyboard shortcut: Spacebar to Cast or Reel
@@ -1225,66 +1211,74 @@ export default function App() {
 
   return (
     <div className="game-shell flex flex-col w-screen h-screen bg-slate-950 font-sans text-slate-100 overflow-hidden select-none">
-      <button
-        type="button"
-        className="immersive-menu-toggle"
-        onClick={() => setIsMenuOpen(open => !open)}
-        aria-label={isMenuOpen ? "Close game menu" : "Open game menu"}
-        aria-expanded={isMenuOpen}
-        title="Game menu"
-      >
-        {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
-      </button>
-      {returnToMenu && activeModal !== 'none' && (
-        <button
-          type="button"
-          className="return-to-menu-button"
-          onClick={() => {
-            setActiveModal('none');
-            setReturnToMenu(false);
-            setIsMenuOpen(true);
-          }}
-          aria-label="Back to game menu"
-        >
-          <ChevronRight size={16} className="return-to-menu-chevron" />
-          <span>Back to Menu</span>
-        </button>
-      )}
-      {isMenuOpen && (
-        <>
-          <button className="immersive-menu-backdrop" onClick={() => setIsMenuOpen(false)} aria-label="Close game menu" />
-          <div className="immersive-menu-panel">
-            <TopBar
-              coins={gameState.coins}
-              starPearls={gameState.starPearls}
-              currentLocation={currentLocation}
-              activeEvents={activeEvents}
-              soundEnabled={gameState.settings.soundEnabled}
-              onToggleSound={() => setGameState(p => ({ ...p, settings: { ...p.settings, soundEnabled: !p.settings.soundEnabled } }))}
-              onOpenLocations={() => { setReturnToMenu(true); setActiveModal('locations'); setIsMenuOpen(false); }}
-              onOpenInventory={() => { setReturnToMenu(true); setActiveModal('inventory'); setIsMenuOpen(false); }}
-              onOpenUpgrades={() => { setReturnToMenu(true); setActiveModal('upgrades'); setIsMenuOpen(false); }}
-              onOpenEncyclopedia={() => { setReturnToMenu(true); setActiveModal('encyclopedia'); setIsMenuOpen(false); }}
-              onOpenAchievements={() => { setReturnToMenu(true); setActiveModal('achievements'); setIsMenuOpen(false); }}
-              onOpenPrestige={() => { setReturnToMenu(true); setActiveModal('prestige'); setIsMenuOpen(false); }}
-              onOpenWardrobe={() => { setReturnToMenu(true); setActiveModal('wardrobe'); setIsMenuOpen(false); }}
-              onOpenSettings={() => { setReturnToMenu(true); setActiveModal('settings'); setIsMenuOpen(false); }}
-              onOpenMerchant={() => { setReturnToMenu(true); setActiveModal('merchant'); setIsMenuOpen(false); }}
-              onOpenVisitors={() => { setReturnToMenu(true); setActiveModal('visitors'); setIsMenuOpen(false); }}
-              onOpenStoryJournal={() => { setReturnToMenu(true); setActiveModal('storyJournal'); setIsMenuOpen(false); }}
-              onOpenShipyard={() => { setReturnToMenu(true); setActiveModal('shipyard'); setIsMenuOpen(false); }}
-            />
-          </div>
-        </>
-      )}
+      
+      {/* 1. Top Resource & Navigation Bar */}
+      <TopBar
+        coins={gameState.coins}
+        starPearls={gameState.starPearls}
+        currentLocation={currentLocation}
+        activeEvents={activeEvents}
+        soundEnabled={gameState.settings.soundEnabled}
+        onToggleSound={() => {
+          setGameState(p => ({
+            ...p,
+            settings: { ...p.settings, soundEnabled: !p.settings.soundEnabled },
+          }));
+        }}
+        onOpenLocations={() => setActiveModal('locations')}
+        onOpenEncyclopedia={() => setActiveModal('encyclopedia')}
+        onOpenAchievements={() => setActiveModal('achievements')}
+        onOpenPrestige={() => setActiveModal('prestige')}
+        onOpenWardrobe={() => setActiveModal('wardrobe')}
+        onOpenSettings={() => setActiveModal('settings')}
+        onOpenMerchant={() => setActiveModal('merchant')}
+        onOpenVisitors={() => setActiveModal('visitors')}
+        onOpenStoryJournal={() => setActiveModal('storyJournal')}
+        onOpenShipyard={() => setActiveModal('shipyard')}
+      />
 
       {/* 2. Main Game Viewport */}
-      <div className="game-main immersive-game-main flex-1 overflow-hidden">
+      <div className="game-main flex-1 flex flex-col md:flex-row overflow-hidden p-3 gap-3">
         
         {/* Left / Center: Interactive Animated Pond */}
-        <div className="pond-column immersive-pond-column relative">
+        <div className="pond-column flex-1 flex flex-col min-h-0 relative">
           
-          <div className="pond-stage immersive-pond-stage relative">
+          {/* Dynamic Day/Night, Weather, Season, and Zone Controls Bar */}
+          <div className="pond-toolbar mb-2">
+            <PondEnvironmentControls
+              timeOfDay={timeOfDay}
+              weather={weather}
+              season={season}
+              autoCycle={autoCycle}
+              selectedZone={selectedZone}
+              activeVisitorType={activeVisitor?.type}
+              visitorName={activeVisitor ? (gameState.befriendedVisitors?.[activeVisitor.type]?.name || VISITORS_CONFIG[activeVisitor.type].defaultName) : undefined}
+              onTimeChange={(t) => {
+                setTimeOfDay(t);
+                setGameState(p => ({ ...p, timeOfDay: t }));
+              }}
+              onWeatherToggle={() => {
+                const nextWeather = weather === 'clear' ? 'rain' : 'clear';
+                setWeather(nextWeather);
+                setGameState(p => ({ ...p, weather: nextWeather }));
+              }}
+              onSeasonChange={(s) => {
+                setSeason(s);
+                setGameState(p => ({ ...p, season: s }));
+              }}
+              onAutoCycleToggle={() => {
+                setAutoCycle(a => !a);
+                setGameState(p => ({ ...p, autoCycleTime: !autoCycle }));
+              }}
+              onSelectZone={(z) => {
+                setSelectedZone(z);
+                setGameState(p => ({ ...p, selectedCastZone: z }));
+              }}
+              onOpenVisitorModal={() => setActiveModal('visitors')}
+            />
+          </div>
+
+          <div className="pond-stage flex-1 relative min-h-0">
             <PondCanvas
               location={currentLocation}
               availableFish={availableSpecies}
@@ -1300,6 +1294,7 @@ export default function App() {
               timeOfDay={timeOfDay}
               weather={weather}
               season={season}
+              autoCycle={autoCycle}
               selectedZone={selectedZone}
               activeVisitor={activeVisitor}
               visitorName={activeVisitor ? (gameState.befriendedVisitors?.[activeVisitor.type]?.name || VISITORS_CONFIG[activeVisitor.type].defaultName) : undefined}
@@ -1310,8 +1305,9 @@ export default function App() {
               onCollectBottle={handleCollectBottle}
               onInteractBubbles={handleInteractBubbles}
               onInteractVisitor={() => setActiveModal('visitors')}
+              onOpenShipyard={() => setActiveModal('shipyard')}
             />
-            <div className="aquarium-toggle absolute bottom-5 right-5 flex items-center gap-2">
+            <div className="aquarium-toggle absolute top-4 right-4 flex items-center gap-2">
               <button
                 onClick={() => setIsAquariumMode(!isAquariumMode)}
                 className={`px-3 py-1.5 rounded-xl border text-xs font-bold shadow-md transition-colors flex items-center gap-1.5 cursor-pointer backdrop-blur-md ${
@@ -1341,22 +1337,240 @@ export default function App() {
 
         </div>
 
-      </div>
-
-      {/* --- MODALS --- */}
-      
-      {/* Upgrade Bench: rod, bait, lines, automation, storage and special gear */}
-      {activeModal === 'upgrades' && (
-        <div className="fixed inset-0 z-50 upgrade-modal-overlay">
-          <div className="upgrade-modal-content">
+        {/* Right: Equipment, Upgrades & Actions Dock */}
+        <div className="angler-panel w-full md:w-96 flex flex-col bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-3xl overflow-hidden shadow-xl shrink-0">
+          
+          {/* Tabs Header */}
+          <div className="panel-tabs p-2 border-b border-slate-800 flex items-center gap-2 bg-slate-950/40">
             <button
-              type="button"
-              className="upgrade-modal-close"
-              onClick={closeActiveModal}
-              aria-label="Close Upgrade Bench"
+              onClick={() => setActiveTab('pond')}
+              className={`flex-1 py-2 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                activeTab === 'pond'
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
             >
-              <X size={18} />
+              <span>🛶 Boat & Tackle</span>
             </button>
+            <button
+              onClick={() => setActiveTab('upgrades')}
+              className={`flex-1 py-2 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                activeTab === 'upgrades'
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <span>🛠️ Tackle Shop</span>
+            </button>
+          </div>
+
+          {/* Tab Content: Casting Dock */}
+          {activeTab === 'pond' && (
+            <div className="angler-content flex-1 p-4 overflow-y-auto space-y-4">
+              
+              {/* Primary Cast Action Button & Fisherman Profile */}
+              <div className="cast-card p-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/80 text-center space-y-3 shadow-inner">
+                <div className="flex items-center justify-between pb-2 border-b border-slate-700/60 text-left">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">🎣</span>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-black text-amber-200">
+                          {gameState.customization?.name || 'Old Pete'}
+                        </span>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-950/70 text-cyan-300 border border-cyan-800/60 font-semibold">
+                          Tier {gameState.boatTier || 1} Vessel
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 block">
+                        Sailing {BOAT_TIERS.find(b => b.tier === (gameState.boatTier || 1))?.name || 'Rowboat'}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setActiveModal('wardrobe')}
+                    className="px-2 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 text-[10px] font-bold transition-all cursor-pointer flex items-center gap-1"
+                    title="Change fisherman name and wardrobe"
+                  >
+                    <span>🎃 Outfits</span>
+                  </button>
+                </div>
+
+                <div>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                    Equipped Gear
+                  </span>
+                  <div className="text-sm font-black text-amber-300 flex items-center justify-center gap-1.5 mt-0.5">
+                    <span>{currentRodTier.icon}</span>
+                    <span>{currentRodTier.name}</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400">
+                    {currentRodTier.power}
+                  </span>
+                </div>
+
+                {/* Big Interactive Action Button */}
+                {fishingState === 'idle' ? (
+                  <button
+                    onClick={() => handleManualCast()}
+                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-emerald-950 font-black text-base tracking-wide shadow-xl shadow-emerald-950 flex items-center justify-center gap-2 transition-transform active:scale-95 cursor-pointer"
+                  >
+                    <span>🎣 Cast Fishing Line</span>
+                    <span className="text-xs font-bold px-2 py-0.5 rounded bg-emerald-700/40 text-emerald-900">
+                      Space
+                    </span>
+                  </button>
+                ) : fishingState === 'hooked' ? (
+                  <button
+                    onClick={handleReelIn}
+                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-rose-600 to-amber-500 hover:from-rose-500 hover:to-amber-400 text-white font-black text-base tracking-wide shadow-xl shadow-rose-950 flex items-center justify-center gap-2 animate-bounce cursor-pointer"
+                  >
+                    <span>⚡ BITE! REEL IN NOW! 🎣</span>
+                  </button>
+                ) : fishingState === 'nibble' ? (
+                  <button
+                    onClick={handleReelIn}
+                    className="w-full py-4 rounded-2xl bg-amber-600 hover:bg-amber-500 text-amber-950 font-black text-base tracking-wide shadow-lg flex items-center justify-center gap-2 cursor-pointer animate-pulse"
+                  >
+                    <span>🐟 Fish Nibbling... Ready!</span>
+                  </button>
+                ) : (
+                  <div className="w-full py-4 rounded-2xl bg-slate-800 border border-slate-700 text-slate-400 font-bold text-sm flex items-center justify-center gap-2">
+                    <span className="animate-spin">⏳</span>
+                    <span>Waiting for fish to bite...</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Automatic Fisher Status Bar */}
+              <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-extrabold text-slate-200 flex items-center gap-1.5">
+                    <span>⚙️ Auto-Fisher:</span>
+                    <span className="text-emerald-400">
+                      {gameState.upgrades.auto_fisher > 0 ? `Lv. ${gameState.upgrades.auto_fisher}` : 'Offline'}
+                    </span>
+                  </span>
+                  <span className="text-[11px] font-mono text-slate-400">
+                    {gameState.upgrades.auto_fisher > 0 ? `${autoProgress}%` : 'Not Installed'}
+                  </span>
+                </div>
+
+                <div className="w-full h-2 rounded-full bg-slate-900 overflow-hidden border border-slate-800">
+                  <div
+                    className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-100"
+                    style={{ width: `${autoProgress}%` }}
+                  />
+                </div>
+
+                <div className="text-[10px] text-slate-400 flex items-center justify-between">
+                  <span>Lines: {gameState.upgrades.multiple_lines || 1}x</span>
+                  <span>
+                    {gameState.upgrades.auto_seller > 0 ? 'Pelican Drone Active' : 'Manual Sales'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Quick Basket, Shipyard, Story & Log Shortcuts */}
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => setActiveModal('inventory')}
+                  className="p-2.5 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/80 text-left transition-colors cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between text-amber-400 mb-1">
+                    <ShoppingBag className="w-4 h-4" />
+                    <span className="text-[10px] font-extrabold font-mono text-slate-200">
+                      {gameState.inventory.length}/{(gameState.inventoryCapacity + (BOAT_TIERS.find(b => b.tier === (gameState.boatTier || 1))?.capacityBonus || 0))}
+                    </span>
+                  </div>
+                  <span className="font-black text-xs text-white block">
+                    Fish Basket
+                  </span>
+                  <span className="text-[10px] text-slate-400 block group-hover:text-slate-300">
+                    Inspect / Sell &gt;
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setActiveModal('shipyard')}
+                  className="p-2.5 rounded-2xl bg-cyan-950/40 hover:bg-cyan-900/40 border border-cyan-500/40 text-left transition-colors cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between text-cyan-300 mb-1">
+                    <Anchor className="w-4 h-4" />
+                    <span className="text-[10px] font-bold text-cyan-400">Tier {gameState.boatTier || 1}/5</span>
+                  </div>
+                  <span className="font-black text-xs text-cyan-200 block">
+                    Shipyard
+                  </span>
+                  <span className="text-[10px] text-cyan-400/80 block group-hover:text-cyan-300">
+                    Upgrade Boat &gt;
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setActiveModal('storyJournal')}
+                  className="p-2.5 rounded-2xl bg-amber-950/40 hover:bg-amber-900/40 border border-amber-500/40 text-left transition-colors cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between text-amber-300 mb-1">
+                    <BookOpen className="w-4 h-4" />
+                    <span className="text-[10px] font-bold text-amber-400">Ch. {(gameState.storyState || INITIAL_STORY_STATE).currentChapter}/5</span>
+                  </div>
+                  <span className="font-black text-xs text-amber-200 block">
+                    Story Journal
+                  </span>
+                  <span className="text-[10px] text-amber-400/80 block group-hover:text-amber-300">
+                    Grandpa's Log &gt;
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setActiveModal('encyclopedia')}
+                  className="p-2.5 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/80 text-left transition-colors cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between text-sky-400 mb-1">
+                    <Fish className="w-4 h-4" />
+                    <span className="text-[10px] font-extrabold font-mono text-emerald-400">
+                      {uniqueFishCount}/{ALL_FISH.length}
+                    </span>
+                  </div>
+                  <span className="font-black text-xs text-white block">
+                    Fish Log
+                  </span>
+                  <span className="text-[10px] text-slate-400 block group-hover:text-slate-300">
+                    Species &gt;
+                  </span>
+                </button>
+              </div>
+
+              {/* Sell Entire Basket Quick Button */}
+              {gameState.inventory.filter(f => !f.isFavorite).length > 0 && (
+                <button
+                  onClick={() => {
+                    handleMassSell('all_non_fav');
+                    sound.playCoin();
+                  }}
+                  className="w-full py-2.5 px-3 rounded-2xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-amber-950 font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-950/40 transition-transform active:scale-95 cursor-pointer"
+                >
+                  <Coins className="w-4 h-4" />
+                  <span>
+                    Sell Entire Basket ({gameState.inventory.filter(f => !f.isFavorite).length} Fish · +🪙 {gameState.inventory.filter(f => !f.isFavorite).reduce((s, f) => s + f.value, 0).toLocaleString()})
+                  </span>
+                </button>
+              )}
+
+              {/* Quick Info & Tips */}
+              <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800 text-[11px] text-slate-400 space-y-1">
+                <span className="font-bold text-slate-300 block">💡 Angler Wisdom:</span>
+                <p>
+                  Upgrading your boat in the Shipyard boosts bite speed, rare fish luck, and basket capacity! Click Bubbles or floating bottles to unveil the pond's ancient history.
+                </p>
+              </div>
+
+            </div>
+          )}
+
+          {/* Tab Content: Tackle Shop (Upgrades) */}
+          {activeTab === 'upgrades' && (
             <UpgradesPanel
               coins={gameState.coins}
               upgrades={gameState.upgrades}
@@ -1364,10 +1578,14 @@ export default function App() {
               onBuyUpgrade={handleBuyUpgrade}
               onOpenShipyard={() => setActiveModal('shipyard')}
             />
-          </div>
-        </div>
-      )}
+          )}
 
+        </div>
+
+      </div>
+
+      {/* --- MODALS --- */}
+      
       {/* 1. Fish Catch Reveal Modal */}
       {activeCatch && (
         <FishCatchModal
@@ -1392,7 +1610,7 @@ export default function App() {
       {activeModal === 'encyclopedia' && (
         <EncyclopediaModal
           discoveries={gameState.discoveries}
-          onClose={closeActiveModal}
+          onClose={() => setActiveModal('none')}
         />
       )}
 
@@ -1406,7 +1624,7 @@ export default function App() {
           onMassSell={handleMassSell}
           onToggleFavorite={handleToggleFavorite}
           onToggleAquarium={handleToggleAquarium}
-          onClose={closeActiveModal}
+          onClose={() => setActiveModal('none')}
         />
       )}
 
@@ -1418,7 +1636,7 @@ export default function App() {
           coins={gameState.coins}
           onSelectLocation={handleSelectLocation}
           onUnlockLocation={handleUnlockLocation}
-          onClose={closeActiveModal}
+          onClose={() => setActiveModal('none')}
         />
       )}
 
@@ -1433,7 +1651,7 @@ export default function App() {
           fishCaughtThisRun={gameState.fishCaughtThisRun || 0}
           onAscend={handleAscend}
           onBuyPrestigeUpgrade={handleBuyPrestigeUpgrade}
-          onClose={closeActiveModal}
+          onClose={() => setActiveModal('none')}
         />
       )}
 
@@ -1442,7 +1660,7 @@ export default function App() {
         <AchievementsModal
           saveState={gameState}
           unlockedAchievements={gameState.unlockedAchievements}
-          onClose={closeActiveModal}
+          onClose={() => setActiveModal('none')}
         />
       )}
 
@@ -1452,7 +1670,7 @@ export default function App() {
           coins={gameState.coins}
           starPearls={gameState.starPearls}
           onBuyItem={handleBuyMerchantDeal}
-          onClose={closeActiveModal}
+          onClose={() => setActiveModal('none')}
         />
       )}
 
@@ -1480,7 +1698,7 @@ export default function App() {
             const fresh = resetGame();
             setGameState(fresh);
           }}
-          onClose={closeActiveModal}
+          onClose={() => setActiveModal('none')}
         />
       )}
 
@@ -1492,7 +1710,7 @@ export default function App() {
           starPearls={gameState.starPearls}
           onUpdateCustomization={handleUpdateCustomization}
           onUnlockCosmetic={handleUnlockCosmetic}
-          onClose={closeActiveModal}
+          onClose={() => setActiveModal('none')}
         />
       )}
 
@@ -1500,7 +1718,7 @@ export default function App() {
       {activeModal === 'visitors' && (
         <VisitorModal
           isOpen={true}
-          onClose={closeActiveModal}
+          onClose={() => setActiveModal('none')}
           activeVisitorType={activeVisitor?.type}
           befriendedVisitors={gameState.befriendedVisitors || getInitialBefriendedVisitors()}
           onRenameVisitor={handleRenameVisitor}
@@ -1526,7 +1744,7 @@ export default function App() {
           unlockedLocations={gameState.unlockedLocations}
           coins={gameState.coins}
           starPearls={gameState.starPearls}
-          onClose={closeActiveModal}
+          onClose={() => setActiveModal('none')}
           onTalkToCharacter={handleTalkToCharacter}
           onClaimQuestReward={handleClaimQuestReward}
           onReadPage={(pageId) => {
@@ -1548,7 +1766,7 @@ export default function App() {
           currentBoatTier={gameState.boatTier || 1}
           coins={gameState.coins}
           onUpgradeBoat={handleUpgradeBoat}
-          onClose={closeActiveModal}
+          onClose={() => setActiveModal('none')}
         />
       )}
 

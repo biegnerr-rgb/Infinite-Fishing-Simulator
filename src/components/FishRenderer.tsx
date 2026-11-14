@@ -126,7 +126,7 @@ export const FishRenderer: React.FC<FishRendererProps> = ({
           )}
         </defs>
 
-        <g className={animate ? 'animate-pulse' : ''} style={{ animationDuration: '3s' }}>
+        <g>
           {/* Dorsal Fin (Top) */}
           <path
             d="M 55 24 Q 75 8 100 22 C 85 20 70 20 55 24 Z"
@@ -167,6 +167,23 @@ export const FishRenderer: React.FC<FishRendererProps> = ({
             d="M 35 48 C 45 60 85 64 110 50 C 95 56 60 56 35 48 Z"
             fill={accentColor}
             opacity="0.35"
+          />
+          {/* Gill arch & mouth */}
+          <path
+            d="M 46 31 Q 53 45 46 58"
+            fill="none"
+            stroke={finColor}
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            opacity="0.7"
+          />
+          <path
+            d="M 22 46 Q 27 48 31 46"
+            fill="none"
+            stroke={finColor}
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            opacity="0.75"
           />
 
           {/* Species-specific Patterns */}

@@ -23,10 +23,10 @@ export interface FishermanCustomization {
 }
 
 export const SKIN_TONES: CosmeticItem[] = [
-  { id: 'skin_peach', name: 'Peach', type: 'skin', description: 'Fair rosy skin tone', costCoins: 0, costPearls: 0, unlockedByDefault: true, color: '#fbcfe8', icon: '🎨' },
-  { id: 'skin_warm', name: 'Warm Tan', type: 'skin', description: 'Sun-kissed river angler', costCoins: 0, costPearls: 0, unlockedByDefault: true, color: '#fcd34d', icon: '🎨' },
-  { id: 'skin_olive', name: 'Olive Bronze', type: 'skin', description: 'Weathered salt fisherman', costCoins: 0, costPearls: 0, unlockedByDefault: true, color: '#d97706', icon: '🎨' },
-  { id: 'skin_rich', name: 'Deep Cocoa', type: 'skin', description: 'Rich deep complexion', costCoins: 0, costPearls: 0, unlockedByDefault: true, color: '#78350f', icon: '🎨' },
+  { id: 'skin_peach', name: 'Peach', type: 'skin', description: 'Fair rosy skin tone', costCoins: 0, costPearls: 0, unlockedByDefault: true, color: '#f1c6ab', icon: '🎨' },
+  { id: 'skin_warm', name: 'Warm Tan', type: 'skin', description: 'Sun-kissed river angler', costCoins: 0, costPearls: 0, unlockedByDefault: true, color: '#d69e7a', icon: '🎨' },
+  { id: 'skin_olive', name: 'Olive Bronze', type: 'skin', description: 'Weathered salt fisherman', costCoins: 0, costPearls: 0, unlockedByDefault: true, color: '#b47a54', icon: '🎨' },
+  { id: 'skin_rich', name: 'Deep Cocoa', type: 'skin', description: 'Rich deep complexion', costCoins: 0, costPearls: 0, unlockedByDefault: true, color: '#6b3e28', icon: '🎨' },
   { id: 'skin_cosmic', name: 'Cosmic Violet', type: 'skin', description: 'Glowing ethereal alien tint', costCoins: 5000, costPearls: 2, unlockedByDefault: false, color: '#c084fc', icon: '✨' },
   // Halloween Special Skins
   { id: 'skin_zombie', name: 'Zombie Slime', type: 'skin', description: 'Creepy rotting graveyard green', costCoins: 666, costPearls: 0, unlockedByDefault: false, color: '#84cc16', icon: '🧟', isHalloween: true },
@@ -57,7 +57,7 @@ export const FACIAL_HAIR_STYLES: CosmeticItem[] = [
 ];
 
 export const HATS: CosmeticItem[] = [
-  { id: 'hat_straw', name: 'Woven Straw Hat', type: 'hat', description: 'Wide-brimmed protection from afternoon sun', costCoins: 0, costPearls: 0, unlockedByDefault: true, color: '#fde047', accentColor: '#ca8a04', icon: '👒' },
+  { id: 'hat_straw', name: 'Woven Straw Hat', type: 'hat', description: 'Wide-brimmed protection from afternoon sun', costCoins: 0, costPearls: 0, unlockedByDefault: true, color: '#e8d5a3', accentColor: '#8b261d', icon: '👒' },
   { id: 'hat_bucket', name: 'Tackle Bucket Hat', type: 'hat', description: 'Classic green canvas with decorative fishing fly pinned', costCoins: 250, costPearls: 0, unlockedByDefault: false, color: '#15803d', accentColor: '#fbbf24', icon: '🧢' },
   { id: 'hat_beanie', name: 'Cozy Fisherman Beanie', type: 'hat', description: 'Ribbed knit wool for crisp mornings', costCoins: 600, costPearls: 0, unlockedByDefault: false, color: '#ea580c', accentColor: '#c2410c', icon: '🧶' },
   { id: 'hat_captain', name: 'Grand Captain Cap', type: 'hat', description: 'Gold embroidered maritime captain cap', costCoins: 2500, costPearls: 1, unlockedByDefault: false, color: '#0f172a', accentColor: '#fbbf24', icon: '⚓' },

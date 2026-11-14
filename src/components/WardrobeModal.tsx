@@ -235,8 +235,9 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
                 {/* Hats & Halloween Masks */}
                 {activeHat.id === 'hat_straw' && (
                   <g>
-                    <ellipse cx="74" cy="35" rx="28" ry="7" fill="#fde047" stroke="#ca8a04" strokeWidth="1.5" />
-                    <path d="M 60 35 C 60 20 88 20 88 35 Z" fill="#facc15" stroke="#ca8a04" strokeWidth="1.5" />
+                    <ellipse cx="74" cy="35" rx="28" ry="7" fill="#e8d5a3" stroke="#9e8048" strokeWidth="1.5" />
+                    <path d="M 60 35 C 60 20 88 20 88 35 Z" fill="#dcc388" stroke="#9e8048" strokeWidth="1.5" />
+                    <rect x="60" y="31" width="28" height="3.5" fill="#8b261d" rx="1" />
                   </g>
                 )}
 

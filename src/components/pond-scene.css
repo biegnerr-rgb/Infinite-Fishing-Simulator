@@ -26,14 +26,11 @@
   position: absolute;
   z-index: 2;
   pointer-events: none;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
 }
 
 .pond-scene-label {
   top: 14px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 14px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -41,8 +38,8 @@
   border: 1px solid rgba(247, 236, 204, 0.55);
   border-radius: 999px;
   color: #f9f4df;
-  background: rgba(31, 66, 58, 0.75);
-  box-shadow: 0 5px 16px rgba(16, 38, 34, 0.2);
+  background: rgba(24, 52, 46, 0.88);
+  box-shadow: 0 5px 16px rgba(16, 38, 34, 0.25);
   font-size: 11px;
   font-weight: 750;
   letter-spacing: 0.025em;
@@ -145,7 +142,7 @@
 
 @media (max-width: 760px) {
   .pond-canvas-3d { border-radius: 21px; }
-  .pond-scene-label { top: 10px; left: 50%; transform: translateX(-50%); padding: 7px 10px; }
+  .pond-scene-label { top: 10px; left: 10px; padding: 7px 10px; }
   .pond-scene-message { top: 52px; left: 10px; right: auto; max-width: calc(100% - 20px); }
   .pond-scene-status { bottom: 10px; gap: 6px; padding: 7px 10px; font-size: 9px; }
   .pond-scene-status strong { font-size: 9px; }

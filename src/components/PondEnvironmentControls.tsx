@@ -58,11 +58,6 @@ export const PondEnvironmentControls: React.FC<PondEnvironmentControlsProps> = (
   const seasons: SeasonType[] = ['spring', 'summer', 'autumn', 'winter'];
   const zones: PondZone[] = ['lily_pads', 'deep_water', 'rocks_reef', 'reeds'];
 
-  const cycleTime = () => {
-    const nextIdx = (times.indexOf(timeOfDay) + 1) % times.length;
-    onTimeChange(times[nextIdx]);
-  };
-
   const cycleSeason = () => {
     const nextIdx = (seasons.indexOf(season) + 1) % seasons.length;
     onSeasonChange(seasons[nextIdx]);
@@ -71,33 +66,46 @@ export const PondEnvironmentControls: React.FC<PondEnvironmentControlsProps> = (
   return (
     <div className="w-full flex flex-wrap items-center justify-between gap-2.5 px-3.5 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-800 backdrop-blur-md shadow-xl text-xs select-none">
       
-      {/* Left: Time, Weather & Season Controls */}
+      {/* Left: Daylight Cycle, Weather & Season Controls */}
       <div className="flex flex-wrap items-center gap-2">
         
-        {/* Time of Day Pill */}
-        <button
-          onClick={cycleTime}
-          title={`Click to switch Time of Day (Bonus: ${TIME_CONFIG[timeOfDay].bonus})`}
-          className="px-3 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700/90 border border-slate-700/60 text-slate-200 font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95"
+        {/* 4-Phase Daylight Cycle Selector */}
+        <div
+          className="flex items-center gap-0.5 bg-slate-950/75 p-1 rounded-xl border border-slate-800"
+          title={`Current phase: ${TIME_CONFIG[timeOfDay].label} (${TIME_CONFIG[timeOfDay].bonus})`}
         >
-          <span className="text-sm">{TIME_CONFIG[timeOfDay].icon}</span>
-          <span>{TIME_CONFIG[timeOfDay].label}</span>
-          <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">
-            ({TIME_CONFIG[timeOfDay].bonus})
-          </span>
-        </button>
+          {times.map((t) => {
+            const cfg = TIME_CONFIG[t];
+            const active = timeOfDay === t;
+            return (
+              <button
+                key={t}
+                onClick={() => onTimeChange(t)}
+                title={`${cfg.label}: ${cfg.bonus}`}
+                className={`px-2 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer ${
+                  active
+                    ? 'bg-amber-500/20 text-amber-200 border border-amber-400/40 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent'
+                }`}
+              >
+                <span>{cfg.icon}</span>
+                <span className="hidden lg:inline">{cfg.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
         {/* Auto Cycle Toggle */}
         <button
           onClick={onAutoCycleToggle}
-          title={autoCycle ? 'Auto day/night cycle enabled' : 'Time paused on current hour'}
+          title={autoCycle ? 'Daylight cycle advancing automatically' : 'Daylight cycle paused on selected phase'}
           className={`px-2.5 py-1.5 rounded-xl border font-medium flex items-center gap-1 cursor-pointer transition-colors ${
             autoCycle
               ? 'bg-emerald-950/70 text-emerald-300 border-emerald-500/40 hover:bg-emerald-900/70'
               : 'bg-slate-800/80 text-slate-400 border-slate-700/50 hover:bg-slate-800'
           }`}
         >
-          <span>{autoCycle ? '⏱️ Auto' : '⏸️ Fixed'}</span>
+          <span>{autoCycle ? '⏱️ Auto Cycle' : '⏸️ Fixed'}</span>
         </button>
 
         {/* Weather Toggle */}
