@@ -1348,26 +1348,25 @@ export default function App() {
 
   // --- MERCHANT BARNABY PURCHASES ---
   const handleBuyMerchantDeal = (dealId: string, costCoins: number, costPearls: number) => {
-    if (gameState.coins >= costCoins && gameState.starPearls >= costPearls) {
-      setGameState(prev => {
-        let addCoins = 0;
-        let addPearls = 0;
+    const merchantDeals: Record<string, { costCoins: number; costPearls: number; rewardPearls: number }> = {
+      pearl_bundle: { costCoins: 24000, costPearls: 0, rewardPearls: 1 },
+      lucky_charm: { costCoins: 52000, costPearls: 0, rewardPearls: 2 },
+      mystery_crate: { costCoins: 78000, costPearls: 0, rewardPearls: 3 },
+    };
+    const deal = merchantDeals[dealId];
+    if (!deal || costCoins !== deal.costCoins || costPearls !== deal.costPearls) return;
 
-        if (dealId === 'pearl_bundle') addPearls = 2;
-        if (dealId === 'golden_chum') addCoins = 2500;
-        if (dealId === 'lucky_charm') addPearls = 1;
-        if (dealId === 'mystery_crate') addCoins = 6000;
+    setGameState(prev => {
+      if (prev.coins < deal.costCoins || prev.starPearls < deal.costPearls) return prev;
 
-        return {
-          ...prev,
-          coins: prev.coins - costCoins + addCoins,
-          starPearls: prev.starPearls - costPearls + addPearls,
-          lifetimeCoins: prev.lifetimeCoins + addCoins,
-        };
-      });
+      return {
+        ...prev,
+        coins: prev.coins - deal.costCoins,
+        starPearls: prev.starPearls + deal.rewardPearls,
+      };
+    });
 
-      pushCatchFeed(`Purchased Barnaby's special trade goods!`, '#f59e0b');
-    }
+    pushCatchFeed(`Traded coins for Barnaby's Star Pearls!`, '#f59e0b');
   };
 
   const handleUpdateCustomization = (newCustom: FishermanCustomization) => {
