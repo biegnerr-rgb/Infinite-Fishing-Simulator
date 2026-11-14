@@ -37,6 +37,7 @@ import {
 import {
   AmbientParticles,
   AnimatedWeather,
+  AutumnLeafDrift,
   AtmospherePalette,
   BackgroundForest,
   CelestialBodies,
@@ -1681,6 +1682,7 @@ function PondScene({
       <PondDragonflies paletteRef={paletteRef} weather={weather} locationId={location.id} />
       <AmbientParticles location={location} paletteRef={paletteRef} season={season} activeEvents={activeEvents} />
       <AnimatedWeather weather={weather} season={season} paletteRef={paletteRef} />
+      <AutumnLeafDrift season={season} />
 
       {hasEvent('giant_sighting') && <GiantShadow />}
       {hasFloatingBottle && onCollectBottle && <Collectible type="bottle" position={[5.3, 0.48, 0.3]} onCollect={onCollectBottle} />}
