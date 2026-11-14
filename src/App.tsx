@@ -88,14 +88,6 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [returnToMenu, setReturnToMenu] = useState(false);
 
-  const closeActiveModal = () => {
-    setActiveModal('none');
-    if (returnToMenu) {
-      setReturnToMenu(false);
-      setIsMenuOpen(true);
-    }
-  };
-
   // Game Save State
   const [gameState, setGameState] = useState<GameSaveState>(() => {
     const { state } = loadGame();
@@ -122,6 +114,14 @@ export default function App() {
     | 'storyDialogue'
     | 'upgrades'
   >('none');
+
+  const closeActiveModal = () => {
+    setActiveModal('none');
+    if (returnToMenu) {
+      setReturnToMenu(false);
+      setIsMenuOpen(true);
+    }
+  };
 
   // Story & Companion State
   const [activeDialogueChar, setActiveDialogueChar] = useState<StoryCharacterDef | null>(null);
