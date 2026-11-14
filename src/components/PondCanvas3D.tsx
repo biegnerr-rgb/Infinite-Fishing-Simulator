@@ -1300,10 +1300,10 @@ function Visitor({ visitor, name, onClick }: { visitor: ActiveVisitorScene; name
             <sphereGeometry args={[0.2, 16, 12]} /><meshStandardMaterial color={animalColor} />
           </mesh>
           {[ -0.12, 0.19 ].map((eyeZ) => (
-            <React.Fragment key={eyeZ}>
+            <group key={eyeZ}>
               <mesh position={[0.16, 0.39, eyeZ]}><sphereGeometry args={[0.085, 12, 10]} /><meshStandardMaterial color={animalColor} /></mesh>
               {eyes(0.19, 0.4, eyeZ + 0.035, 0.046)}
-            </React.Fragment>
+            </group>
           ))}
           <mesh position={[0.39, 0.18, 0.015]} scale={[0.72, 0.42, 0.55]}><sphereGeometry args={[0.1, 12, 8]} /><meshStandardMaterial color="#a9d96f" /></mesh>
           {[[-0.2, -0.08, -0.2],[-0.2, -0.08, 0.2],[0.22, -0.08, -0.2],[0.22, -0.08, 0.2]].map((p, i) => (
@@ -1370,12 +1370,12 @@ function Visitor({ visitor, name, onClick }: { visitor: ActiveVisitorScene; name
           </mesh>
           <mesh position={[0, 0.22, 0]} scale={[1.05, 0.28, 0.92]}><sphereGeometry args={[0.25, 16, 10]} /><meshStandardMaterial color="#f49b78" /></mesh>
           {[-0.13, 0.13].map((zPos) => (
-            <React.Fragment key={zPos}>
+            <group key={zPos}>
               <mesh position={[0.17, 0.36, zPos]}><cylinderGeometry args={[0.018, 0.025, 0.16, 8]} /><meshStandardMaterial color="#d96d53" /></mesh>
               {eyes(0.19, 0.45, zPos, 0.035)}
               <mesh position={[0.24, 0.16, zPos * 2.2]} rotation={[0, 0, -0.55]}><capsuleGeometry args={[0.055, 0.12, 4, 8]} /><meshStandardMaterial color={animalColor} /></mesh>
               <mesh position={[0.34, 0.25, zPos * 2.35]}><sphereGeometry args={[0.095, 12, 10]} /><meshStandardMaterial color="#f39a76" /></mesh>
-            </React.Fragment>
+            </group>
           ))}
           {[-0.22, -0.08, 0.08, 0.22].flatMap((zPos, i) => [-1, 1].map((side) => (
             <mesh key={`${zPos}-${side}`} position={[-0.02 + (i % 2) * 0.04, -0.03, zPos * side]} rotation={[side * 0.12, 0, side * (i < 2 ? -0.42 : 0.42)]}>
