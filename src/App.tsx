@@ -64,6 +64,7 @@ import {
   STORY_ARTIFACTS,
   VISITOR_BOND_QUESTS,
   JOURNAL_PAGES,
+  RANDOM_STORY_EVENTS,
   INITIAL_STORY_STATE,
 } from './data/storyData';
 import { StoryState, StoryCharacterDef, CharacterDialogue } from './types/story';
@@ -127,6 +128,7 @@ export default function App() {
   // Story & Companion State
   const [activeDialogueChar, setActiveDialogueChar] = useState<StoryCharacterDef | null>(null);
   const [activeDialogue, setActiveDialogue] = useState<CharacterDialogue | null>(null);
+  const [activeRandomStoryEvent, setActiveRandomStoryEvent] = useState<(typeof RANDOM_STORY_EVENTS)[number] | null>(null);
   const [hasFloatingBottle, setHasFloatingBottle] = useState<boolean>(true);
   const [bubblesMessage, setBubblesMessage] = useState<string>('✨ Cast your line!');
 
@@ -355,6 +357,84 @@ export default function App() {
       clearInterval(bottleInterval);
     };
   }, [gameState.storyState]);
+
+  // Gentle one-off story moments appear while the player is peacefully fishing.
+  // Each moment is saved as seen, so it will not repeatedly interrupt later sessions.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (activeModal !== 'none' || isMenuOpen || fishingState !== 'idle') return;
+
+      const story = gameState.storyState || INITIAL_STORY_STATE;
+      const seenIds = story.seenStoryEventIds || [];
+      const isEvening = timeOfDay === 'dusk' || timeOfDay === 'night';
+      const availableMoments = RANDOM_STORY_EVENTS.filter(event =>
+        event.chapterRequired <= story.currentChapter &&
+        !seenIds.includes(event.id) &&
+        (!event.eveningOnly || isEvening)
+      );
+
+      if (availableMoments.length === 0) return;
+
+      const moment = availableMoments[Math.floor(Math.random() * availableMoments.length)];
+      setGameState(prev => {
+        const nextStory = { ...(prev.storyState || INITIAL_STORY_STATE) };
+        nextStory.seenStoryEventIds = [...(nextStory.seenStoryEventIds || []), moment.id];
+        return { ...prev, storyState: nextStory };
+      });
+
+      const momentCharacter: StoryCharacterDef = {
+        id: 'bubbles',
+        name: moment.title,
+        title: moment.subtitle,
+        avatar: moment.avatar,
+        color: moment.color,
+        description: moment.subtitle,
+        personality: 'A small unexpected moment from the pond.',
+        favoriteCatch: 'Quiet moments',
+        dialogues: [],
+      };
+      const momentDialogue: CharacterDialogue = {
+        id: moment.id,
+        chapterRequired: moment.chapterRequired,
+        speaker: 'bubbles',
+        text: moment.text,
+        responseOptions: moment.responseOptions,
+      };
+
+      setActiveRandomStoryEvent(moment);
+      setActiveDialogueChar(momentCharacter);
+      setActiveDialogue(momentDialogue);
+      setBubblesMessage(moment.bubblesMessage || '✨ The pond has a little story to share...');
+      setActiveModal('storyDialogue');
+    }, 95000);
+
+    return () => clearTimeout(timer);
+  }, [
+    activeModal,
+    isMenuOpen,
+    fishingState,
+    timeOfDay,
+    gameState.storyState,
+  ]);
+
+  const handleSelectRandomStoryEventOption = useCallback((
+    optionIdx: number,
+    rewardCoins?: number,
+    rewardPearls?: number,
+  ) => {
+    handleSelectDialogueOption(optionIdx, rewardCoins, rewardPearls);
+    const pageId = activeRandomStoryEvent?.rewardPageId;
+    if (pageId) {
+      setGameState(prev => {
+        const story = { ...(prev.storyState || INITIAL_STORY_STATE) };
+        if (story.collectedPageIds.includes(pageId)) return prev;
+        story.collectedPageIds = [...story.collectedPageIds, pageId];
+        const page = JOURNAL_PAGES.find(item => item.id === pageId);
+        pushCatchFeed(`📜 Hidden logbook page found: ${page?.title || 'A Grandfather’s Memory'}!`, '#fbbf24');
+        return { ...prev, storyState: story };
+      });
+    }
+  }, [activeRandomStoryEvent, handleSelectDialogueOption, pushCatchFeed]);
 
   const handleCollectBottle = useCallback(() => {
     sound.playCatchSuccess();
@@ -1897,8 +1977,9 @@ export default function App() {
             closeActiveModal();
             setActiveDialogueChar(null);
             setActiveDialogue(null);
+            setActiveRandomStoryEvent(null);
           }}
-          onSelectOption={handleSelectDialogueOption}
+          onSelectOption={activeRandomStoryEvent ? handleSelectRandomStoryEventOption : handleSelectDialogueOption}
         />
       )}
 
