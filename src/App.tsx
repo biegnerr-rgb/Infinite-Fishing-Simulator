@@ -1839,7 +1839,7 @@ export default function App() {
           character={activeDialogueChar}
           dialogue={activeDialogue}
           onClose={() => {
-            setActiveModal('none');
+            closeActiveModal();
             setActiveDialogueChar(null);
             setActiveDialogue(null);
           }}
