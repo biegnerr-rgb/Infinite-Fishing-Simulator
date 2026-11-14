@@ -509,7 +509,7 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
               <div className="flex items-center justify-between pb-1 border-b border-slate-800">
                 <span className="text-xs font-bold text-slate-400">Chapter Quests & Objectives</span>
                 <span className="text-xs text-amber-400 font-mono font-bold">
-                  {storyState.completedQuestIds.length} / {STORY_QUESTS.length} Completed
+                  {storyState.completedQuestIds.filter(id => STORY_QUESTS.some(quest => quest.id === id)).length} / {STORY_QUESTS.length} Completed
                 </span>
               </div>
 
