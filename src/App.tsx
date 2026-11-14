@@ -62,6 +62,7 @@ import {
   STORY_CHARACTERS,
   STORY_QUESTS,
   STORY_ARTIFACTS,
+  VISITOR_BOND_QUESTS,
   JOURNAL_PAGES,
   INITIAL_STORY_STATE,
 } from './data/storyData';
@@ -387,22 +388,40 @@ export default function App() {
     const bubblesChar = STORY_CHARACTERS.find(c => c.id === 'bubbles') || STORY_CHARACTERS[1];
     const story = gameState.storyState || INITIAL_STORY_STATE;
     const availableDialogues = bubblesChar.dialogues.filter(d => d.chapterRequired <= story.currentChapter);
-    const chosenDialogue = availableDialogues[availableDialogues.length - 1] || bubblesChar.dialogues[0];
-
+    const unreadDialogue = availableDialogues.find(d => !story.readDialogueIds.includes(d.id));
+    const chosenDialogue = unreadDialogue || availableDialogues[availableDialogues.length - 1] || bubblesChar.dialogues[0];
+    if (unreadDialogue) {
+      setGameState(prev => {
+        const nextStory = { ...(prev.storyState || INITIAL_STORY_STATE) };
+        if (!nextStory.readDialogueIds.includes(chosenDialogue.id)) nextStory.readDialogueIds = [...nextStory.readDialogueIds, chosenDialogue.id];
+        return { ...prev, storyState: nextStory };
+      });
+    }
     setActiveDialogueChar(bubblesChar);
-    setActiveDialogue(chosenDialogue);
+    setActiveDialogue(unreadDialogue ? chosenDialogue : { ...chosenDialogue, responseOptions: undefined });
     setActiveModal('storyDialogue');
   }, [gameState.storyState]);
 
-  const handleTalkToCharacter = useCallback((charId: 'old_finn' | 'bubbles' | 'milo' | 'keeper') => {
+  const handleTalkToCharacter = useCallback((charId: StoryCharacterDef['id']) => {
     const char = STORY_CHARACTERS.find(c => c.id === charId);
     if (!char) return;
     const story = gameState.storyState || INITIAL_STORY_STATE;
     const availableDialogues = char.dialogues.filter(d => d.chapterRequired <= story.currentChapter);
-    const chosenDialogue = availableDialogues[availableDialogues.length - 1] || char.dialogues[0];
+    const unreadDialogue = availableDialogues.find(d => !story.readDialogueIds.includes(d.id));
+    const chosenDialogue = unreadDialogue || availableDialogues[availableDialogues.length - 1] || char.dialogues[0];
+    const dialogueToShow = unreadDialogue ? chosenDialogue : { ...chosenDialogue, responseOptions: undefined };
 
+    if (unreadDialogue) {
+      setGameState(prev => {
+        const nextStory = { ...(prev.storyState || INITIAL_STORY_STATE) };
+        if (!nextStory.readDialogueIds.includes(chosenDialogue.id)) {
+          nextStory.readDialogueIds = [...nextStory.readDialogueIds, chosenDialogue.id];
+        }
+        return { ...prev, storyState: nextStory };
+      });
+    }
     setActiveDialogueChar(char);
-    setActiveDialogue(chosenDialogue);
+    setActiveDialogue(dialogueToShow);
     setActiveModal('storyDialogue');
   }, [gameState.storyState]);
 
@@ -416,6 +435,34 @@ export default function App() {
       }));
       pushCatchFeed(`Gift from companion: +${rewardCoins || 0}🪙 +${rewardPearls || 0}🔮!`, '#38bdf8');
     }
+  }, [pushCatchFeed]);
+
+  const handleClaimVisitorBondQuest = useCallback((questId: string) => {
+    const quest = VISITOR_BOND_QUESTS.find(item => item.id === questId);
+    if (!quest) return;
+
+    setGameState(prev => {
+      const story = { ...(prev.storyState || INITIAL_STORY_STATE) };
+      if (story.completedQuestIds.includes(questId)) return prev;
+      const visitor = prev.befriendedVisitors?.[quest.visitorType];
+      const isReady = !!visitor &&
+        visitor.timesFed >= quest.targetFeeds &&
+        visitor.friendship >= quest.targetFriendship;
+      if (!isReady) {
+        pushCatchFeed(`Spend a little more time with ${VISITORS_CONFIG[quest.visitorType].defaultName} first.`, '#f59e0b');
+        return prev;
+      }
+      story.completedQuestIds = [...story.completedQuestIds, questId];
+      pushCatchFeed(`💚 ${VISITORS_CONFIG[quest.visitorType].defaultName}: ${quest.thankYou}`, '#34d399');
+      sound.playCatchSuccess();
+      return {
+        ...prev,
+        coins: prev.coins + quest.rewardCoins,
+        starPearls: prev.starPearls + quest.rewardPearls,
+        lifetimeCoins: prev.lifetimeCoins + quest.rewardCoins,
+        storyState: story,
+      };
+    });
   }, [pushCatchFeed]);
 
   const handleUpgradeBoat = useCallback((targetTier: number) => {
@@ -1813,6 +1860,8 @@ export default function App() {
           unlockedLocations={gameState.unlockedLocations}
           coins={gameState.coins}
           starPearls={gameState.starPearls}
+          befriendedVisitors={gameState.befriendedVisitors || getInitialBefriendedVisitors()}
+          onClaimVisitorBondQuest={handleClaimVisitorBondQuest}
           onClose={closeActiveModal}
           onTalkToCharacter={handleTalkToCharacter}
           onClaimQuestReward={handleClaimQuestReward}
