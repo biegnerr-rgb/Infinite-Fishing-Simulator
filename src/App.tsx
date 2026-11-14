@@ -111,6 +111,7 @@ export default function App() {
     | 'storyJournal'
     | 'shipyard'
     | 'storyDialogue'
+    | 'upgrades'
   >('none');
 
   // Story & Companion State
@@ -1237,6 +1238,8 @@ export default function App() {
               soundEnabled={gameState.settings.soundEnabled}
               onToggleSound={() => setGameState(p => ({ ...p, settings: { ...p.settings, soundEnabled: !p.settings.soundEnabled } }))}
               onOpenLocations={() => { setActiveModal('locations'); setIsMenuOpen(false); }}
+              onOpenInventory={() => { setActiveModal('inventory'); setIsMenuOpen(false); }}
+              onOpenUpgrades={() => { setActiveModal('upgrades'); setIsMenuOpen(false); }}
               onOpenEncyclopedia={() => { setActiveModal('encyclopedia'); setIsMenuOpen(false); }}
               onOpenAchievements={() => { setActiveModal('achievements'); setIsMenuOpen(false); }}
               onOpenPrestige={() => { setActiveModal('prestige'); setIsMenuOpen(false); }}
@@ -1284,7 +1287,7 @@ export default function App() {
               onInteractBubbles={handleInteractBubbles}
               onInteractVisitor={() => setActiveModal('visitors')}
             />
-            <div className="aquarium-toggle absolute top-4 right-4 flex items-center gap-2">
+            <div className="aquarium-toggle absolute bottom-5 right-5 flex items-center gap-2">
               <button
                 onClick={() => setIsAquariumMode(!isAquariumMode)}
                 className={`px-3 py-1.5 rounded-xl border text-xs font-bold shadow-md transition-colors flex items-center gap-1.5 cursor-pointer backdrop-blur-md ${
@@ -1318,6 +1321,29 @@ export default function App() {
 
       {/* --- MODALS --- */}
       
+      {/* Upgrade Bench: rod, bait, lines, automation, storage and special gear */}
+      {activeModal === 'upgrades' && (
+        <div className="fixed inset-0 z-50 upgrade-modal-overlay">
+          <div className="upgrade-modal-content">
+            <button
+              type="button"
+              className="upgrade-modal-close"
+              onClick={() => setActiveModal('none')}
+              aria-label="Close Upgrade Bench"
+            >
+              <X size={18} />
+            </button>
+            <UpgradesPanel
+              coins={gameState.coins}
+              upgrades={gameState.upgrades}
+              boatTier={gameState.boatTier || 1}
+              onBuyUpgrade={handleBuyUpgrade}
+              onOpenShipyard={() => setActiveModal('shipyard')}
+            />
+          </div>
+        </div>
+      )}
+
       {/* 1. Fish Catch Reveal Modal */}
       {activeCatch && (
         <FishCatchModal
