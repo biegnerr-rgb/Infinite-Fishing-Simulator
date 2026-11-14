@@ -1,7 +1,5 @@
 import React from 'react';
-import { createPortal } from 'react-dom';
 import { BOAT_TIERS } from '../data/storyData';
-import { BoatTierDef } from '../types/story';
 import { X, CheckCircle2, Anchor, Sparkles, Zap, Package, ArrowUpRight } from 'lucide-react';
 import { sound } from '../utils/audio';
 
@@ -12,6 +10,33 @@ interface ShipyardModalProps {
   onClose: () => void;
 }
 
+const overlayStyle: React.CSSProperties = {
+  position: 'fixed',
+  inset: 0,
+  zIndex: 2147483000,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: '16px',
+  background: 'rgba(2, 6, 23, 0.97)',
+  backdropFilter: 'blur(8px)',
+  color: '#f8fafc',
+  fontFamily: 'Arial, sans-serif',
+};
+
+const panelStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  width: 'min(980px, 100%)',
+  height: 'min(780px, 92dvh)',
+  minHeight: 0,
+  overflow: 'hidden',
+  border: '1px solid rgba(34, 211, 238, .45)',
+  borderRadius: '22px',
+  background: 'linear-gradient(160deg, #0f2537 0%, #0f172a 55%, #07111f 100%)',
+  boxShadow: '0 28px 90px rgba(0,0,0,.65)',
+};
+
 export const ShipyardModal: React.FC<ShipyardModalProps> = ({
   currentBoatTier,
   coins,
@@ -20,195 +45,102 @@ export const ShipyardModal: React.FC<ShipyardModalProps> = ({
 }) => {
   const currentDef = BOAT_TIERS.find(b => b.tier === currentBoatTier) || BOAT_TIERS[0];
 
-  return createPortal(
-    <div
-      className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-5 bg-black/90 backdrop-blur-md"
-      style={{ position: 'fixed', inset: 0, zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px', background: 'rgba(2, 6, 23, 0.94)', backdropFilter: 'blur(8px)' }}
-    >
-      <div className="relative w-full max-w-4xl h-[88vh] max-h-[760px] bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border border-cyan-500/40 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-white font-sans">
-        
-        {/* Header */}
-        <div className="px-6 py-4 bg-gradient-to-r from-cyan-950/70 via-slate-900 to-blue-950/70 border-b border-cyan-500/30 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-2xl shadow-inner">
-              ⚓
+  if (!currentDef) {
+    return (
+      <div style={overlayStyle} role="dialog" aria-modal="true" aria-label="Shipyard">
+        <div style={{ ...panelStyle, height: 'auto', padding: '28px', gap: '16px' }}>
+          <h2 style={{ margin: 0, fontSize: '22px' }}>Shipyard unavailable</h2>
+          <p style={{ margin: 0, color: '#cbd5e1' }}>The boat upgrade data could not be loaded. Please close this window and try again.</p>
+          <button type="button" onClick={onClose} style={{ alignSelf: 'flex-end', padding: '10px 16px', borderRadius: '10px', border: 0, cursor: 'pointer' }}>Close</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={overlayStyle} role="dialog" aria-modal="true" aria-label="Pond Shipyard">
+      <div style={panelStyle}>
+        <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', padding: '18px 22px', borderBottom: '1px solid rgba(34,211,238,.25)', background: 'rgba(8,47,73,.45)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '13px', minWidth: 0 }}>
+            <div style={{ display: 'grid', placeItems: 'center', width: '44px', height: '44px', flex: '0 0 auto', borderRadius: '13px', background: 'rgba(6,182,212,.16)', color: '#a5f3fc' }}>
+              <Anchor size={24} />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl font-black text-cyan-200 tracking-tight">
-                  POND SHIPYARD & FLEET WORKSHOP
-                </h2>
-                <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
-                  Tier {currentBoatTier} / 5
-                </span>
-              </div>
-              <p className="text-xs text-slate-300">
-                Upgrade from Grandpa's wooden dinghy up to the legendary Sovereign Mega Yacht!
-              </p>
+            <div style={{ minWidth: 0 }}>
+              <h2 style={{ margin: 0, color: '#cffafe', fontSize: 'clamp(16px, 2.5vw, 22px)', fontWeight: 900 }}>POND SHIPYARD</h2>
+              <p style={{ margin: '4px 0 0', color: '#cbd5e1', fontSize: '12px' }}>Upgrade your boat and explore farther</p>
             </div>
           </div>
-
-          <div className="flex items-center gap-3">
-            <div className="px-3.5 py-1.5 rounded-xl bg-amber-950/60 border border-amber-600/40 text-amber-300 font-extrabold text-xs flex items-center gap-1.5 shadow-inner">
-              <span>🪙</span>
-              <span className="font-mono">{coins.toLocaleString()} Coins</span>
-            </div>
-
-            <button
-              onClick={() => {
-                sound.playClick();
-                onClose();
-              }}
-              className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer border border-slate-700"
-            >
-              <X className="w-5 h-5" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: '0 0 auto' }}>
+            <strong style={{ color: '#fcd34d', fontSize: '13px', whiteSpace: 'nowrap' }}>🪙 {coins.toLocaleString()}</strong>
+            <button type="button" aria-label="Close shipyard" onClick={() => { sound.playClick(); onClose(); }} style={{ display: 'grid', placeItems: 'center', width: '38px', height: '38px', border: '1px solid #475569', borderRadius: '10px', background: '#1e293b', color: '#f8fafc', cursor: 'pointer' }}>
+              <X size={20} />
             </button>
           </div>
-        </div>
+        </header>
 
-        {/* Current Boat Showcase Bar */}
-        <div className="px-6 py-3 bg-slate-950/70 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 shrink-0">
-          <div className="flex items-center gap-3">
-            <span className="text-3xl">{currentDef.icon}</span>
+        <section style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px', padding: '14px 22px', background: 'rgba(2,6,23,.55)', borderBottom: '1px solid #1e293b' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '30px' }}>{currentDef.icon}</span>
             <div>
-              <div className="text-xs font-bold text-slate-400">Current Flagship Vessel</div>
-              <div className="text-sm font-black text-cyan-300">{currentDef.name}</div>
+              <div style={{ color: '#94a3b8', fontSize: '11px', fontWeight: 700 }}>CURRENT BOAT · TIER {currentBoatTier}/5</div>
+              <strong style={{ color: '#67e8f9', fontSize: '14px' }}>{currentDef.name}</strong>
             </div>
           </div>
-
-          <div className="flex items-center gap-4 text-xs font-semibold">
-            <div className="flex items-center gap-1.5 text-emerald-300">
-              <Zap className="w-3.5 h-3.5 text-emerald-400" />
-              <span>+{currentDef.biteSpeedBonus}% Bite Speed</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-amber-300">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>+{currentDef.luckBonus}% Rare Luck</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-cyan-300">
-              <Package className="w-3.5 h-3.5 text-cyan-400" />
-              <span>+{currentDef.capacityBonus} Slots</span>
-            </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '11px', fontWeight: 700 }}>
+            <span style={{ color: '#6ee7b7' }}><Zap size={13} style={{ verticalAlign: 'middle' }} /> +{currentDef.biteSpeedBonus}% bite speed</span>
+            <span style={{ color: '#fcd34d' }}><Sparkles size={13} style={{ verticalAlign: 'middle' }} /> +{currentDef.luckBonus}% rare luck</span>
+            <span style={{ color: '#67e8f9' }}><Package size={13} style={{ verticalAlign: 'middle' }} /> +{currentDef.capacityBonus} slots</span>
           </div>
-        </div>
+        </section>
 
-        {/* Boat Tiers Cards List */}
-        <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4">
+        <div style={{ flex: '1 1 auto', minHeight: 0, overflowY: 'auto', padding: '16px 20px', display: 'grid', gap: '12px', alignContent: 'start' }}>
           {BOAT_TIERS.map(boat => {
             const isCurrent = boat.tier === currentBoatTier;
-            const isPurchased = boat.tier <= currentBoatTier;
+            const isPurchased = boat.tier < currentBoatTier;
             const isNext = boat.tier === currentBoatTier + 1;
             const canAfford = coins >= boat.cost;
+            const borderColor = isCurrent ? '#0891b2' : isNext && canAfford ? '#d97706' : '#334155';
+            const background = isCurrent ? 'rgba(8,145,178,.13)' : isPurchased ? 'rgba(30,41,59,.6)' : '#0b1627';
 
             return (
-              <div
-                key={boat.tier}
-                className={`p-5 rounded-2xl border transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4 ${
-                  isCurrent
-                    ? 'bg-cyan-950/30 border-cyan-500/60 shadow-lg ring-1 ring-cyan-500/40'
-                    : isPurchased
-                    ? 'bg-slate-900/60 border-slate-700/80'
-                    : isNext && canAfford
-                    ? 'bg-slate-800/90 border-amber-500/60 shadow-md hover:border-amber-400'
-                    : 'bg-slate-950/50 border-slate-800 opacity-70'
-                }`}
-              >
-                {/* Left: Boat Info & Icon */}
-                <div className="flex items-start gap-4 flex-1">
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-md shrink-0 ${
-                    isCurrent
-                      ? 'bg-cyan-900/50 border border-cyan-400'
-                      : isPurchased
-                      ? 'bg-slate-800 border border-slate-700'
-                      : 'bg-slate-900 border border-slate-800'
-                  }`}>
-                    {boat.icon}
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="text-base font-black text-white">{boat.name}</h4>
-                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
-                        Tier {boat.tier}
-                      </span>
-                      {isCurrent && (
-                        <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 flex items-center gap-1">
-                          <CheckCircle2 className="w-3 h-3" />
-                          <span>Active Boat</span>
-                        </span>
-                      )}
+              <article key={boat.tier} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '14px', padding: '16px', border: `1px solid ${borderColor}`, borderRadius: '15px', background }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '13px', flex: '1 1 340px', minWidth: 0 }}>
+                  <div style={{ display: 'grid', placeItems: 'center', width: '54px', height: '54px', flex: '0 0 auto', borderRadius: '14px', background: '#1e293b', fontSize: '30px' }}>{boat.icon}</div>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '7px' }}>
+                      <strong style={{ color: '#f8fafc', fontSize: '15px' }}>{boat.name}</strong>
+                      <span style={{ padding: '3px 7px', borderRadius: '6px', background: '#1e293b', color: '#cbd5e1', fontSize: '10px', fontWeight: 800 }}>TIER {boat.tier}</span>
+                      {isCurrent && <span style={{ color: '#67e8f9', fontSize: '10px', fontWeight: 900 }}>✓ ACTIVE BOAT</span>}
                     </div>
-                    <p className="text-xs text-cyan-400/90 font-medium">{boat.subtitle}</p>
-                    <p className="text-xs text-slate-400 max-w-xl leading-relaxed">{boat.description}</p>
-
-                    {/* Features list */}
-                    <div className="flex flex-wrap items-center gap-2 pt-2">
-                      {boat.features.map((f, fIdx) => (
-                        <span
-                          key={fIdx}
-                          className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-800/90 border border-slate-700 text-slate-300"
-                        >
-                          ✦ {f}
-                        </span>
-                      ))}
+                    <div style={{ marginTop: '3px', color: '#67e8f9', fontSize: '12px' }}>{boat.subtitle}</div>
+                    <p style={{ margin: '6px 0', maxWidth: '600px', color: '#94a3b8', fontSize: '12px', lineHeight: 1.5 }}>{boat.description}</p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                      {boat.features.map((feature, index) => <span key={index} style={{ padding: '4px 7px', borderRadius: '6px', background: '#1e293b', color: '#cbd5e1', fontSize: '10px' }}>✦ {feature}</span>)}
                     </div>
                   </div>
                 </div>
-
-                {/* Right: Price & Upgrade Button */}
-                <div className="flex md:flex-col items-center md:items-end justify-between w-full md:w-auto gap-3 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-800">
-                  <div className="text-left md:text-right">
-                    <div className="text-[10px] uppercase font-bold text-slate-400">Shipyard Cost</div>
-                    <div className="text-base font-mono font-black text-amber-300">
-                      {boat.cost === 0 ? 'Free (Inherited)' : `${boat.cost.toLocaleString()} 🪙`}
-                    </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '14px', flex: '0 0 auto', minWidth: '180px' }}>
+                  <div>
+                    <div style={{ color: '#94a3b8', fontSize: '10px', fontWeight: 800 }}>SHIPYARD COST</div>
+                    <strong style={{ color: '#fcd34d', fontSize: '14px' }}>{boat.cost === 0 ? 'Free' : `${boat.cost.toLocaleString()} coins`}</strong>
                   </div>
-
                   {isCurrent ? (
-                    <div className="px-4 py-2 rounded-xl bg-cyan-950/80 border border-cyan-700 text-cyan-300 font-bold text-xs flex items-center gap-1.5 shadow-sm">
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>At The Helm</span>
-                    </div>
+                    <span style={{ color: '#67e8f9', fontSize: '12px', fontWeight: 800 }}>At the helm</span>
                   ) : isPurchased ? (
-                    <button
-                      onClick={() => {
-                        sound.playClick();
-                        onUpgradeBoat(boat.tier);
-                      }}
-                      className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white font-bold text-xs transition-colors cursor-pointer"
-                    >
-                      Take Out
-                    </button>
+                    <button type="button" onClick={() => { sound.playClick(); onUpgradeBoat(boat.tier); }} style={{ padding: '9px 12px', border: '1px solid #475569', borderRadius: '9px', background: '#1e293b', color: '#e2e8f0', fontWeight: 800, cursor: 'pointer' }}>Take out</button>
                   ) : isNext ? (
-                    <button
-                      onClick={() => {
-                        if (canAfford) {
-                          sound.playUpgrade();
-                          onUpgradeBoat(boat.tier);
-                        }
-                      }}
-                      disabled={!canAfford}
-                      className={`px-5 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow-lg transition-all active:scale-95 cursor-pointer ${
-                        canAfford
-                          ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-amber-950/60'
-                          : 'bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed'
-                      }`}
-                    >
-                      <ArrowUpRight className="w-4 h-4" />
-                      <span>{canAfford ? 'Commission Boat' : 'Need More Coins'}</span>
+                    <button type="button" disabled={!canAfford} onClick={() => { if (canAfford) { sound.playUpgrade(); onUpgradeBoat(boat.tier); } }} style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '10px 13px', border: 0, borderRadius: '9px', background: canAfford ? '#f59e0b' : '#334155', color: canAfford ? '#111827' : '#94a3b8', fontWeight: 900, cursor: canAfford ? 'pointer' : 'not-allowed' }}>
+                      <ArrowUpRight size={15} /> {canAfford ? 'Upgrade boat' : 'Need more coins'}
                     </button>
                   ) : (
-                    <div className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-600 font-bold text-xs">
-                      Requires Tier {boat.tier - 1}
-                    </div>
+                    <span style={{ color: '#64748b', fontSize: '11px', fontWeight: 700 }}>Requires tier {boat.tier - 1}</span>
                   )}
                 </div>
-              </div>
+              </article>
             );
           })}
         </div>
       </div>
-    </div>,
-    document.body
+    </div>
   );
 };
