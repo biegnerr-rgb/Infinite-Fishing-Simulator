@@ -1217,3 +1217,106 @@ button {
     border-radius: 22px !important;
   }
 }
+
+
+/* Full-screen pond mode with an on-demand corner navigation menu */
+.game-shell {
+  position: relative;
+}
+
+.game-menu-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 80;
+  display: inline-flex;
+  min-width: 48px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  border: 1px solid rgba(232, 211, 153, .58);
+  border-radius: 15px;
+  color: #fff1ca;
+  background: linear-gradient(145deg, rgba(52, 83, 66, .96), rgba(24, 52, 49, .97));
+  box-shadow: 0 8px 24px rgba(3, 18, 19, .38), inset 0 1px 0 rgba(255,255,255,.12);
+  font: 700 12px 'Outfit', sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.game-menu-toggle:hover {
+  transform: translateY(-2px);
+  border-color: rgba(246, 224, 167, .9);
+  background: linear-gradient(145deg, rgba(68, 101, 77, .98), rgba(29, 63, 58, .98));
+}
+
+.game-menu-toggle:focus-visible {
+  outline: 2px solid #f1d991;
+  outline-offset: 3px;
+}
+
+.game-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 59;
+  background: rgba(4, 17, 18, .34);
+  backdrop-filter: blur(2px);
+}
+
+.game-menu-panel {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 60;
+  overflow: hidden;
+  border: 1px solid rgba(215, 195, 139, .38);
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(35, 66, 57, .98), rgba(19, 43, 43, .98));
+  box-shadow: 0 20px 55px rgba(0, 12, 14, .48);
+  animation: menuDropIn .2s cubic-bezier(.2,.8,.2,1);
+}
+
+.game-menu-panel .game-header {
+  position: relative;
+  min-height: 70px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+@keyframes menuDropIn {
+  from { opacity: 0; transform: translateY(-9px) scale(.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 760px) {
+  .game-menu-toggle {
+    top: 10px;
+    right: 10px;
+    min-height: 40px;
+    min-width: 42px;
+    padding-inline: 11px;
+  }
+
+  .game-menu-panel {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+  }
+
+  .game-menu-panel .game-header {
+    flex-wrap: wrap;
+    padding: 10px;
+  }
+
+  .game-menu-panel .header-right {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+}
