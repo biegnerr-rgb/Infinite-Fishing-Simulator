@@ -65,6 +65,7 @@ import {
   VISITOR_BOND_QUESTS,
   JOURNAL_PAGES,
   RANDOM_STORY_EVENTS,
+  HIDDEN_DISCOVERIES,
   INITIAL_STORY_STATE,
 } from './data/storyData';
 import { StoryState, StoryCharacterDef, CharacterDialogue } from './types/story';
@@ -961,6 +962,39 @@ export default function App() {
       const newCatch = generateCatch(activeCastZone);
       sound.playCatch(newCatch.species.rarity);
 
+      // Permanent, location-specific keepsakes reward exploring different cast zones.
+      const storyNow = gameState.storyState || INITIAL_STORY_STATE;
+      const alreadyFound = storyNow.foundHiddenDiscoveryIds || [];
+      const eligibleSecrets = HIDDEN_DISCOVERIES.filter(secret =>
+        secret.locationId === currentLocation.id &&
+        secret.zone === activeCastZone &&
+        secret.chapterRequired <= storyNow.currentChapter &&
+        (!secret.timeOfDay || secret.timeOfDay === timeOfDay) &&
+        !alreadyFound.includes(secret.id)
+      );
+      if (eligibleSecrets.length > 0) {
+        const secret = eligibleSecrets.find(item => Math.random() < item.chance);
+        if (secret) {
+          setGameState(prev => {
+            const story = { ...(prev.storyState || INITIAL_STORY_STATE) };
+            const found = story.foundHiddenDiscoveryIds || [];
+            if (found.includes(secret.id)) return prev;
+            story.foundHiddenDiscoveryIds = [...found, secret.id];
+            return {
+              ...prev,
+              coins: prev.coins + secret.rewardCoins,
+              starPearls: prev.starPearls + secret.rewardPearls,
+              lifetimeCoins: prev.lifetimeCoins + secret.rewardCoins,
+              storyState: story,
+            };
+          });
+          pushCatchFeed(`✨ Hidden discovery: ${secret.name}!`, '#fbbf24');
+          pushCatchFeed(`+ ${secret.rewardCoins.toLocaleString()} coins · +${secret.rewardPearls} Star Pearls`, '#c084fc');
+          setBubblesMessage(`✨ You found ${secret.name}! A new keepsake has been added to your journal.`);
+          sound.playChest();
+        }
+      }
+
       // Hidden zone discoveries & rewards!
       if (activeCastZone === 'lily_pads' && Math.random() < 0.12) {
         setGameState(p => ({ ...p, starPearls: p.starPearls + 1 }));
@@ -987,7 +1021,7 @@ export default function App() {
         setActiveCatch(newCatch);
       }
     }, 550);
-  }, [fishingState, generateCatch, activeCastZone, gameState.settings, commitCatch, pushCatchFeed]);
+  }, [fishingState, generateCatch, activeCastZone, gameState.settings, gameState.storyState, currentLocation.id, timeOfDay, commitCatch, pushCatchFeed]);
 
   // Keyboard shortcut: Spacebar to Cast or Reel
   useEffect(() => {
