@@ -417,25 +417,6 @@ export default function App() {
     gameState.storyState,
   ]);
 
-  const handleSelectRandomStoryEventOption = useCallback((
-    optionIdx: number,
-    rewardCoins?: number,
-    rewardPearls?: number,
-  ) => {
-    handleSelectDialogueOption(optionIdx, rewardCoins, rewardPearls);
-    const pageId = activeRandomStoryEvent?.rewardPageId;
-    if (pageId) {
-      setGameState(prev => {
-        const story = { ...(prev.storyState || INITIAL_STORY_STATE) };
-        if (story.collectedPageIds.includes(pageId)) return prev;
-        story.collectedPageIds = [...story.collectedPageIds, pageId];
-        const page = JOURNAL_PAGES.find(item => item.id === pageId);
-        pushCatchFeed(`📜 Hidden logbook page found: ${page?.title || 'A Grandfather’s Memory'}!`, '#fbbf24');
-        return { ...prev, storyState: story };
-      });
-    }
-  }, [activeRandomStoryEvent, handleSelectDialogueOption, pushCatchFeed]);
-
   const handleCollectBottle = useCallback(() => {
     sound.playCatchSuccess();
     setHasFloatingBottle(false);
@@ -516,6 +497,25 @@ export default function App() {
       pushCatchFeed(`Gift from companion: +${rewardCoins || 0}🪙 +${rewardPearls || 0}🔮!`, '#38bdf8');
     }
   }, [pushCatchFeed]);
+
+  const handleSelectRandomStoryEventOption = useCallback((
+    optionIdx: number,
+    rewardCoins?: number,
+    rewardPearls?: number,
+  ) => {
+    handleSelectDialogueOption(optionIdx, rewardCoins, rewardPearls);
+    const pageId = activeRandomStoryEvent?.rewardPageId;
+    if (pageId) {
+      setGameState(prev => {
+        const story = { ...(prev.storyState || INITIAL_STORY_STATE) };
+        if (story.collectedPageIds.includes(pageId)) return prev;
+        story.collectedPageIds = [...story.collectedPageIds, pageId];
+        const page = JOURNAL_PAGES.find(item => item.id === pageId);
+        pushCatchFeed(`📜 Hidden logbook page found: ${page?.title || 'A Grandfather’s Memory'}!`, '#fbbf24');
+        return { ...prev, storyState: story };
+      });
+    }
+  }, [activeRandomStoryEvent, handleSelectDialogueOption, pushCatchFeed]);
 
   const handleClaimVisitorBondQuest = useCallback((questId: string) => {
     const quest = VISITOR_BOND_QUESTS.find(item => item.id === questId);
