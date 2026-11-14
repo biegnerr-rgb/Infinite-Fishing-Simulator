@@ -8,6 +8,7 @@ import {
 } from '../data/storyData';
 import { StoryState, JournalPageDef, StoryCharacterDef } from '../types/story';
 import { LOCATIONS } from '../data/locationsData';
+import { VISITORS_CONFIG } from '../data/visitorsData';
 import { 
   BookOpen, 
   Scroll, 
@@ -438,9 +439,38 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
                   </div>
                 </div>
               </div>
+              <div className="md:col-span-12 mt-2 space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h4 className="text-sm font-black text-emerald-100">The pond’s animal visitors</h4>
+                    <p className="mt-1 text-xs text-slate-400">Six familiar faces, each with their own habits and favorite things.</p>
+                  </div>
+                  <span className="rounded-full border border-emerald-300/20 bg-emerald-950/30 px-3 py-1 text-[10px] font-bold text-emerald-200">6 pond friends</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {Object.values(VISITORS_CONFIG).map(visitor => {
+                    const isWaterVisitor = ['frog', 'turtle', 'duck', 'otter'].includes(visitor.type);
+                    return (
+                      <div key={visitor.type} className="rounded-2xl border border-emerald-200/15 bg-slate-950/30 p-3">
+                        <div className="flex items-center gap-3">
+                          <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-white/10 bg-emerald-900/40 text-2xl">{visitor.emoji}</div>
+                          <div className="min-w-0">
+                            <h5 className="truncate text-sm font-extrabold text-slate-100">{visitor.defaultName}</h5>
+                            <p className="text-[10px] text-emerald-200">{visitor.speciesTitle}</p>
+                          </div>
+                        </div>
+                        <p className="mt-3 text-xs leading-relaxed text-slate-300">{visitor.description}</p>
+                        <p className="mt-2 text-[11px] text-slate-400"><span className="font-bold text-slate-300">Personality:</span> {visitor.personality}</p>
+                        <p className="mt-2 text-[11px] text-slate-400"><span className="font-bold text-slate-300">Favorite snack:</span> {visitor.favoriteFood}</p>
+                        <div className={`mt-3 inline-flex rounded-full border px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider ${isWaterVisitor ? 'border-sky-300/20 bg-sky-950/30 text-sky-200' : 'border-amber-300/20 bg-amber-950/30 text-amber-200'}`}>{isWaterVisitor ? 'Water visitor' : 'Shore visitor'}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           )}
-
+          
           {/* TAB 4: STORY QUESTS */}
           {activeTab === 'story' && (
             <div className="space-y-4 max-w-3xl mx-auto">
