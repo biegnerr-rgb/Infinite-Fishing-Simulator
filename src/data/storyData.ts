@@ -375,6 +375,111 @@ export const STORY_CHARACTERS: StoryCharacterDef[] = [
   },
 ];
 
+export interface VisitorBondQuestDef {
+  id: string;
+  visitorType: 'frog' | 'turtle' | 'duck' | 'otter' | 'crab' | 'raccoon';
+  title: string;
+  description: string;
+  targetFeeds: number;
+  targetFriendship: number;
+  rewardCoins: number;
+  rewardPearls: number;
+  thankYou: string;
+}
+
+export const VISITOR_BOND_QUESTS: VisitorBondQuestDef[] = [
+  { id: 'bond_frog', visitorType: 'frog', title: 'A Lily-Pad Hello', description: 'Spend a little time with Barnaby and share two snacks.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 450, rewardPearls: 1, thankYou: 'Barnaby has decided your fishing spot is a very good place to sit.' },
+  { id: 'bond_turtle', visitorType: 'turtle', title: 'Slow and Steady', description: 'Visit Shelby and share two peaceful snack breaks.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 500, rewardPearls: 1, thankYou: 'Shelby trusts you enough to share one of her oldest pond memories.' },
+  { id: 'bond_duck', visitorType: 'duck', title: 'A Quacking Good Friend', description: 'Bring Quackers two snacks and listen to his latest story.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 450, rewardPearls: 1, thankYou: 'Quackers has officially added you to his very exclusive crumb club.' },
+  { id: 'bond_otter', visitorType: 'otter', title: 'River-Ripple Pals', description: 'Spend time with Ollie and share two favorite treats.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 600, rewardPearls: 1, thankYou: 'Ollie celebrates your friendship with a spectacular splash.' },
+  { id: 'bond_crab', visitorType: 'crab', title: 'Official Dock Helpers', description: 'Earn Pinchy’s trust by bringing two snacks to the shoreline.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 500, rewardPearls: 1, thankYou: 'Pinchy grants you honorary deputy dock-keeper status.' },
+  { id: 'bond_raccoon', visitorType: 'raccoon', title: 'A Shiny Arrangement', description: 'Share two snacks with Bandit and hear about his latest find.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 650, rewardPearls: 1, thankYou: 'Bandit gives you a shiny button. He insists it is a rare antique.' },
+  {
+    id: 'frog_friend',
+    name: 'Barnaby',
+    title: 'The Thoughtful Lily-Pad Philosopher',
+    avatar: '🐸',
+    color: '#34d399',
+    description: 'A calm bullfrog who watches the pond from his favorite lily pad. Barnaby notices little details that everyone else misses and enjoys sharing quiet observations.',
+    personality: 'Patient, observant, gentle and quietly funny.',
+    favoriteCatch: 'Garden Minnows',
+    dialogues: [
+      { id: 'barnaby_intro', chapterRequired: 1, speaker: 'frog_friend', text: '*Croooak.* Ah, a new friend. I have been watching the ripples. They seem happier when someone takes their time.', responseOptions: [{ label: 'I like a peaceful fishing day.', replyText: '*Barnaby gives a thoughtful nod.* Then you understand the most important pond rule: there is no need to hurry.', rewardCoins: 100 }] },
+      { id: 'barnaby_lilypad', chapterRequired: 2, speaker: 'frog_friend', text: 'This lily pad has been my favorite seat for years. I saved the smaller one beside it for a friend, though it is usually occupied by a very opinionated beetle.', responseOptions: [{ label: 'I hope the beetle is friendly.', replyText: '*A soft croak.* Friendly enough, once you learn its schedule.', rewardCoins: 150 }] },
+    ],
+  },
+  {
+    id: 'turtle_friend',
+    name: 'Shelby',
+    title: 'The Patient Keeper of Memories',
+    avatar: '🐢',
+    color: '#2dd4bf',
+    description: 'An old terrapin who remembers the pond through changing seasons. Shelby rarely speaks quickly, but her stories are worth waiting for.',
+    personality: 'Wise, unhurried, kind and quietly playful.',
+    favoriteCatch: 'Sunfish and River Perch',
+    dialogues: [
+      { id: 'shelby_intro', chapterRequired: 1, speaker: 'turtle_friend', text: 'Hello, little angler. I remember when your grandfather first repaired that dock. He said a good place to fish should always leave room for one more friend.', responseOptions: [{ label: 'That sounds like him.', replyText: 'It does. He always made time for visitors, even the ones who arrived very slowly. Especially those ones.', rewardCoins: 100 }] },
+      { id: 'shelby_memory', chapterRequired: 2, speaker: 'turtle_friend', text: 'The pond changes with every season, but some things stay: the sound of the reeds, the warmth of the sun, and the kindness of someone who remembers to say hello.', responseOptions: [{ label: 'I will keep visiting.', replyText: 'Then I shall keep a story ready. I have quite a few, and only a little bit of time to tell them.', rewardPearls: 1 }] },
+    ],
+  },
+  {
+    id: 'duck_friend',
+    name: 'Quackers',
+    title: 'The Self-Appointed Pond Ambassador',
+    avatar: '🦆',
+    color: '#fbbf24',
+    description: 'A chatty mallard who believes every pond needs an official ambassador. Quackers is enthusiastic, easily distracted and always ready for a snack.',
+    personality: 'Cheerful, dramatic, sociable and snack-focused.',
+    favoriteCatch: 'Shiny Minnows',
+    dialogues: [
+      { id: 'quackers_intro', chapterRequired: 1, speaker: 'duck_friend', text: 'QUACK! Welcome! I am Quackers, official ambassador of this pond. The position is unpaid, but the snack benefits are excellent.', responseOptions: [{ label: 'Sounds like an important job.', replyText: 'Very important. I greet visitors, inspect crumbs and occasionally make announcements that nobody asked for.', rewardCoins: 100 }] },
+      { id: 'quackers_crumbs', chapterRequired: 2, speaker: 'duck_friend', text: 'I have been preparing a pond festival. So far I have a guest list, three feathers and absolutely no idea what the festival is celebrating.', responseOptions: [{ label: 'We can figure it out together.', replyText: 'Splendid! I shall put you down as assistant festival planner. Your first duty is to enjoy yourself.', rewardCoins: 150 }] },
+    ],
+  },
+  {
+    id: 'otter_friend',
+    name: 'Ollie',
+    title: 'The Riverbank Adventurer',
+    avatar: '🦦',
+    color: '#7dd3fc',
+    description: 'A playful otter who explores every nook beneath the dock. Ollie loves finding interesting stones, making friends and showing off his newest swimming trick.',
+    personality: 'Energetic, curious, generous and mischievous.',
+    favoriteCatch: 'Fresh Minnows',
+    dialogues: [
+      { id: 'ollie_intro', chapterRequired: 1, speaker: 'otter_friend', text: '*Squeak!* Hi! I found a smooth stone, a bent spoon and a very confused leaf today. Want to see the stone? It is my best find.', responseOptions: [{ label: 'Absolutely, show me!', replyText: '*Ollie proudly presents a perfectly ordinary pebble.* See? Excellent shape. Very round. Almost suspiciously round.', rewardCoins: 125 }] },
+      { id: 'ollie_tunnel', chapterRequired: 2, speaker: 'otter_friend', text: 'There are little tunnels under the roots along the bank. I use them to explore. Sometimes I forget which way is home, but the snacks usually help me remember.', responseOptions: [{ label: 'That sounds like an adventure.', replyText: '*Ollie does a happy spin.* It is! I will show you my favorite spot sometime.', rewardCoins: 175 }] },
+    ],
+  },
+  {
+    id: 'crab_friend',
+    name: 'Pinchy',
+    title: 'The Very Serious Shoreline Keeper',
+    avatar: '🦀',
+    color: '#fb7185',
+    description: 'A small crab who patrols the shoreline and takes dock safety extremely seriously. Beneath the stern little scowl is a dependable friend.',
+    personality: 'Proud, organized, cautious and secretly soft-hearted.',
+    favoriteCatch: 'Rock Pool Gobies',
+    dialogues: [
+      { id: 'pinchy_intro', chapterRequired: 1, speaker: 'crab_friend', text: '*Clack!* Halt, visitor. Shoreline inspection. Hm. Your fishing manners seem acceptable. You may proceed.', responseOptions: [{ label: 'Thank you, officer.', replyText: 'You are welcome. Please keep the dock tidy. I have a reputation to maintain.', rewardCoins: 100 }] },
+      { id: 'pinchy_patrol', chapterRequired: 2, speaker: 'crab_friend', text: 'I found a loose plank near the reeds. I have marked it with a pebble. It is a very official pebble. Please do not move it.', responseOptions: [{ label: 'I will leave it there.', replyText: 'Good. You are now an honorary assistant to shoreline operations. The badge is imaginary, but the responsibility is real.', rewardCoins: 150 }] },
+    ],
+  },
+  {
+    id: 'raccoon_friend',
+    name: 'Bandit',
+    title: 'The Shoreline Collector',
+    avatar: '🦝',
+    color: '#cbd5e1',
+    description: 'A curious raccoon who collects shiny odds and ends from around the pond. Bandit is a cheerful negotiator whose definition of treasure is wonderfully broad.',
+    personality: 'Inventive, cheeky, generous and easily distracted by shiny objects.',
+    favoriteCatch: 'Golden and Glowing Fish',
+    dialogues: [
+      { id: 'bandit_intro', chapterRequired: 1, speaker: 'raccoon_friend', text: 'Psst! I have a business opportunity. You bring the curiosity, I bring the collection. Together we can identify which objects are treasure and which are somebody’s lost buttons.', responseOptions: [{ label: 'How can I help?', replyText: 'Excellent question! First, admire this button. Second, agree that it is probably historic. Third, welcome to the collection club.', rewardCoins: 125 }] },
+      { id: 'bandit_button', chapterRequired: 2, speaker: 'raccoon_friend', text: 'I found a brass button by the old dock. It might have belonged to a captain. Or a coat. Either way, it has a very distinguished shine.', responseOptions: [{ label: 'It is a fine button.', replyText: 'You have a good eye. I shall let you borrow it for a moment. Please return it before I miss it.', rewardPearls: 1 }] },
+    ],
+  },
+];
+
 export const JOURNAL_PAGES: JournalPageDef[] = [
   {
     id: 'page_1',
