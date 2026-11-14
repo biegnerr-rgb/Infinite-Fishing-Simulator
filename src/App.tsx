@@ -83,6 +83,9 @@ import {
 } from 'lucide-react';
 
 export default function App() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [returnToMenu, setReturnToMenu] = useState(false);
+
   // Game Save State
   const [gameState, setGameState] = useState<GameSaveState>(() => {
     const { state } = loadGame();
@@ -107,7 +110,16 @@ export default function App() {
     | 'storyJournal'
     | 'shipyard'
     | 'storyDialogue'
+    | 'upgrades'
   >('none');
+
+  const closeActiveModal = () => {
+    setActiveModal('none');
+    if (returnToMenu) {
+      setReturnToMenu(false);
+      setIsMenuOpen(true);
+    }
+  };
 
   // Story & Companion State
   const [activeDialogueChar, setActiveDialogueChar] = useState<StoryCharacterDef | null>(null);
@@ -1212,30 +1224,60 @@ export default function App() {
   return (
     <div className="game-shell flex flex-col w-screen h-screen bg-slate-950 font-sans text-slate-100 overflow-hidden select-none">
       
-      {/* 1. Top Resource & Navigation Bar */}
-      <TopBar
-        coins={gameState.coins}
-        starPearls={gameState.starPearls}
-        currentLocation={currentLocation}
-        activeEvents={activeEvents}
-        soundEnabled={gameState.settings.soundEnabled}
-        onToggleSound={() => {
-          setGameState(p => ({
-            ...p,
-            settings: { ...p.settings, soundEnabled: !p.settings.soundEnabled },
-          }));
-        }}
-        onOpenLocations={() => setActiveModal('locations')}
-        onOpenEncyclopedia={() => setActiveModal('encyclopedia')}
-        onOpenAchievements={() => setActiveModal('achievements')}
-        onOpenPrestige={() => setActiveModal('prestige')}
-        onOpenWardrobe={() => setActiveModal('wardrobe')}
-        onOpenSettings={() => setActiveModal('settings')}
-        onOpenMerchant={() => setActiveModal('merchant')}
-        onOpenVisitors={() => setActiveModal('visitors')}
-        onOpenStoryJournal={() => setActiveModal('storyJournal')}
-        onOpenShipyard={() => setActiveModal('shipyard')}
-      />
+      <button
+        type="button"
+        className="immersive-menu-toggle"
+        onClick={() => setIsMenuOpen(open => !open)}
+        aria-label={isMenuOpen ? "Close game menu" : "Open game menu"}
+        aria-expanded={isMenuOpen}
+        title="Game menu"
+      >
+        {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
+      </button>
+
+      {returnToMenu && activeModal !== 'none' && (
+        <button
+          type="button"
+          className="return-to-menu-button"
+          onClick={() => {
+            setActiveModal('none');
+            setReturnToMenu(false);
+            setIsMenuOpen(true);
+          }}
+          aria-label="Back to game menu"
+        >
+          <ChevronRight size={16} className="return-to-menu-chevron" />
+          <span>Back to Menu</span>
+        </button>
+      )}
+
+      {isMenuOpen && (
+        <>
+          <button className="immersive-menu-backdrop" onClick={() => setIsMenuOpen(false)} aria-label="Close game menu" />
+          <div className="immersive-menu-panel">
+            <TopBar
+              coins={gameState.coins}
+              starPearls={gameState.starPearls}
+              currentLocation={currentLocation}
+              activeEvents={activeEvents}
+              soundEnabled={gameState.settings.soundEnabled}
+              onToggleSound={() => setGameState(p => ({ ...p, settings: { ...p.settings, soundEnabled: !p.settings.soundEnabled } }))}
+              onOpenLocations={() => { setReturnToMenu(true); setActiveModal('locations'); setIsMenuOpen(false); }}
+              onOpenInventory={() => { setReturnToMenu(true); setActiveModal('inventory'); setIsMenuOpen(false); }}
+              onOpenUpgrades={() => { setReturnToMenu(true); setActiveModal('upgrades'); setIsMenuOpen(false); }}
+              onOpenEncyclopedia={() => { setReturnToMenu(true); setActiveModal('encyclopedia'); setIsMenuOpen(false); }}
+              onOpenAchievements={() => { setReturnToMenu(true); setActiveModal('achievements'); setIsMenuOpen(false); }}
+              onOpenPrestige={() => { setReturnToMenu(true); setActiveModal('prestige'); setIsMenuOpen(false); }}
+              onOpenWardrobe={() => { setReturnToMenu(true); setActiveModal('wardrobe'); setIsMenuOpen(false); }}
+              onOpenSettings={() => { setReturnToMenu(true); setActiveModal('settings'); setIsMenuOpen(false); }}
+              onOpenMerchant={() => { setReturnToMenu(true); setActiveModal('merchant'); setIsMenuOpen(false); }}
+              onOpenVisitors={() => { setReturnToMenu(true); setActiveModal('visitors'); setIsMenuOpen(false); }}
+              onOpenStoryJournal={() => { setReturnToMenu(true); setActiveModal('storyJournal'); setIsMenuOpen(false); }}
+              onOpenShipyard={() => { setReturnToMenu(true); setActiveModal('shipyard'); setIsMenuOpen(false); }}
+            />
+          </div>
+        </>
+      )}
 
       {/* 2. Main Game Viewport */}
       <div className="game-main flex-1 flex flex-col md:flex-row overflow-hidden p-3 gap-3">
@@ -1307,7 +1349,7 @@ export default function App() {
               onInteractVisitor={() => setActiveModal('visitors')}
               onOpenShipyard={() => setActiveModal('shipyard')}
             />
-            <div className="aquarium-toggle absolute top-4 right-4 flex items-center gap-2">
+            <div className="aquarium-toggle absolute bottom-5 right-5 flex items-center gap-2">
               <button
                 onClick={() => setIsAquariumMode(!isAquariumMode)}
                 className={`px-3 py-1.5 rounded-xl border text-xs font-bold shadow-md transition-colors flex items-center gap-1.5 cursor-pointer backdrop-blur-md ${
@@ -1585,6 +1627,25 @@ export default function App() {
       </div>
 
       {/* --- MODALS --- */}
+      {/* Upgrade Bench opened from the immersive game menu */}
+      {activeModal === 'upgrades' && (
+        <div className="fixed inset-0 z-50 upgrade-modal-overlay">
+          <div className="upgrade-modal-content">
+            <button type="button" className="upgrade-modal-close" onClick={closeActiveModal} aria-label="Close Upgrade Bench">
+              <X size={18} />
+            </button>
+            <UpgradesPanel
+              coins={gameState.coins}
+              upgrades={gameState.upgrades}
+              boatTier={gameState.boatTier || 1}
+              onBuyUpgrade={handleBuyUpgrade}
+              onOpenShipyard={() => setActiveModal('shipyard')}
+            />
+          </div>
+        </div>
+      )}
+
+
       
       {/* 1. Fish Catch Reveal Modal */}
       {activeCatch && (
@@ -1610,7 +1671,7 @@ export default function App() {
       {activeModal === 'encyclopedia' && (
         <EncyclopediaModal
           discoveries={gameState.discoveries}
-          onClose={() => setActiveModal('none')}
+          onClose={closeActiveModal}
         />
       )}
 
@@ -1624,7 +1685,7 @@ export default function App() {
           onMassSell={handleMassSell}
           onToggleFavorite={handleToggleFavorite}
           onToggleAquarium={handleToggleAquarium}
-          onClose={() => setActiveModal('none')}
+          onClose={closeActiveModal}
         />
       )}
 
@@ -1636,7 +1697,7 @@ export default function App() {
           coins={gameState.coins}
           onSelectLocation={handleSelectLocation}
           onUnlockLocation={handleUnlockLocation}
-          onClose={() => setActiveModal('none')}
+          onClose={closeActiveModal}
         />
       )}
 
@@ -1651,7 +1712,7 @@ export default function App() {
           fishCaughtThisRun={gameState.fishCaughtThisRun || 0}
           onAscend={handleAscend}
           onBuyPrestigeUpgrade={handleBuyPrestigeUpgrade}
-          onClose={() => setActiveModal('none')}
+          onClose={closeActiveModal}
         />
       )}
 
@@ -1660,7 +1721,7 @@ export default function App() {
         <AchievementsModal
           saveState={gameState}
           unlockedAchievements={gameState.unlockedAchievements}
-          onClose={() => setActiveModal('none')}
+          onClose={closeActiveModal}
         />
       )}
 
@@ -1670,7 +1731,7 @@ export default function App() {
           coins={gameState.coins}
           starPearls={gameState.starPearls}
           onBuyItem={handleBuyMerchantDeal}
-          onClose={() => setActiveModal('none')}
+          onClose={closeActiveModal}
         />
       )}
 
@@ -1698,7 +1759,7 @@ export default function App() {
             const fresh = resetGame();
             setGameState(fresh);
           }}
-          onClose={() => setActiveModal('none')}
+          onClose={closeActiveModal}
         />
       )}
 
@@ -1710,7 +1771,7 @@ export default function App() {
           starPearls={gameState.starPearls}
           onUpdateCustomization={handleUpdateCustomization}
           onUnlockCosmetic={handleUnlockCosmetic}
-          onClose={() => setActiveModal('none')}
+          onClose={closeActiveModal}
         />
       )}
 
@@ -1718,7 +1779,7 @@ export default function App() {
       {activeModal === 'visitors' && (
         <VisitorModal
           isOpen={true}
-          onClose={() => setActiveModal('none')}
+          onClose={closeActiveModal}
           activeVisitorType={activeVisitor?.type}
           befriendedVisitors={gameState.befriendedVisitors || getInitialBefriendedVisitors()}
           onRenameVisitor={handleRenameVisitor}
@@ -1744,7 +1805,7 @@ export default function App() {
           unlockedLocations={gameState.unlockedLocations}
           coins={gameState.coins}
           starPearls={gameState.starPearls}
-          onClose={() => setActiveModal('none')}
+          onClose={closeActiveModal}
           onTalkToCharacter={handleTalkToCharacter}
           onClaimQuestReward={handleClaimQuestReward}
           onReadPage={(pageId) => {
@@ -1766,7 +1827,7 @@ export default function App() {
           currentBoatTier={gameState.boatTier || 1}
           coins={gameState.coins}
           onUpgradeBoat={handleUpgradeBoat}
-          onClose={() => setActiveModal('none')}
+          onClose={closeActiveModal}
         />
       )}
 
