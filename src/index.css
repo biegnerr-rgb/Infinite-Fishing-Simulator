@@ -1253,3 +1253,33 @@ button {
   .pond-menu-grid { grid-template-columns: 1fr; }
   .pond-menu-status { align-items: flex-start; flex-direction: column; }
 }
+
+
+/* Cozy journal treatment */
+.pond-story-journal {
+  background: rgba(10, 25, 22, .68) !important;
+  backdrop-filter: blur(8px);
+}
+.pond-story-journal-card {
+  background: linear-gradient(155deg, #263f36 0%, #172e2b 100%) !important;
+  border-color: rgba(205, 190, 139, .48) !important;
+  box-shadow: 0 28px 90px rgba(0, 12, 10, .58) !important;
+}
+.pond-story-journal-card > div:first-child {
+  background: linear-gradient(110deg, rgba(91, 105, 68, .58), rgba(25, 57, 49, .96), rgba(61, 75, 56, .7)) !important;
+  border-bottom-color: rgba(210, 196, 146, .3) !important;
+}
+.pond-story-journal-card > div:nth-child(2) {
+  background: rgba(10, 31, 27, .68) !important;
+  border-bottom-color: rgba(196, 207, 168, .16) !important;
+}
+.pond-story-journal-card > div:nth-child(3) {
+  background: linear-gradient(180deg, rgba(42, 67, 56, .48), rgba(17, 42, 39, .74)) !important;
+}
+.pond-story-journal-card button:focus-visible {
+  outline: 2px solid #e7d89e;
+  outline-offset: 2px;
+}
+@media (max-width: 640px) {
+  .pond-story-journal-card { height: 94dvh !important; max-height: 94dvh !important; }
+}
