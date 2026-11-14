@@ -7,6 +7,7 @@ import {
   STORY_ARTIFACTS 
 } from '../data/storyData';
 import { StoryState, JournalPageDef, StoryCharacterDef } from '../types/story';
+import { LOCATIONS } from '../data/locationsData';
 import { 
   BookOpen, 
   Scroll, 
@@ -18,7 +19,10 @@ import {
   X, 
   Award, 
   ChevronRight,
-  MessageCircle
+  MessageCircle,
+  MapPin,
+  Map,
+  Heart
 } from 'lucide-react';
 import { sound } from '../utils/audio';
 
@@ -45,7 +49,7 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
   onClaimQuestReward,
   onReadPage,
 }) => {
-  const [activeTab, setActiveTab] = useState<'chapters' | 'journal' | 'characters' | 'quests' | 'relics'>('chapters');
+  const [activeTab, setActiveTab] = useState<'story' | 'discoveries' | 'characters' | 'locations' | 'memories'>('story');
   const [selectedPage, setSelectedPage] = useState<JournalPageDef | null>(() => {
     return JOURNAL_PAGES.find(p => storyState.collectedPageIds.includes(p.id)) || JOURNAL_PAGES[0];
   });
@@ -54,8 +58,8 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
   const currentChapterDef = STORY_CHAPTERS.find(c => c.chapter === storyState.currentChapter) || STORY_CHAPTERS[0];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-4xl h-[88vh] max-h-[780px] bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border border-amber-600/40 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-100 font-sans">
+    <div className="pond-story-journal fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-md animate-fadeIn">
+      <div className="pond-story-journal-card relative w-full max-w-4xl h-[88vh] max-h-[780px] bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border border-amber-600/40 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-100 font-sans">
         
         {/* Ornate Header Banner */}
         <div className="relative px-6 py-4 bg-gradient-to-r from-amber-950/70 via-slate-900 to-indigo-950/70 border-b border-amber-500/30 flex items-center justify-between shrink-0">
@@ -66,14 +70,14 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-xl font-black text-amber-200 tracking-tight flex items-center gap-2">
-                  <span>THE SECRETS OF THE INFINITE POND</span>
+                  <span>THE POND THAT REMEMBERS</span>
                 </h2>
                 <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
                   Chapter {storyState.currentChapter} / 5
                 </span>
               </div>
               <p className="text-xs text-slate-300">
-                Grandfather Arthur’s Logbook & The Awakening of the Guardians
+                A little record of friends, places and discoveries
               </p>
             </div>
           </div>
@@ -93,11 +97,11 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
         {/* Tab Navigation */}
         <div className="flex items-center gap-1.5 px-6 py-2.5 bg-slate-950/60 border-b border-slate-800 shrink-0 overflow-x-auto">
           {[
-            { id: 'chapters', label: 'Story Chapters', icon: Scroll, count: `${storyState.currentChapter}/5` },
-            { id: 'journal', label: 'Grandpa’s Log', icon: BookOpen, count: `${storyState.collectedPageIds.length}/12` },
-            { id: 'characters', label: 'Companions', icon: Users, count: `${STORY_CHARACTERS.length}` },
-            { id: 'quests', label: 'Story Quests', icon: Award, count: `${storyState.completedQuestIds.length}/${STORY_QUESTS.length}` },
-            { id: 'relics', label: 'Guardian Relics', icon: Sparkles, count: `${storyState.collectedArtifactIds.length}/${STORY_ARTIFACTS.length}` },
+            { id: 'story', label: 'Main Story', icon: Scroll, count: `${storyState.completedChapters.length}/5` },
+            { id: 'discoveries', label: 'Discoveries', icon: BookOpen, count: `${storyState.collectedPageIds.length + storyState.collectedArtifactIds.length}` },
+            { id: 'characters', label: 'Characters', icon: Users, count: `${STORY_CHARACTERS.length}` },
+            { id: 'locations', label: 'Locations', icon: Map, count: `${unlockedLocations.length}/${LOCATIONS.length}` },
+            { id: 'memories', label: 'Memories', icon: Heart, count: `${storyState.readPageIds.length + storyState.completedChapters.length}` },
           ].map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -130,7 +134,7 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 bg-slate-900/40">
 
           {/* TAB 1: CHAPTERS & PROGRESSION */}
-          {activeTab === 'chapters' && (
+          {activeTab === 'story' && (
             <div className="space-y-6 max-w-3xl mx-auto">
               {/* Current Chapter Hero Card */}
               <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-950/40 via-slate-800/70 to-indigo-950/40 border border-amber-500/40 shadow-lg">
@@ -160,7 +164,7 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
               {/* Timeline of All 5 Chapters */}
               <div className="space-y-3">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  Chronicle of the Great Awakening
+                  The pond’s story so far
                 </h4>
                 <div className="space-y-3">
                   {STORY_CHAPTERS.map(ch => {
@@ -226,7 +230,7 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
           )}
 
           {/* TAB 2: GRANDPA'S LOGBOOK */}
-          {activeTab === 'journal' && (
+          {activeTab === 'discoveries' && (
             <div className="grid grid-cols-1 md:grid-cols-12 gap-5 h-full">
               {/* Left Column: Pages List */}
               <div className="md:col-span-4 space-y-2 max-h-[550px] overflow-y-auto pr-1">
@@ -335,7 +339,7 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
               {/* Character List */}
               <div className="md:col-span-4 space-y-2">
                 <div className="text-xs font-bold text-slate-400 px-1 pb-1">
-                  Residents of the Infinite Pond
+                  Friends around the pond
                 </div>
                 {STORY_CHARACTERS.map(c => {
                   const isSelected = selectedChar.id === c.id;
@@ -438,7 +442,7 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
           )}
 
           {/* TAB 4: STORY QUESTS */}
-          {activeTab === 'quests' && (
+          {activeTab === 'story' && (
             <div className="space-y-4 max-w-3xl mx-auto">
               <div className="flex items-center justify-between pb-1 border-b border-slate-800">
                 <span className="text-xs font-bold text-slate-400">Chapter Quests & Objectives</span>
@@ -519,12 +523,12 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
           )}
 
           {/* TAB 5: GUARDIAN ARTIFACTS & RELICS */}
-          {activeTab === 'relics' && (
+          {activeTab === 'discoveries' && (
             <div className="space-y-4 max-w-3xl mx-auto">
               <div className="p-4 rounded-2xl bg-indigo-950/40 border border-indigo-500/40">
-                <h4 className="text-sm font-black text-indigo-200">The 4 Ancient Keystones</h4>
+                <h4 className="text-sm font-black text-indigo-200">Little Treasures & Keepsakes</h4>
                 <p className="text-xs text-slate-300 mt-1">
-                  Each relic was forged by an ancient guardian to govern the flow of tides and starlight. Restoring them grants permanent passive blessings to your vessel and fishing prowess.
+                  Some discoveries are useful, some are simply lovely to keep. Every one has a story attached.
                 </p>
               </div>
 
@@ -571,6 +575,74 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
               </div>
             </div>
           )}
+          {/* TAB 4: LOCATIONS */}
+          {activeTab === 'locations' && (
+            <div className="space-y-4 max-w-3xl mx-auto">
+              <div className="rounded-2xl border border-emerald-200/20 bg-emerald-950/25 p-4">
+                <h3 className="text-sm font-black text-emerald-100 flex items-center gap-2"><MapPin className="w-4 h-4" /> Places you can visit</h3>
+                <p className="mt-1 text-xs text-slate-300">Every stretch of water has its own fish, little surprises and memories. Locked places will appear here as your adventure grows.</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {LOCATIONS.map(location => {
+                  const isUnlocked = unlockedLocations.includes(location.id);
+                  return (
+                    <div key={location.id} className={`rounded-2xl border p-4 transition-all ${isUnlocked ? 'border-emerald-400/40 bg-emerald-950/30' : 'border-slate-700 bg-slate-950/40 opacity-70'}`}>
+                      <div className="flex items-start gap-3">
+                        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-white/10 text-xl" style={{ background: isUnlocked ? location.waterColors[0] : '#334155' }}>
+                          {isUnlocked ? '🌿' : '🔒'}
+                        </div>
+                        <div className="min-w-0">
+                          <h4 className="text-sm font-extrabold text-slate-100">{location.name}</h4>
+                          <p className="mt-0.5 text-[11px] text-slate-400">{location.subtitle}</p>
+                        </div>
+                      </div>
+                      <p className="mt-3 text-xs leading-relaxed text-slate-300">{isUnlocked ? location.description : 'A place waiting to be discovered. Keep fishing and exploring to unlock it.'}</p>
+                      <div className={`mt-3 text-[10px] font-bold uppercase tracking-wider ${isUnlocked ? 'text-emerald-300' : 'text-slate-500'}`}>{isUnlocked ? 'Available to visit' : 'Not discovered yet'}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: MEMORIES */}
+          {activeTab === 'memories' && (
+            <div className="space-y-4 max-w-3xl mx-auto">
+              <div className="rounded-2xl border border-rose-200/20 bg-rose-950/20 p-4">
+                <h3 className="flex items-center gap-2 text-sm font-black text-rose-100"><Heart className="w-4 h-4" /> Moments worth remembering</h3>
+                <p className="mt-1 text-xs text-slate-300">A scrapbook of the pages you have read and the chapters you have completed. More memories will appear as you explore.</p>
+              </div>
+              {storyState.completedChapters.length === 0 && storyState.readPageIds.length === 0 && storyState.collectedArtifactIds.length === 0 ? (
+                <div className="rounded-2xl border border-slate-700 bg-slate-950/30 p-8 text-center">
+                  <div className="text-3xl">📷</div>
+                  <h4 className="mt-2 text-sm font-bold text-slate-100">Your scrapbook is just getting started</h4>
+                  <p className="mt-1 text-xs text-slate-400">Read a logbook page, finish a chapter or find a keepsake to save your first memory.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {STORY_CHAPTERS.filter(ch => storyState.completedChapters.includes(ch.chapter)).map(ch => (
+                    <div key={`chapter-${ch.chapter}`} className="flex items-start gap-3 rounded-xl border border-emerald-500/25 bg-emerald-950/20 p-3">
+                      <span className="text-xl">{ch.icon}</span>
+                      <div><div className="text-xs font-bold text-emerald-200">Chapter {ch.chapter}: {ch.title}</div><p className="mt-1 text-xs text-slate-300">{ch.summaryWhenComplete}</p></div>
+                    </div>
+                  ))}
+                  {JOURNAL_PAGES.filter(page => storyState.readPageIds.includes(page.id)).map(page => (
+                    <div key={page.id} className="flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-950/15 p-3">
+                      <span className="text-xl">📜</span>
+                      <div><div className="text-xs font-bold text-amber-200">{page.title}</div><p className="mt-1 text-xs text-slate-300">{page.content[0]}</p><span className="mt-1 block text-[10px] text-slate-500">From {page.author}’s logbook</span></div>
+                    </div>
+                  ))}
+                  {STORY_ARTIFACTS.filter(artifact => storyState.collectedArtifactIds.includes(artifact.id)).map(artifact => (
+                    <div key={artifact.id} className="flex items-start gap-3 rounded-xl border border-sky-500/20 bg-sky-950/15 p-3">
+                      <span className="text-xl">{artifact.icon}</span>
+                      <div><div className="text-xs font-bold text-sky-200">{artifact.name}</div><p className="mt-1 text-xs text-slate-300">{artifact.lore}</p></div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
 
         </div>
       </div>
