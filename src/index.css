@@ -1041,3 +1041,215 @@ button {
 @media (max-width: 560px) {
   .game-main:has(.upgrade-shop) .upgrade-list { grid-template-columns: minmax(0, 1fr); }
 }
+
+
+/* Immersive full-screen pond and compact corner navigation. */
+.game-shell { position: relative; width: 100vw; height: 100dvh; overflow: hidden; }
+.game-shell > .game-main {
+  display: block !important;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0 !important;
+  gap: 0 !important;
+  overflow: hidden;
+}
+.game-shell .pond-column {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  gap: 0;
+  padding: 0;
+}
+.game-shell .pond-toolbar { display: none !important; }
+.game-shell .pond-stage {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+  border-radius: 0;
+  filter: none;
+}
+.game-shell .pond-stage > div:first-child {
+  border: 0;
+  border-radius: 0;
+}
+.game-shell .angler-panel { display: none !important; }
+.game-shell .aquarium-toggle {
+  top: auto !important;
+  right: 20px !important;
+  bottom: 20px !important;
+  left: auto !important;
+  z-index: 20;
+}
+.game-shell .aquarium-toggle button {
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid rgba(232, 226, 194, .25);
+  border-radius: 13px;
+  background: rgba(11, 31, 34, .72);
+  backdrop-filter: blur(10px);
+}
+
+.immersive-menu-toggle {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  right: auto;
+  z-index: 90;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: #f7efd8;
+  border: 1px solid rgba(232, 226, 194, .4);
+  border-radius: 13px;
+  background: rgba(19, 42, 39, .78);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, .22);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+.immersive-menu-toggle:hover {
+  background: rgba(38, 75, 62, .96);
+  border-color: rgba(232, 226, 194, .72);
+  transform: translateY(-1px);
+}
+.immersive-menu-toggle:focus-visible,
+.return-to-menu-button:focus-visible {
+  outline: 2px solid #f1d991;
+  outline-offset: 3px;
+}
+.immersive-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 79;
+  border: 0;
+  background: rgba(3, 15, 16, .32);
+  backdrop-filter: blur(3px);
+}
+.immersive-menu-panel {
+  position: fixed;
+  top: 66px;
+  left: 16px;
+  right: auto;
+  z-index: 80;
+  width: min(820px, calc(100vw - 32px));
+  max-height: calc(100dvh - 82px);
+  overflow: auto;
+  padding: 14px;
+  border: 1px solid rgba(215, 195, 139, .42);
+  border-radius: 19px;
+  background: linear-gradient(145deg, rgba(35, 66, 57, .98), rgba(19, 43, 43, .985));
+  box-shadow: 0 20px 55px rgba(0, 12, 14, .5);
+  animation: menuDropIn .18s ease-out;
+}
+@keyframes menuDropIn {
+  from { opacity: 0; transform: translateY(-8px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.pond-menu { display: grid; gap: 12px; color: #f5efd9; }
+.pond-menu-heading, .pond-menu-brand, .pond-menu-resources, .pond-menu-status,
+.pond-menu-location, .pond-menu-group h2, .pond-menu-item { display: flex; align-items: center; }
+.pond-menu-heading { justify-content: space-between; gap: 14px; padding: 4px 4px 10px; }
+.pond-menu-brand { gap: 11px; min-width: 0; }
+.pond-menu-brand-icon {
+  display: grid; width: 42px; height: 42px; flex: 0 0 auto; place-items: center;
+  border: 1px solid rgba(230,210,157,.3); border-radius: 14px; color: #e9d18e;
+  background: rgba(215,190,123,.1);
+}
+.pond-menu-brand h1 { margin: 0; color: #fff0cb; font-size: 18px; font-weight: 800; letter-spacing: -.03em; }
+.pond-menu-brand p { margin: 2px 0 0; color: #a9c0a9; font-size: 11px; }
+.pond-menu-resources { gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+.pond-menu-resources > span, .pond-menu-resources > button {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 10px;
+  border: 1px solid rgba(226,197,125,.22); border-radius: 11px; color: #f3d68d;
+  background: rgba(7,24,25,.4); font-size: 12px; font-weight: 700;
+}
+.pond-menu-resources > button { cursor: pointer; }
+.pond-menu-status {
+  justify-content: space-between; gap: 10px; padding: 9px 11px;
+  border: 1px solid rgba(178,199,156,.14); border-radius: 13px; background: rgba(7,25,26,.32);
+}
+.pond-menu-location { gap: 8px; border: 0; color: #d9e5cb; background: transparent; text-align: left; cursor: pointer; }
+.pond-menu-location span { display: grid; gap: 1px; }
+.pond-menu-location small { color: #92ae99; font-size: 8px; font-weight: 800; letter-spacing: .12em; }
+.pond-menu-location strong { font-size: 12px; }
+.pond-menu-event { display: flex; align-items: center; gap: 7px; color: #e7d49e; font-size: 11px; }
+.pond-menu-event small { color: #b7a879; font-family: ui-monospace, monospace; }
+.pond-menu-event button { padding: 4px 8px; border-radius: 8px; color: #f5e7bd; background: rgba(208,167,81,.2); cursor: pointer; }
+.pond-menu-status-dot { width: 7px; height: 7px; border-radius: 50%; background: #e6c46f; box-shadow: 0 0 9px rgba(230,196,111,.55); }
+.pond-menu-status-dot.is-quiet { background: #8ab99a; box-shadow: none; }
+.pond-menu-groups { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+.pond-menu-group { min-width: 0; padding: 10px; border: 1px solid rgba(184,204,161,.13); border-radius: 15px; background: rgba(5,22,24,.28); }
+.pond-menu-group h2 { gap: 7px; margin: 0 0 8px; color: #c8d5b5; font-size: 9px; font-weight: 900; letter-spacing: .13em; }
+.pond-menu-group h2 svg { color: #e4c67e; }
+.pond-menu-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 7px; }
+.pond-menu-item {
+  min-width: 0; min-height: 54px; gap: 8px; padding: 7px 8px;
+  border: 1px solid rgba(182,202,159,.12); border-radius: 11px; color: #e6ead7;
+  background: rgba(37,65,57,.43); text-align: left; cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, transform .15s ease;
+}
+.pond-menu-item:hover { border-color: rgba(224,205,147,.4); background: rgba(68,91,67,.55); transform: translateY(-1px); }
+.pond-menu-item.is-featured { border-color: rgba(226,202,133,.42); background: linear-gradient(120deg, rgba(118,100,54,.32), rgba(53,83,59,.52)); }
+.pond-menu-item-icon {
+  display: grid; width: 32px; height: 32px; flex: 0 0 auto; place-items: center;
+  border-radius: 9px; color: #e7d08c; background: rgba(211,190,128,.1);
+}
+.pond-menu-item-copy { display: grid; min-width: 0; gap: 2px; }
+.pond-menu-item-copy strong { overflow: hidden; color: #f3efd9; font-size: 11px; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+.pond-menu-item-copy small { overflow: hidden; color: #a8bda8; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.pond-menu-item-arrow { margin-left: auto; flex: 0 0 auto; color: #b9c89d; }
+.pond-menu-item:focus-visible, .pond-menu-resources button:focus-visible, .pond-menu-location:focus-visible {
+  outline: 2px solid #f1d991; outline-offset: 2px;
+}
+
+.return-to-menu-button {
+  position: fixed; top: 16px; left: 66px; z-index: 110;
+  display: inline-flex; align-items: center; gap: 7px; min-height: 40px;
+  padding: 0 13px 0 10px; border: 1px solid rgba(232,226,194,.4);
+  border-radius: 12px; color: #f6edcf; background: rgba(19,42,39,.94);
+  box-shadow: 0 5px 18px rgba(0,0,0,.28); backdrop-filter: blur(10px);
+  font-size: 12px; font-weight: 750; cursor: pointer;
+}
+.return-to-menu-button:hover { background: rgba(38,75,62,.98); border-color: rgba(232,226,194,.7); }
+.return-to-menu-chevron { transform: rotate(180deg); }
+
+.upgrade-modal-overlay { display: flex; align-items: center; justify-content: center; overflow: auto; padding: 12px; background: rgba(3,15,16,.76); backdrop-filter: blur(5px); }
+.upgrade-modal-content {
+  position: relative; width: min(1120px, 96vw); max-height: 92dvh; overflow: auto;
+  padding: 42px 12px 12px; border: 1px solid rgba(215,195,139,.38);
+  border-radius: 22px; background: linear-gradient(155deg,#294b43,#172f31);
+  box-shadow: 0 28px 80px rgba(0,12,14,.6);
+}
+.upgrade-modal-close {
+  position: absolute; top: 10px; right: 12px; z-index: 5; display: grid;
+  width: 32px; height: 32px; place-items: center; border: 1px solid rgba(230,215,170,.25);
+  border-radius: 10px; color: #f6e8c2; background: rgba(7,24,25,.55); cursor: pointer;
+}
+.upgrade-modal-content .upgrade-shop { min-height: 0; }
+.upgrade-modal-content .upgrade-scroll { max-height: 58dvh; overflow: auto; }
+
+@media (max-width: 760px) {
+  .immersive-menu-toggle { top: 10px; left: 10px; width: 36px; height: 36px; }
+  .immersive-menu-panel { top: 56px; left: 8px; right: 8px; width: auto; max-height: calc(100dvh - 64px); padding: 9px; }
+  .pond-menu-heading { align-items: flex-start; flex-direction: column; }
+  .pond-menu-resources { justify-content: flex-start; }
+  .pond-menu-groups { grid-template-columns: 1fr; gap: 8px; }
+  .pond-menu-group { padding: 8px; }
+  .pond-menu-item { min-height: 48px; }
+  .pond-menu-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .return-to-menu-button { top: 10px; left: 56px; min-height: 36px; padding-inline: 9px; }
+  .game-shell .aquarium-toggle { right: 12px !important; bottom: 12px !important; }
+  .upgrade-modal-content { width: calc(100vw - 12px); max-height: 96dvh; padding: 40px 7px 7px; }
+  .upgrade-modal-content .upgrade-scroll { max-height: 65dvh; }
+}
+@media (max-width: 420px) {
+  .pond-menu-grid { grid-template-columns: 1fr; }
+  .pond-menu-status { align-items: flex-start; flex-direction: column; }
+}
