@@ -68,6 +68,8 @@ import {
 import { StoryState, StoryCharacterDef, CharacterDialogue } from './types/story';
 
 import {
+  Menu,
+  X,
   Sparkles,
   ShoppingBag,
   Wrench,
@@ -91,6 +93,9 @@ export default function App() {
 
   // Offline Progress modal
   const [offlineResult, setOfflineResult] = useState<OfflineCatchResult | null>(null);
+
+  // Corner navigation menu (closed when the game starts)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Active Modals
   const [activeModal, setActiveModal] = useState<
@@ -1212,30 +1217,34 @@ export default function App() {
   return (
     <div className="game-shell flex flex-col w-screen h-screen bg-slate-950 font-sans text-slate-100 overflow-hidden select-none">
       
-      {/* 1. Top Resource & Navigation Bar */}
-      <TopBar
-        coins={gameState.coins}
-        starPearls={gameState.starPearls}
-        currentLocation={currentLocation}
-        activeEvents={activeEvents}
-        soundEnabled={gameState.settings.soundEnabled}
-        onToggleSound={() => {
-          setGameState(p => ({
-            ...p,
-            settings: { ...p.settings, soundEnabled: !p.settings.soundEnabled },
-          }));
-        }}
-        onOpenLocations={() => setActiveModal('locations')}
-        onOpenEncyclopedia={() => setActiveModal('encyclopedia')}
-        onOpenAchievements={() => setActiveModal('achievements')}
-        onOpenPrestige={() => setActiveModal('prestige')}
-        onOpenWardrobe={() => setActiveModal('wardrobe')}
-        onOpenSettings={() => setActiveModal('settings')}
-        onOpenMerchant={() => setActiveModal('merchant')}
-        onOpenVisitors={() => setActiveModal('visitors')}
-        onOpenStoryJournal={() => setActiveModal('storyJournal')}
-        onOpenShipyard={() => setActiveModal('shipyard')}
-      />
+      {/* Corner menu: navigation is hidden until requested */}
+      <button type="button" className="game-menu-toggle" onClick={() => setIsMenuOpen(open => !open)} aria-label={isMenuOpen ? "Close game menu" : "Open game menu"} aria-expanded={isMenuOpen}>
+        {isMenuOpen ? <X size={21} /> : <Menu size={21} />}
+        <span>{isMenuOpen ? "Close" : "Menu"}</span>
+      </button>
+      {isMenuOpen && <div className="game-menu-backdrop" onClick={() => setIsMenuOpen(false)} aria-hidden="true" />}
+      {isMenuOpen && (
+        <div className="game-menu-panel">
+          <TopBar
+            coins={gameState.coins}
+            starPearls={gameState.starPearls}
+            currentLocation={currentLocation}
+            activeEvents={activeEvents}
+            soundEnabled={gameState.settings.soundEnabled}
+            onToggleSound={() => setGameState(p => ({ ...p, settings: { ...p.settings, soundEnabled: !p.settings.soundEnabled } }))}
+            onOpenLocations={() => { setActiveModal('locations'); setIsMenuOpen(false); }}
+            onOpenEncyclopedia={() => { setActiveModal('encyclopedia'); setIsMenuOpen(false); }}
+            onOpenAchievements={() => { setActiveModal('achievements'); setIsMenuOpen(false); }}
+            onOpenPrestige={() => { setActiveModal('prestige'); setIsMenuOpen(false); }}
+            onOpenWardrobe={() => { setActiveModal('wardrobe'); setIsMenuOpen(false); }}
+            onOpenSettings={() => { setActiveModal('settings'); setIsMenuOpen(false); }}
+            onOpenMerchant={() => { setActiveModal('merchant'); setIsMenuOpen(false); }}
+            onOpenVisitors={() => { setActiveModal('visitors'); setIsMenuOpen(false); }}
+            onOpenStoryJournal={() => { setActiveModal('storyJournal'); setIsMenuOpen(false); }}
+            onOpenShipyard={() => { setActiveModal('shipyard'); setIsMenuOpen(false); }}
+          />
+        </div>
+      )}
 
       {/* 2. Main Game Viewport */}
       <div className="game-main flex-1 flex flex-col md:flex-row overflow-hidden p-3 gap-3">
