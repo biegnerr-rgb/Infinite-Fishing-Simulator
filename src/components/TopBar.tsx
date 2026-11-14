@@ -1,7 +1,7 @@
 import React from 'react';
 import { LocationDef, ActiveEvent } from '../types/game';
 import {
-  Anchor, Award, BookOpen, Coins, Fish, MapPin, PawPrint,
+  Award, BookOpen, Coins, Fish, MapPin, PawPrint,
   Settings as SettingsIcon, Shirt, Sparkles, Volume2, VolumeX,
   Package, Wrench, Compass, Trophy, Ship,
 } from 'lucide-react';
