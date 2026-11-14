@@ -1360,3 +1360,88 @@ button {
   height: 100% !important;
   min-height: 0 !important;
 }
+
+
+/* Small unobtrusive menu control for the immersive pond view. */
+.immersive-menu-toggle {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 90;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  color: rgba(255, 255, 255, .88);
+  border: 1px solid rgba(232, 226, 194, .28);
+  border-radius: 12px;
+  background: rgba(19, 42, 39, .48);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, .16);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+.immersive-menu-toggle:hover {
+  background: rgba(28, 62, 54, .88);
+  border-color: rgba(232, 226, 194, .65);
+  transform: translateY(-1px);
+}
+.immersive-menu-toggle:focus-visible {
+  outline: 2px solid #f1d991;
+  outline-offset: 3px;
+}
+.immersive-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 79;
+  border: 0;
+  background: rgba(3, 15, 16, .24);
+  backdrop-filter: blur(2px);
+}
+.immersive-menu-panel {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 80;
+  width: min(760px, calc(100vw - 20px));
+  max-height: calc(100vh - 20px);
+  overflow: auto;
+  border: 1px solid rgba(215, 195, 139, .38);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(35, 66, 57, .98), rgba(19, 43, 43, .98));
+  box-shadow: 0 18px 48px rgba(0, 12, 14, .42);
+  animation: menuDropIn .18s ease-out;
+}
+.immersive-menu-panel .game-header {
+  position: relative;
+  min-height: 64px;
+  border: 0;
+  border-radius: inherit;
+  box-shadow: none;
+  background: transparent;
+}
+@media (max-width: 760px) {
+  .immersive-menu-toggle {
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+  }
+  .immersive-menu-panel {
+    top: 8px;
+    right: 8px;
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 16px);
+  }
+  .immersive-menu-panel .game-header {
+    flex-wrap: wrap;
+    padding: 10px;
+  }
+  .immersive-menu-panel .header-right {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+}
