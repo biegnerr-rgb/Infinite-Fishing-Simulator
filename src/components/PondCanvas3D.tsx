@@ -1259,7 +1259,13 @@ function FishSchool({ fish, aquariumFish, isAquariumMode }: {
 
 function Visitor({ visitor, name, onClick }: { visitor: ActiveVisitorScene; name?: string; onClick: (event: ThreeEvent<MouseEvent>) => void }) {
   const root = useRef<Group>(null);
-  const [x, z] = clampInsideLakeXZ((visitor.x - 0.5) * 14.5, (visitor.y - 0.5) * 9.0, 0.84);
+  const aquaticVisitors: VisitorType[] = ['frog', 'turtle', 'duck', 'otter'];
+  const isAquaticVisitor = aquaticVisitors.includes(visitor.type);
+  const landAngle = visitor.x * Math.PI * 2;
+  const [x, z] = isAquaticVisitor
+    ? clampInsideLakeXZ((visitor.x - 0.5) * 14.5, (visitor.y - 0.5) * 9.0, 0.84)
+    : getLakeShorePoint(landAngle, 1, 2.0, 1.5);
+  const groundHeight = isAquaticVisitor ? 0.44 : 0.08;
   const colors = {
     frog: '#75bd4f',
     duck: '#f4cf68',
@@ -1276,7 +1282,7 @@ function Visitor({ visitor, name, onClick }: { visitor: ActiveVisitorScene; name
   useFrame(({ clock }) => {
     if (root.current) {
       const t = clock.getElapsedTime();
-      root.current.position.y = 0.44 + Math.sin(t * 2.1) * 0.025;
+      root.current.position.y = groundHeight + Math.sin(t * (isAquaticVisitor ? 2.1 : 1.45)) * (isAquaticVisitor ? 0.025 : 0.012);
       root.current.rotation.y = Math.sin(t * 0.7) * 0.045;
     }
   });
@@ -1290,7 +1296,7 @@ function Visitor({ visitor, name, onClick }: { visitor: ActiveVisitorScene; name
   );
 
   return (
-    <group ref={root} position={[x, 0.44, z]} onClick={(event) => { event.stopPropagation(); onClick(event); }}>
+    <group ref={root} position={[x, groundHeight, z]} onClick={(event) => { event.stopPropagation(); onClick(event); }}>
       {visitor.type === 'frog' && (
         <>
           <mesh position={[-0.04, 0.13, 0]} scale={[1.28, 0.78, 0.92]} castShadow>
