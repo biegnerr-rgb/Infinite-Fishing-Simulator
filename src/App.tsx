@@ -140,6 +140,8 @@ export default function App() {
   const [autoCycle, setAutoCycle] = useState<boolean>(gameState.autoCycleTime !== undefined ? gameState.autoCycleTime : true);
   const [selectedZone, setSelectedZone] = useState<PondZone>(gameState.selectedCastZone || 'deep_water');
   const [activeVisitor, setActiveVisitor] = useState<ActiveVisitorScene | null>(null);
+  const pondConditionsRef = useRef({ timeOfDay, weather, season });
+  pondConditionsRef.current = { timeOfDay, weather, season };
 
   // Bottom active tab
   const [activeTab, setActiveTab] = useState<'pond' | 'upgrades'>('pond');
@@ -367,14 +369,15 @@ export default function App() {
 
       const story = gameState.storyState || INITIAL_STORY_STATE;
       const seenIds = story.seenStoryEventIds || [];
-      const isEvening = timeOfDay === 'dusk' || timeOfDay === 'night';
+      const { timeOfDay: currentTime, weather: currentWeather, season: currentSeason } = pondConditionsRef.current;
+      const isEvening = currentTime === 'dusk' || currentTime === 'night';
       const availableMoments = RANDOM_STORY_EVENTS.filter(event =>
         event.chapterRequired <= story.currentChapter &&
         !seenIds.includes(event.id) &&
         (!event.eveningOnly || isEvening) &&
-        (!event.seasonRequired || event.seasonRequired === season) &&
-        (!event.weatherRequired || event.weatherRequired === weather) &&
-        (!event.timeRequired || event.timeRequired === timeOfDay)
+        (!event.seasonRequired || event.seasonRequired === currentSeason) &&
+        (!event.weatherRequired || event.weatherRequired === currentWeather) &&
+        (!event.timeRequired || event.timeRequired === currentTime)
       );
 
       if (availableMoments.length === 0) return;
@@ -417,9 +420,6 @@ export default function App() {
     activeModal,
     isMenuOpen,
     fishingState,
-    timeOfDay,
-    weather,
-    season,
     gameState.storyState,
   ]);
 
