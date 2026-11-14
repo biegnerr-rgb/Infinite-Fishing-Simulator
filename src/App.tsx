@@ -77,6 +77,8 @@ import {
   Award,
   Coins,
   ChevronRight,
+  Menu,
+  X,
   Eye,
   Shirt,
   Anchor,
