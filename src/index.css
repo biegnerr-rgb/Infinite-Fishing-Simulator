@@ -1320,3 +1320,43 @@ button {
     justify-content: space-between;
   }
 }
+
+
+/* Immersive full-screen pond: hide all navigation and side-dock chrome. */
+.immersive-game-main {
+  display: flex !important;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+.immersive-pond-column {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  padding: 0;
+}
+.immersive-pond-stage {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+.immersive-pond-stage > div:first-child,
+.immersive-pond-stage canvas {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
