@@ -1423,6 +1423,7 @@ button {
   background: transparent;
 }
 @media (max-width: 760px) {
+  .return-to-menu-button { top: 10px; left: 56px; min-height: 36px; padding-inline: 9px; }
   .immersive-menu-toggle {
     top: 10px;
     right: 10px;
@@ -1448,6 +1449,38 @@ button {
 
 
 /* Rebalanced immersive HUD: distribute corner controls and keep the pond uncluttered. */
+.return-to-menu-button {
+  position: fixed;
+  top: 16px;
+  left: 64px;
+  z-index: 110;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 13px 0 10px;
+  border: 1px solid rgba(232, 226, 194, .38);
+  border-radius: 12px;
+  color: #f6edcf;
+  background: rgba(19, 42, 39, .92);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, .28);
+  backdrop-filter: blur(10px);
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+.return-to-menu-button:hover {
+  background: rgba(38, 75, 62, .98);
+  border-color: rgba(232, 226, 194, .7);
+  transform: translateY(-1px);
+}
+.return-to-menu-button:focus-visible {
+  outline: 2px solid #f1d991;
+  outline-offset: 3px;
+}
+.return-to-menu-chevron { transform: rotate(180deg); }
+
 .immersive-menu-toggle { top: 16px; left: 16px; right: auto; }
 .immersive-menu-panel {
   top: 64px;
