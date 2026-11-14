@@ -1272,7 +1272,7 @@ export function AnimatedWeather({
  * A light seasonal breeze carries small leaves across the foreground in autumn.
  * Instanced meshes keep the effect inexpensive while each leaf tumbles independently.
  */
-export function AutumnLeafDrift({ season }: { season: SeasonType }) {
+export function SeasonalDriftParticles({ season }: { season: SeasonType }) {
   const leavesRef = useRef<InstancedMesh>(null);
   const leafCount = 28;
   const seeds = useMemo(
@@ -1292,7 +1292,7 @@ export function AutumnLeafDrift({ season }: { season: SeasonType }) {
   }, []);
 
   useFrame(({ clock }) => {
-    if (!leavesRef.current || season !== 'autumn') return;
+    if (!leavesRef.current || (season !== 'autumn' && season !== 'spring')) return;
     const t = clock.getElapsedTime();
     seeds.forEach((leaf, idx) => {
       const fall = (leaf.y + t * leaf.speed) % 7.2;
@@ -1308,7 +1308,9 @@ export function AutumnLeafDrift({ season }: { season: SeasonType }) {
       _dummy.scale.set(leaf.size * 0.13, 0.025, leaf.size * 0.075);
       _dummy.updateMatrix();
       leavesRef.current!.setMatrixAt(idx, _dummy.matrix);
-      const colors = ['#d97706', '#ea580c', '#fbbf24', '#b45309', '#c2410c'];
+      const colors = season === 'autumn'
+        ? ['#d97706', '#ea580c', '#fbbf24', '#b45309', '#c2410c']
+        : ['#f9a8d4', '#fbcfe8', '#fda4af', '#fff1f2', '#f0abfc'];
       leavesRef.current!.setColorAt(idx, _cA.set(colors[idx % colors.length]));
     });
     leavesRef.current.instanceMatrix.needsUpdate = true;
@@ -1316,7 +1318,7 @@ export function AutumnLeafDrift({ season }: { season: SeasonType }) {
   });
 
   return (
-    <instancedMesh ref={leavesRef} args={[undefined, undefined, leafCount]} visible={season === 'autumn'}>
+    <instancedMesh ref={leavesRef} args={[undefined, undefined, leafCount]} visible={season === 'autumn' || season === 'spring'}>
       <sphereGeometry args={[1, 7, 5]} />
       <meshBasicMaterial vertexColors />
     </instancedMesh>
