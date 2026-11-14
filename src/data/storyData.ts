@@ -103,6 +103,90 @@ export const BOAT_TIERS: BoatTierDef[] = [
     autoSpeedBonus: 100,
     features: ['Multi-tier gold & marble decks', 'Panoramic luxury sky bridge', 'Golden champagne bar & helipad', '+100 Inventory Slots'],
   },
+  {
+    id: 'pond_firefly_waltz',
+    chapterRequired: 1,
+    title: 'The Firefly Waltz',
+    subtitle: 'A summer evening in the reeds',
+    avatar: '✨',
+    color: '#a3e635',
+    text: 'As the summer evening settles in, fireflies begin blinking above the reeds. Barnaby watches them drift in little circles. “They always seem to know where the music is,” he whispers. For a moment, the whole pond feels like a tiny festival.',
+    seasonRequired: 'summer',
+    timeRequired: 'night',
+    environmental: true,
+    bubblesMessage: '✨ Fireflies are dancing above the reeds...',
+    responseOptions: [{ label: 'Watch the little lights', replyText: 'You stay until the fireflies drift into the trees. Barnaby says the pond has just given you a very small, very bright gift.', rewardCoins: 300, rewardPearls: 1 }],
+  },
+  {
+    id: 'pond_meteor_wish',
+    chapterRequired: 2,
+    title: 'A Wish Across the Water',
+    subtitle: 'A clear night beneath the stars',
+    avatar: '🌠',
+    color: '#c4b5fd',
+    text: 'A bright meteor crosses the sky and its reflection glides across the water. Shelby says Arthur used to make a wish whenever he saw one. “He never told me what he wished for. I think it was probably something kind.”',
+    weatherRequired: 'clear',
+    timeRequired: 'night',
+    environmental: true,
+    bubblesMessage: '🌠 Something bright just crossed the sky...',
+    responseOptions: [{ label: 'Make a quiet wish', replyText: 'You make a wish for the pond and everyone who calls it home. A tiny star-shaped glimmer appears on the water before fading.', rewardCoins: 450, rewardPearls: 1 }],
+  },
+  {
+    id: 'pond_spring_bloom',
+    chapterRequired: 1,
+    title: 'The First Pond Bloom',
+    subtitle: 'A sign that spring has arrived',
+    avatar: '🌸',
+    color: '#f9a8d4',
+    text: 'A fresh pink blossom has opened beside the old dock. Quackers declares it the official beginning of spring, although nobody remembers appointing him seasonal coordinator. Bubbles says the pond looks especially happy today.',
+    seasonRequired: 'spring',
+    timeRequired: 'dawn',
+    environmental: true,
+    bubblesMessage: '🌸 A new blossom has opened beside the dock...',
+    responseOptions: [{ label: 'Celebrate the new bloom', replyText: 'You leave the blossom undisturbed and take a little sketch for your journal. Quackers announces a one-duck celebration.', rewardCoins: 250 }],
+  },
+  {
+    id: 'pond_autumn_leaf_boat',
+    chapterRequired: 1,
+    title: 'The Little Leaf Boat',
+    subtitle: 'A quiet autumn afternoon',
+    avatar: '🍂',
+    color: '#fb923c',
+    text: 'A golden leaf floats past the dock like a tiny boat. Ollie gently nudges it into a calm current and follows it along the bank. “Every explorer needs a boat,” he says, “even the very small ones.”',
+    seasonRequired: 'autumn',
+    timeRequired: 'day',
+    environmental: true,
+    bubblesMessage: '🍂 A golden leaf is sailing across the pond...',
+    responseOptions: [{ label: 'Follow its little journey', replyText: 'The leaf circles a lily pad, then drifts beneath the willow. Ollie calls it a successful voyage and gives the leaf an imaginary captain’s hat.', rewardCoins: 275 }],
+  },
+  {
+    id: 'pond_first_snow',
+    chapterRequired: 2,
+    title: 'The First Snowfall',
+    subtitle: 'A softer kind of silence',
+    avatar: '❄️',
+    color: '#bae6fd',
+    text: 'The first snowflakes settle on the dock and the pond grows wonderfully quiet. Shelby remembers how Arthur used to leave warm lantern light in the window on snowy evenings. “He wanted everyone to know there was a place to rest,” she says.',
+    seasonRequired: 'winter',
+    weatherRequired: 'clear',
+    environmental: true,
+    bubblesMessage: '❄️ The first snowflakes are drifting down...',
+    responseOptions: [{ label: 'Enjoy the peaceful snowfall', replyText: 'You watch the snow gather along the shore. Bubbles says that even the quietest days can make the warmest memories.', rewardCoins: 500, rewardPearls: 1 }],
+  },
+  {
+    id: 'pond_rain_song',
+    chapterRequired: 1,
+    title: 'The Rain’s Little Song',
+    subtitle: 'A gentle shower over the pond',
+    avatar: '🌧️',
+    color: '#7dd3fc',
+    text: 'Soft rain begins tapping against the water. Pinchy has arranged three pebbles beneath a leaf to catch the drops. “A very orderly concert,” he says. The ripples overlap until the whole pond seems to be humming.',
+    weatherRequired: 'rain',
+    timeRequired: 'day',
+    environmental: true,
+    bubblesMessage: '🌧️ The pond is singing in the rain...',
+    responseOptions: [{ label: 'Listen to the rain', replyText: 'You listen as the ripples make their gentle music. Pinchy gives the performance a perfect score for organization.', rewardCoins: 225 }],
+  },
 ];
 
 export interface HiddenDiscoveryDef {
@@ -269,6 +353,10 @@ export interface RandomStoryEventDef {
   text: string;
   bubblesMessage?: string;
   eveningOnly?: boolean;
+  seasonRequired?: 'spring' | 'summer' | 'autumn' | 'winter';
+  weatherRequired?: 'clear' | 'rain';
+  timeRequired?: 'dawn' | 'day' | 'dusk' | 'night';
+  environmental?: boolean;
   rewardPageId?: string;
   responseOptions: {
     label: string;
