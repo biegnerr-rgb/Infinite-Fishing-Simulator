@@ -103,4 +103,5 @@ export interface StoryState {
   lastBottleSpawnTime?: number;
   storyCompleted: boolean;
   seenStoryEventIds?: string[];
+  foundHiddenDiscoveryIds?: string[];
 }
