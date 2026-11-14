@@ -55,6 +55,7 @@ import { SettingsModal } from './components/SettingsModal';
 import { StoryJournalModal } from './components/StoryJournalModal';
 import { ShipyardModal } from './components/ShipyardModal';
 import { StoryDialogueModal } from './components/StoryDialogueModal';
+import { TopBar } from './components/TopBar';
 import {
   BOAT_TIERS,
   STORY_CHAPTERS,
@@ -67,6 +68,8 @@ import {
 import { StoryState, StoryCharacterDef, CharacterDialogue } from './types/story';
 
 import {
+  Menu,
+  X,
   Sparkles,
   ShoppingBag,
   Wrench,
@@ -82,6 +85,8 @@ import {
 } from 'lucide-react';
 
 export default function App() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   // Game Save State
   const [gameState, setGameState] = useState<GameSaveState>(() => {
     const { state } = loadGame();
@@ -1210,7 +1215,42 @@ export default function App() {
 
   return (
     <div className="game-shell flex flex-col w-screen h-screen bg-slate-950 font-sans text-slate-100 overflow-hidden select-none">
-      
+      <button
+        type="button"
+        className="immersive-menu-toggle"
+        onClick={() => setIsMenuOpen(open => !open)}
+        aria-label={isMenuOpen ? "Close game menu" : "Open game menu"}
+        aria-expanded={isMenuOpen}
+        title="Game menu"
+      >
+        {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
+      </button>
+      {isMenuOpen && (
+        <>
+          <button className="immersive-menu-backdrop" onClick={() => setIsMenuOpen(false)} aria-label="Close game menu" />
+          <div className="immersive-menu-panel">
+            <TopBar
+              coins={gameState.coins}
+              starPearls={gameState.starPearls}
+              currentLocation={currentLocation}
+              activeEvents={activeEvents}
+              soundEnabled={gameState.settings.soundEnabled}
+              onToggleSound={() => setGameState(p => ({ ...p, settings: { ...p.settings, soundEnabled: !p.settings.soundEnabled } }))}
+              onOpenLocations={() => { setActiveModal('locations'); setIsMenuOpen(false); }}
+              onOpenEncyclopedia={() => { setActiveModal('encyclopedia'); setIsMenuOpen(false); }}
+              onOpenAchievements={() => { setActiveModal('achievements'); setIsMenuOpen(false); }}
+              onOpenPrestige={() => { setActiveModal('prestige'); setIsMenuOpen(false); }}
+              onOpenWardrobe={() => { setActiveModal('wardrobe'); setIsMenuOpen(false); }}
+              onOpenSettings={() => { setActiveModal('settings'); setIsMenuOpen(false); }}
+              onOpenMerchant={() => { setActiveModal('merchant'); setIsMenuOpen(false); }}
+              onOpenVisitors={() => { setActiveModal('visitors'); setIsMenuOpen(false); }}
+              onOpenStoryJournal={() => { setActiveModal('storyJournal'); setIsMenuOpen(false); }}
+              onOpenShipyard={() => { setActiveModal('shipyard'); setIsMenuOpen(false); }}
+            />
+          </div>
+        </>
+      )}
+
       {/* 2. Main Game Viewport */}
       <div className="game-main immersive-game-main flex-1 overflow-hidden">
         
