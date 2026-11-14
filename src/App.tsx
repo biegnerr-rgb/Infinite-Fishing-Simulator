@@ -1536,10 +1536,33 @@ export default function App() {
                 <span>{isAquariumMode ? 'Aquarium View (On)' : 'Wild Pond View'}</span>
               </button>
             </div>
+            
+            {/* Always-visible fish bag and coin balance */}
+            <div className="pond-corner-wallet">
+              <div className="pond-corner-wallet-balance" aria-live="polite">
+                <Coins size={16} />
+                <span className="pond-corner-wallet-label">YOUR COINS</span>
+                <strong>{gameState.coins.toLocaleString()}</strong>
+              </div>
+              <button
+                type="button"
+                className="pond-corner-bag-button"
+                onClick={() => {
+                  setReturnToMenu(false);
+                  setActiveModal('inventory');
+                }}
+                aria-label={`Open fish bag, ${gameState.inventory.length} fish`}
+                title="Open fish bag and sell catches"
+              >
+                <ShoppingBag size={18} />
+                <span>Fish Bag</span>
+                <span className="pond-corner-bag-count">{gameState.inventory.length}</span>
+              </button>
+            </div>
           </div>
 
           {/* Toast Feed in bottom left corner of pond (compact, unobtrusive) */}
-          <div className="absolute bottom-3 left-3 pointer-events-none flex flex-col-reverse gap-1 max-w-[210px] z-10">
+          <div className="pond-catch-toast-feed absolute bottom-3 left-3 pointer-events-none flex flex-col-reverse gap-1 max-w-[210px] z-10">
             {recentCatches.map(rc => (
               <div
                 key={rc.id}
