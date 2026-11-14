@@ -228,13 +228,19 @@ export default function App() {
 
     const spawnVisitor = () => {
       const picked = visitorTypes[Math.floor(Math.random() * visitorTypes.length)];
+      const aquaticVisitors: VisitorType[] = ['frog', 'turtle', 'duck', 'otter'];
+      const isAquaticVisitor = aquaticVisitors.includes(picked);
+      // Aquatic visitors get a point inside the pond; land visitors get a shoreline angle.
+      const spawnAngle = (0.18 + Math.random() * 0.64) * Math.PI;
+      const spawnX = isAquaticVisitor ? 0.2 + Math.random() * 0.6 : spawnAngle / (Math.PI * 2);
+      const spawnY = isAquaticVisitor ? 0.2 + Math.random() * 0.6 : 0.5;
       const newVisitorScene: ActiveVisitorScene = {
         id: `vis_${Date.now()}`,
         type: picked,
-        x: 0.3,
-        y: 0.4,
-        targetX: 0.3,
-        targetY: 0.4,
+        x: spawnX,
+        y: spawnY,
+        targetX: spawnX,
+        targetY: spawnY,
         state: 'idle',
         arrivedAt: Date.now(),
         duration: 90,
