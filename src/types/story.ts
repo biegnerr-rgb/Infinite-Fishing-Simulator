@@ -102,4 +102,5 @@ export interface StoryState {
   bubblesAffection: number; // 0 - 100
   lastBottleSpawnTime?: number;
   storyCompleted: boolean;
+  seenStoryEventIds?: string[];
 }
