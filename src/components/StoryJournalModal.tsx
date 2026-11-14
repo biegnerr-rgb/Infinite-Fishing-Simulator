@@ -4,7 +4,8 @@ import {
   JOURNAL_PAGES, 
   STORY_CHARACTERS, 
   STORY_QUESTS, 
-  STORY_ARTIFACTS 
+  STORY_ARTIFACTS,
+  RANDOM_STORY_EVENTS,
 } from '../data/storyData';
 import { StoryState, JournalPageDef, StoryCharacterDef } from '../types/story';
 import { LOCATIONS } from '../data/locationsData';
@@ -674,7 +675,7 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
                 <h3 className="flex items-center gap-2 text-sm font-black text-rose-100"><Heart className="w-4 h-4" /> Moments worth remembering</h3>
                 <p className="mt-1 text-xs text-slate-300">A scrapbook of the pages you have read and the chapters you have completed. More memories will appear as you explore.</p>
               </div>
-              {storyState.completedChapters.length === 0 && storyState.readPageIds.length === 0 && storyState.collectedArtifactIds.length === 0 ? (
+              {storyState.completedChapters.length === 0 && storyState.readPageIds.length === 0 && storyState.collectedArtifactIds.length === 0 && (storyState.seenStoryEventIds || []).length === 0 ? (
                 <div className="rounded-2xl border border-slate-700 bg-slate-950/30 p-8 text-center">
                   <div className="text-3xl">📷</div>
                   <h4 className="mt-2 text-sm font-bold text-slate-100">Your scrapbook is just getting started</h4>
@@ -698,6 +699,17 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
                     <div key={artifact.id} className="flex items-start gap-3 rounded-xl border border-sky-500/20 bg-sky-950/15 p-3">
                       <span className="text-xl">{artifact.icon}</span>
                       <div><div className="text-xs font-bold text-sky-200">{artifact.name}</div><p className="mt-1 text-xs text-slate-300">{artifact.lore}</p></div>
+                    </div>
+                  ))}
+
+                  {RANDOM_STORY_EVENTS.filter(event => (storyState.seenStoryEventIds || []).includes(event.id)).map(event => (
+                    <div key={event.id} className="flex items-start gap-3 rounded-xl border border-rose-500/20 bg-rose-950/15 p-3">
+                      <span className="text-xl">{event.avatar}</span>
+                      <div>
+                        <div className="text-xs font-bold text-rose-200">{event.title}</div>
+                        <p className="mt-1 text-xs text-slate-300">{event.text}</p>
+                        <span className="mt-1 block text-[10px] text-slate-500">A little moment from the pond</span>
+                      </div>
                     </div>
                   ))}
                 </div>
