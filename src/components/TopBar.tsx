@@ -1,19 +1,9 @@
 import React from 'react';
 import { LocationDef, ActiveEvent } from '../types/game';
 import {
-  Anchor,
-  Award,
-  BookOpen,
-  Coins,
-  Compass,
-  Fish,
-  MapPin,
-  PawPrint,
-  Settings as SettingsIcon,
-  Shirt,
-  Sparkles,
-  Volume2,
-  VolumeX,
+  Anchor, Award, BookOpen, Coins, Fish, MapPin, PawPrint,
+  Settings as SettingsIcon, Shirt, Sparkles, Volume2, VolumeX,
+  Package, Wrench, Compass, Trophy, Ship,
 } from 'lucide-react';
 
 interface TopBarProps {
@@ -24,6 +14,8 @@ interface TopBarProps {
   soundEnabled: boolean;
   onToggleSound: () => void;
   onOpenLocations: () => void;
+  onOpenInventory: () => void;
+  onOpenUpgrades: () => void;
   onOpenEncyclopedia: () => void;
   onOpenAchievements: () => void;
   onOpenPrestige: () => void;
@@ -36,93 +28,75 @@ interface TopBarProps {
 }
 
 export const TopBar: React.FC<TopBarProps> = ({
-  coins,
-  starPearls,
-  currentLocation,
-  activeEvents,
-  soundEnabled,
-  onToggleSound,
-  onOpenLocations,
-  onOpenEncyclopedia,
-  onOpenAchievements,
-  onOpenPrestige,
-  onOpenWardrobe,
-  onOpenSettings,
-  onOpenMerchant,
-  onOpenVisitors,
-  onOpenStoryJournal,
-  onOpenShipyard,
+  coins, starPearls, currentLocation, activeEvents, soundEnabled,
+  onToggleSound, onOpenLocations, onOpenInventory, onOpenUpgrades,
+  onOpenEncyclopedia, onOpenAchievements, onOpenPrestige, onOpenWardrobe,
+  onOpenSettings, onOpenMerchant, onOpenVisitors, onOpenStoryJournal, onOpenShipyard,
 }) => {
-  const merchantEvent = activeEvents.find(event => event.event.bonusType === 'traveling_merchant');
   const event = activeEvents[0];
+  const MenuItem = ({ icon: Icon, label, detail, onClick, featured = false }: {
+    icon: React.ElementType; label: string; detail: string; onClick: () => void; featured?: boolean;
+  }) => (
+    <button type="button" className={`pond-menu-item${featured ? ' is-featured' : ''}`} onClick={onClick}>
+      <span className="pond-menu-item-icon"><Icon size={18} /></span>
+      <span className="pond-menu-item-copy"><strong>{label}</strong><small>{detail}</small></span>
+      <span className="pond-menu-item-arrow">›</span>
+    </button>
+  );
 
   return (
-    <header className="game-header select-none">
-      <div className="game-brand">
-        <div className="brand-mark" aria-hidden="true">
-          <span>✦</span>
-          <Fish size={22} strokeWidth={2.5} />
+    <section className="pond-menu">
+      <div className="pond-menu-heading">
+        <div className="pond-menu-brand">
+          <span className="pond-menu-brand-icon"><Fish size={22} /></span>
+          <div><h1>Infinite Fishing Pond</h1><p>Your little lakeside workshop</p></div>
         </div>
-        <div className="brand-copy">
-          <h1>Infinite Fishing Pond</h1>
-          <span>Little moments, big catches</span>
+        <div className="pond-menu-resources">
+          <span><Coins size={15} /> {coins.toLocaleString()}</span>
+          <button type="button" onClick={onOpenPrestige} title="Star pearls and prestige"><Sparkles size={15} /> {starPearls.toLocaleString()}</button>
         </div>
       </div>
 
-      <button className="location-chip" onClick={onOpenLocations} title="Explore the world map">
-        <span className="location-icon"><MapPin size={15} /></span>
-        <span className="location-copy"><strong>{currentLocation.name}</strong><small>YOUR POND</small></span>
-        <Compass size={15} className="location-compass" />
-      </button>
-
-      <div className="header-right">
-        {event ? (
-          <button
-            className={`event-chip ${merchantEvent ? 'merchant-event' : ''}`}
-            onClick={() => merchantEvent && onOpenMerchant?.()}
-            disabled={!merchantEvent}
-            title={merchantEvent ? 'Visit the traveling merchant' : event.event.name}
-          >
-            <span className="event-sparkle">✦</span>
-            <span>{event.event.name}</span>
-            <small>{Math.ceil(event.timeRemaining)}s</small>
-          </button>
-        ) : (
-          <span className="quiet-chip"><span className="quiet-dot" /> A quiet afternoon</span>
-        )}
-
-        <div className="resource-pills" aria-label="Resources">
-          <div className="resource-pill coins-pill" title="Fishing coins">
-            <Coins size={16} />
-            <span>{coins.toLocaleString()}</span>
-          </div>
-          <button className="resource-pill pearl-pill" onClick={onOpenPrestige} title="Star pearls and ascension">
-            <Sparkles size={15} />
-            <span>{starPearls.toLocaleString()}</span>
-          </button>
+      <div className="pond-menu-status">
+        <button type="button" className="pond-menu-location" onClick={onOpenLocations}>
+          <MapPin size={15} /><span><small>CURRENT POND</small><strong>{currentLocation.name}</strong></span><Compass size={14} />
+        </button>
+        <div className="pond-menu-event">
+          {event ? <><span className="pond-menu-status-dot" /><span>{event.event.name}</span><small>{Math.ceil(event.timeRemaining)}s</small></> : <><span className="pond-menu-status-dot is-quiet" /> A quiet afternoon</>}
         </div>
-
-        <nav className="game-nav" aria-label="Game menu">
-          <div className="nav-group" aria-label="Collection">
-            <button className="nav-icon-button" onClick={onOpenEncyclopedia} title="Fish collection" aria-label="Fish collection"><Fish /></button>
-            <button className="nav-icon-button" onClick={onOpenAchievements} title="Achievements" aria-label="Achievements"><Award /></button>
-            {onOpenStoryJournal && <button className="nav-icon-button journal-button" onClick={onOpenStoryJournal} title="Story journal" aria-label="Story journal"><BookOpen /></button>}
-            {onOpenVisitors && <button className="nav-icon-button visitor-button" onClick={onOpenVisitors} title="Pond visitors" aria-label="Pond visitors"><PawPrint /></button>}
-          </div>
-          <span className="nav-divider" aria-hidden="true" />
-          <div className="nav-group" aria-label="World and style">
-            {onOpenShipyard && <button className="nav-icon-button" onClick={onOpenShipyard} title="Shipyard" aria-label="Shipyard"><Anchor /></button>}
-            <button className="nav-icon-button" onClick={onOpenWardrobe} title="Outfits" aria-label="Outfits"><Shirt /></button>
-          </div>
-          <span className="nav-divider" aria-hidden="true" />
-          <div className="nav-group" aria-label="Game settings">
-            <button className="nav-icon-button sound-button" onClick={onToggleSound} title={soundEnabled ? 'Mute sounds' : 'Enable sounds'} aria-label={soundEnabled ? 'Mute sounds' : 'Enable sounds'}>
-              {soundEnabled ? <Volume2 /> : <VolumeX />}
-            </button>
-            <button className="nav-icon-button settings-button" onClick={onOpenSettings} title="Settings" aria-label="Settings"><SettingsIcon /></button>
-          </div>
-        </nav>
       </div>
-    </header>
+
+      <div className="pond-menu-groups">
+        <section className="pond-menu-group">
+          <h2><Wrench size={14} /> TACKLE & EQUIPMENT</h2>
+          <div className="pond-menu-grid">
+            <MenuItem icon={Fish} label="Upgrade Bench" detail="Rod, bait, lines & more" onClick={onOpenUpgrades} featured />
+            <MenuItem icon={Package} label="Fish Inventory" detail="Manage and sell your catches" onClick={onOpenInventory} />
+            {onOpenShipyard && <MenuItem icon={Ship} label="Shipyard" detail="Improve your boat" onClick={onOpenShipyard} />}
+            {onOpenMerchant && <MenuItem icon={Coins} label="Traveling Merchant" detail="Browse special offers" onClick={onOpenMerchant} />}
+          </div>
+        </section>
+
+        <section className="pond-menu-group">
+          <h2><Compass size={14} /> EXPLORE & COLLECT</h2>
+          <div className="pond-menu-grid">
+            <MenuItem icon={MapPin} label="Locations" detail="Discover new fishing spots" onClick={onOpenLocations} />
+            <MenuItem icon={Fish} label="Fish Collection" detail="Browse discovered species" onClick={onOpenEncyclopedia} />
+            <MenuItem icon={Trophy} label="Achievements" detail="See your milestones" onClick={onOpenAchievements} />
+            {onOpenStoryJournal && <MenuItem icon={BookOpen} label="Story Journal" detail="Follow the pond's story" onClick={onOpenStoryJournal} />}
+            {onOpenVisitors && <MenuItem icon={PawPrint} label="Pond Friends" detail="Visit your animal companions" onClick={onOpenVisitors} />}
+          </div>
+        </section>
+
+        <section className="pond-menu-group">
+          <h2><Sparkles size={14} /> PERSONALIZE & SETTINGS</h2>
+          <div className="pond-menu-grid">
+            <MenuItem icon={Shirt} label="Outfits" detail="Customize your fisherman" onClick={onOpenWardrobe} />
+            <MenuItem icon={SettingsIcon} label="Settings" detail="Game and save options" onClick={onOpenSettings} />
+            <MenuItem icon={soundEnabled ? Volume2 : VolumeX} label={soundEnabled ? 'Sound On' : 'Sound Off'} detail="Toggle game audio" onClick={onToggleSound} />
+          </div>
+        </section>
+      </div>
+    </section>
   );
 };
