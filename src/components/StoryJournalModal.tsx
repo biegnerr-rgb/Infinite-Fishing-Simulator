@@ -51,6 +51,8 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
   boatTier,
   totalFishCaught,
   unlockedLocations,
+  befriendedVisitors,
+  onClaimVisitorBondQuest,
   onClose,
   onTalkToCharacter,
   onClaimQuestReward,
@@ -636,6 +638,7 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
                     </div>
                   );
                 })}
+              </div>
               <div className="mt-6 space-y-3">
                 <div className="flex items-center justify-between gap-3 border-t border-slate-800 pt-5">
                   <div>
@@ -643,7 +646,7 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
                     <p className="mt-1 text-xs text-slate-400">Eight one-of-a-kind treasures are scattered across the waters. Each hint points toward a place, a cast zone or a time of day.</p>
                   </div>
                   <span className="rounded-full border border-amber-300/20 bg-amber-950/30 px-3 py-1 text-[10px] font-bold text-amber-200">
-                    ${(storyState.foundHiddenDiscoveryIds || []).length}/${HIDDEN_DISCOVERIES.length} found
+                    {(storyState.foundHiddenDiscoveryIds || []).length}/{HIDDEN_DISCOVERIES.length} found
                   </span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -667,7 +670,6 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
                     );
                   })}
                 </div>
-              </div>
               </div>
             </div>
           )}

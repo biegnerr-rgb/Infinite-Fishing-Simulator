@@ -61,6 +61,7 @@ export const INITIAL_SAVE_STATE: GameSaveState = {
   selectedCastZone: 'deep_water',
   lastVisitorArrival: Date.now() - 30000,
   boatTier: 1,
+  maxBoatTier: 1,
   storyState: INITIAL_STORY_STATE,
 };
 
@@ -90,6 +91,7 @@ export function loadGame(): { state: GameSaveState; offlineResult?: OfflineCatch
       customization: { ...DEFAULT_CUSTOMIZATION, ...(parsed.customization || {}) },
       discoveries: parsed.discoveries || {},
       boatTier: parsed.boatTier || 1,
+      maxBoatTier: Math.max(parsed.maxBoatTier || 1, parsed.boatTier || 1),
       storyState: {
         ...INITIAL_STORY_STATE,
         ...(parsed.storyState || {}),
@@ -161,6 +163,8 @@ export function importSaveCode(code: string): GameSaveState | null {
       return {
         ...INITIAL_SAVE_STATE,
         ...parsed,
+        boatTier: parsed.boatTier || 1,
+        maxBoatTier: Math.max(parsed.maxBoatTier || 1, parsed.boatTier || 1),
         lastSavedAt: Date.now(),
       };
     }

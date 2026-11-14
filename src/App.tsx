@@ -557,12 +557,20 @@ export default function App() {
 
     setGameState(prev => {
       const currentTier = prev.boatTier || 1;
-      if (targetTier <= currentTier) {
+      const maxUnlockedTier = Math.max(prev.maxBoatTier || 1, currentTier);
+
+      if (targetTier <= maxUnlockedTier) {
+        if (targetTier === currentTier) return prev;
         pushCatchFeed(`Switched active flagship to ${boatDef.name}!`, '#38bdf8');
-        return { ...prev, boatTier: targetTier };
+        setBubblesMessage(`⛵ Taking out the ${boatDef.name}!`);
+        return {
+          ...prev,
+          boatTier: targetTier,
+          maxBoatTier: maxUnlockedTier,
+        };
       }
 
-      if (prev.coins < boatDef.cost) {
+      if (targetTier !== maxUnlockedTier + 1 || prev.coins < boatDef.cost) {
         return prev;
       }
 
@@ -589,6 +597,7 @@ export default function App() {
         ...prev,
         coins: updatedCoins,
         boatTier: targetTier,
+        maxBoatTier: targetTier,
         storyState: updatedStory,
       };
     });
@@ -677,10 +686,11 @@ export default function App() {
     const giantSightingActive = activeEvents.some(e => e.event.bonusType === 'giant_sighting');
     const krakenActive = activeEvents.some(e => e.event.bonusType === 'kraken_whisper');
 
-    // 2. Base Rarity Weights with upgrades
+    // 2. Base Rarity Weights with upgrades & active boat luck
     const luckyBaitLevel = gameState.upgrades.lucky_bait || 0;
     const eternalLuckLevel = gameState.prestigeUpgrades.eternal_luck || 0;
-    const luckMultiplier = 1.0 + (luckyBaitLevel * 0.12) + (eternalLuckLevel * 0.15) + (rareSchoolActive ? 0.35 : 0) + (luckyTideActive ? 0.4 : 0);
+    const curBoat = BOAT_TIERS.find(b => b.tier === (gameState.boatTier || 1)) || BOAT_TIERS[0];
+    const luckMultiplier = 1.0 + (luckyBaitLevel * 0.12) + (eternalLuckLevel * 0.15) + (curBoat.luckBonus / 100) + (rareSchoolActive ? 0.35 : 0) + (luckyTideActive ? 0.4 : 0);
 
     // Roll rarity tier
     const rarityRoll = Math.random();
@@ -1056,7 +1066,9 @@ export default function App() {
     if (autoLevel <= 0) return;
 
     const intervals = [12, 9, 7, 5.5, 4.2, 3.2, 2.5, 2.0, 1.7, 1.3];
-    let intervalSeconds = intervals[Math.min(autoLevel - 1, intervals.length - 1)];
+    const curBoat = BOAT_TIERS.find(b => b.tier === (gameState.boatTier || 1)) || BOAT_TIERS[0];
+    const boatAutoFactor = 1 + (curBoat.autoSpeedBonus || 0) / 100;
+    let intervalSeconds = intervals[Math.min(autoLevel - 1, intervals.length - 1)] / boatAutoFactor;
 
     // Plankton bloom event speeds up auto-fisher
     const planktonActive = activeEvents.some(e => e.event.bonusType === 'plankton_bloom');
@@ -1096,7 +1108,7 @@ export default function App() {
     }, intervalStep);
 
     return () => clearInterval(intervalTimer);
-  }, [gameState.upgrades.auto_fisher, gameState.upgrades.multiple_lines, gameState.upgrades.auto_seller, gameState.settings, activeEvents, generateCatch, commitCatch]);
+  }, [gameState.upgrades.auto_fisher, gameState.upgrades.multiple_lines, gameState.upgrades.auto_seller, gameState.boatTier, gameState.settings, activeEvents, generateCatch, commitCatch]);
 
   // --- RANDOM EVENT GENERATOR ---
   useEffect(() => {
@@ -1875,7 +1887,7 @@ export default function App() {
       {activeModal === 'inventory' && (
         <InventoryModal
           inventory={gameState.inventory}
-          capacity={gameState.inventoryCapacity}
+          capacity={gameState.inventoryCapacity + (BOAT_TIERS.find(b => b.tier === (gameState.boatTier || 1))?.capacityBonus || 0)}
           aquariumFishIds={gameState.aquariumFishIds}
           onSellFish={handleSellSingleFish}
           onMassSell={handleMassSell}
@@ -2023,6 +2035,7 @@ export default function App() {
       {activeModal === 'shipyard' && (
         <ShipyardModal
           currentBoatTier={gameState.boatTier || 1}
+          maxBoatTier={Math.max(gameState.maxBoatTier || 1, gameState.boatTier || 1)}
           coins={gameState.coins}
           onUpgradeBoat={handleUpgradeBoat}
           onClose={closeActiveModal}

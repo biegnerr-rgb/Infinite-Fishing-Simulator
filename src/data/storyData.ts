@@ -103,90 +103,6 @@ export const BOAT_TIERS: BoatTierDef[] = [
     autoSpeedBonus: 100,
     features: ['Multi-tier gold & marble decks', 'Panoramic luxury sky bridge', 'Golden champagne bar & helipad', '+100 Inventory Slots'],
   },
-  {
-    id: 'pond_firefly_waltz',
-    chapterRequired: 1,
-    title: 'The Firefly Waltz',
-    subtitle: 'A summer evening in the reeds',
-    avatar: '✨',
-    color: '#a3e635',
-    text: 'As the summer evening settles in, fireflies begin blinking above the reeds. Barnaby watches them drift in little circles. “They always seem to know where the music is,” he whispers. For a moment, the whole pond feels like a tiny festival.',
-    seasonRequired: 'summer',
-    timeRequired: 'night',
-    environmental: true,
-    bubblesMessage: '✨ Fireflies are dancing above the reeds...',
-    responseOptions: [{ label: 'Watch the little lights', replyText: 'You stay until the fireflies drift into the trees. Barnaby says the pond has just given you a very small, very bright gift.', rewardCoins: 300, rewardPearls: 1 }],
-  },
-  {
-    id: 'pond_meteor_wish',
-    chapterRequired: 2,
-    title: 'A Wish Across the Water',
-    subtitle: 'A clear night beneath the stars',
-    avatar: '🌠',
-    color: '#c4b5fd',
-    text: 'A bright meteor crosses the sky and its reflection glides across the water. Shelby says Arthur used to make a wish whenever he saw one. “He never told me what he wished for. I think it was probably something kind.”',
-    weatherRequired: 'clear',
-    timeRequired: 'night',
-    environmental: true,
-    bubblesMessage: '🌠 Something bright just crossed the sky...',
-    responseOptions: [{ label: 'Make a quiet wish', replyText: 'You make a wish for the pond and everyone who calls it home. A tiny star-shaped glimmer appears on the water before fading.', rewardCoins: 450, rewardPearls: 1 }],
-  },
-  {
-    id: 'pond_spring_bloom',
-    chapterRequired: 1,
-    title: 'The First Pond Bloom',
-    subtitle: 'A sign that spring has arrived',
-    avatar: '🌸',
-    color: '#f9a8d4',
-    text: 'A fresh pink blossom has opened beside the old dock. Quackers declares it the official beginning of spring, although nobody remembers appointing him seasonal coordinator. Bubbles says the pond looks especially happy today.',
-    seasonRequired: 'spring',
-    timeRequired: 'dawn',
-    environmental: true,
-    bubblesMessage: '🌸 A new blossom has opened beside the dock...',
-    responseOptions: [{ label: 'Celebrate the new bloom', replyText: 'You leave the blossom undisturbed and take a little sketch for your journal. Quackers announces a one-duck celebration.', rewardCoins: 250 }],
-  },
-  {
-    id: 'pond_autumn_leaf_boat',
-    chapterRequired: 1,
-    title: 'The Little Leaf Boat',
-    subtitle: 'A quiet autumn afternoon',
-    avatar: '🍂',
-    color: '#fb923c',
-    text: 'A golden leaf floats past the dock like a tiny boat. Ollie gently nudges it into a calm current and follows it along the bank. “Every explorer needs a boat,” he says, “even the very small ones.”',
-    seasonRequired: 'autumn',
-    timeRequired: 'day',
-    environmental: true,
-    bubblesMessage: '🍂 A golden leaf is sailing across the pond...',
-    responseOptions: [{ label: 'Follow its little journey', replyText: 'The leaf circles a lily pad, then drifts beneath the willow. Ollie calls it a successful voyage and gives the leaf an imaginary captain’s hat.', rewardCoins: 275 }],
-  },
-  {
-    id: 'pond_first_snow',
-    chapterRequired: 2,
-    title: 'The First Snowfall',
-    subtitle: 'A softer kind of silence',
-    avatar: '❄️',
-    color: '#bae6fd',
-    text: 'The first snowflakes settle on the dock and the pond grows wonderfully quiet. Shelby remembers how Arthur used to leave warm lantern light in the window on snowy evenings. “He wanted everyone to know there was a place to rest,” she says.',
-    seasonRequired: 'winter',
-    weatherRequired: 'clear',
-    environmental: true,
-    bubblesMessage: '❄️ The first snowflakes are drifting down...',
-    responseOptions: [{ label: 'Enjoy the peaceful snowfall', replyText: 'You watch the snow gather along the shore. Bubbles says that even the quietest days can make the warmest memories.', rewardCoins: 500, rewardPearls: 1 }],
-  },
-  {
-    id: 'pond_rain_song',
-    chapterRequired: 1,
-    title: 'The Rain’s Little Song',
-    subtitle: 'A gentle shower over the pond',
-    avatar: '🌧️',
-    color: '#7dd3fc',
-    text: 'Soft rain begins tapping against the water. Pinchy has arranged three pebbles beneath a leaf to catch the drops. “A very orderly concert,” he says. The ripples overlap until the whole pond seems to be humming.',
-    weatherRequired: 'rain',
-    timeRequired: 'day',
-    environmental: true,
-    bubblesMessage: '🌧️ The pond is singing in the rain...',
-    responseOptions: [{ label: 'Listen to the rain', replyText: 'You listen as the ripples make their gentle music. Pinchy gives the performance a perfect score for organization.', rewardCoins: 225 }],
-  },
 ];
 
 export interface HiddenDiscoveryDef {
@@ -461,6 +377,90 @@ export const RANDOM_STORY_EVENTS: RandomStoryEventDef[] = [
     bubblesMessage: '🏮 A warm light has appeared by the shack...',
     responseOptions: [{ label: 'Read the note', replyText: 'You place the note beside Arthur’s other pages. For a moment, the pond feels as welcoming as it did in his stories.', rewardCoins: 250 }],
   },
+  {
+    id: 'pond_firefly_waltz',
+    chapterRequired: 1,
+    title: 'The Firefly Waltz',
+    subtitle: 'A summer evening in the reeds',
+    avatar: '✨',
+    color: '#a3e635',
+    text: 'As the summer evening settles in, fireflies begin blinking above the reeds. Barnaby watches them drift in little circles. “They always seem to know where the music is,” he whispers. For a moment, the whole pond feels like a tiny festival.',
+    seasonRequired: 'summer',
+    timeRequired: 'night',
+    environmental: true,
+    bubblesMessage: '✨ Fireflies are dancing above the reeds...',
+    responseOptions: [{ label: 'Watch the little lights', replyText: 'You stay until the fireflies drift into the trees. Barnaby says the pond has just given you a very small, very bright gift.', rewardCoins: 300, rewardPearls: 1 }],
+  },
+  {
+    id: 'pond_meteor_wish',
+    chapterRequired: 2,
+    title: 'A Wish Across the Water',
+    subtitle: 'A clear night beneath the stars',
+    avatar: '🌠',
+    color: '#c4b5fd',
+    text: 'A bright meteor crosses the sky and its reflection glides across the water. Shelby says Arthur used to make a wish whenever he saw one. “He never told me what he wished for. I think it was probably something kind.”',
+    weatherRequired: 'clear',
+    timeRequired: 'night',
+    environmental: true,
+    bubblesMessage: '🌠 Something bright just crossed the sky...',
+    responseOptions: [{ label: 'Make a quiet wish', replyText: 'You make a wish for the pond and everyone who calls it home. A tiny star-shaped glimmer appears on the water before fading.', rewardCoins: 450, rewardPearls: 1 }],
+  },
+  {
+    id: 'pond_spring_bloom',
+    chapterRequired: 1,
+    title: 'The First Pond Bloom',
+    subtitle: 'A sign that spring has arrived',
+    avatar: '🌸',
+    color: '#f9a8d4',
+    text: 'A fresh pink blossom has opened beside the old dock. Quackers declares it the official beginning of spring, although nobody remembers appointing him seasonal coordinator. Bubbles says the pond looks especially happy today.',
+    seasonRequired: 'spring',
+    timeRequired: 'dawn',
+    environmental: true,
+    bubblesMessage: '🌸 A new blossom has opened beside the dock...',
+    responseOptions: [{ label: 'Celebrate the new bloom', replyText: 'You leave the blossom undisturbed and take a little sketch for your journal. Quackers announces a one-duck celebration.', rewardCoins: 250 }],
+  },
+  {
+    id: 'pond_autumn_leaf_boat',
+    chapterRequired: 1,
+    title: 'The Little Leaf Boat',
+    subtitle: 'A quiet autumn afternoon',
+    avatar: '🍂',
+    color: '#fb923c',
+    text: 'A golden leaf floats past the dock like a tiny boat. Ollie gently nudges it into a calm current and follows it along the bank. “Every explorer needs a boat,” he says, “even the very small ones.”',
+    seasonRequired: 'autumn',
+    timeRequired: 'day',
+    environmental: true,
+    bubblesMessage: '🍂 A golden leaf is sailing across the pond...',
+    responseOptions: [{ label: 'Follow its little journey', replyText: 'The leaf circles a lily pad, then drifts beneath the willow. Ollie calls it a successful voyage and gives the leaf an imaginary captain’s hat.', rewardCoins: 275 }],
+  },
+  {
+    id: 'pond_first_snow',
+    chapterRequired: 2,
+    title: 'The First Snowfall',
+    subtitle: 'A softer kind of silence',
+    avatar: '❄️',
+    color: '#bae6fd',
+    text: 'The first snowflakes settle on the dock and the pond grows wonderfully quiet. Shelby remembers how Arthur used to leave warm lantern light in the window on snowy evenings. “He wanted everyone to know there was a place to rest,” she says.',
+    seasonRequired: 'winter',
+    weatherRequired: 'clear',
+    environmental: true,
+    bubblesMessage: '❄️ The first snowflakes are drifting down...',
+    responseOptions: [{ label: 'Enjoy the peaceful snowfall', replyText: 'You watch the snow gather along the shore. Bubbles says that even the quietest days can make the warmest memories.', rewardCoins: 500, rewardPearls: 1 }],
+  },
+  {
+    id: 'pond_rain_song',
+    chapterRequired: 1,
+    title: 'The Rain’s Little Song',
+    subtitle: 'A gentle shower over the pond',
+    avatar: '🌧️',
+    color: '#7dd3fc',
+    text: 'Soft rain begins tapping against the water. Pinchy has arranged three pebbles beneath a leaf to catch the drops. “A very orderly concert,” he says. The ripples overlap until the whole pond seems to be humming.',
+    weatherRequired: 'rain',
+    timeRequired: 'day',
+    environmental: true,
+    bubblesMessage: '🌧️ The pond is singing in the rain...',
+    responseOptions: [{ label: 'Listen to the rain', replyText: 'You listen as the ripples make their gentle music. Pinchy gives the performance a perfect score for organization.', rewardCoins: 225 }],
+  },
 ];
 
 export const STORY_CHARACTERS: StoryCharacterDef[] = [
@@ -670,27 +670,6 @@ export const STORY_CHARACTERS: StoryCharacterDef[] = [
       },
     ],
   },
-];
-
-export interface VisitorBondQuestDef {
-  id: string;
-  visitorType: 'frog' | 'turtle' | 'duck' | 'otter' | 'crab' | 'raccoon';
-  title: string;
-  description: string;
-  targetFeeds: number;
-  targetFriendship: number;
-  rewardCoins: number;
-  rewardPearls: number;
-  thankYou: string;
-}
-
-export const VISITOR_BOND_QUESTS: VisitorBondQuestDef[] = [
-  { id: 'bond_frog', visitorType: 'frog', title: 'A Lily-Pad Hello', description: 'Spend a little time with Barnaby and share two snacks.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 450, rewardPearls: 1, thankYou: 'Barnaby has decided your fishing spot is a very good place to sit.' },
-  { id: 'bond_turtle', visitorType: 'turtle', title: 'Slow and Steady', description: 'Visit Shelby and share two peaceful snack breaks.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 500, rewardPearls: 1, thankYou: 'Shelby trusts you enough to share one of her oldest pond memories.' },
-  { id: 'bond_duck', visitorType: 'duck', title: 'A Quacking Good Friend', description: 'Bring Quackers two snacks and listen to his latest story.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 450, rewardPearls: 1, thankYou: 'Quackers has officially added you to his very exclusive crumb club.' },
-  { id: 'bond_otter', visitorType: 'otter', title: 'River-Ripple Pals', description: 'Spend time with Ollie and share two favorite treats.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 600, rewardPearls: 1, thankYou: 'Ollie celebrates your friendship with a spectacular splash.' },
-  { id: 'bond_crab', visitorType: 'crab', title: 'Official Dock Helpers', description: 'Earn Pinchy’s trust by bringing two snacks to the shoreline.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 500, rewardPearls: 1, thankYou: 'Pinchy grants you honorary deputy dock-keeper status.' },
-  { id: 'bond_raccoon', visitorType: 'raccoon', title: 'A Shiny Arrangement', description: 'Share two snacks with Bandit and hear about his latest find.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 650, rewardPearls: 1, thankYou: 'Bandit gives you a shiny button. He insists it is a rare antique.' },
   {
     id: 'frog_friend',
     name: 'Barnaby',
@@ -775,6 +754,27 @@ export const VISITOR_BOND_QUESTS: VisitorBondQuestDef[] = [
       { id: 'bandit_button', chapterRequired: 2, speaker: 'raccoon_friend', text: 'I found a brass button by the old dock. It might have belonged to a captain. Or a coat. Either way, it has a very distinguished shine.', responseOptions: [{ label: 'It is a fine button.', replyText: 'You have a good eye. I shall let you borrow it for a moment. Please return it before I miss it.', rewardPearls: 1 }] },
     ],
   },
+];
+
+export interface VisitorBondQuestDef {
+  id: string;
+  visitorType: 'frog' | 'turtle' | 'duck' | 'otter' | 'crab' | 'raccoon';
+  title: string;
+  description: string;
+  targetFeeds: number;
+  targetFriendship: number;
+  rewardCoins: number;
+  rewardPearls: number;
+  thankYou: string;
+}
+
+export const VISITOR_BOND_QUESTS: VisitorBondQuestDef[] = [
+  { id: 'bond_frog', visitorType: 'frog', title: 'A Lily-Pad Hello', description: 'Spend a little time with Barnaby and share two snacks.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 450, rewardPearls: 1, thankYou: 'Barnaby has decided your fishing spot is a very good place to sit.' },
+  { id: 'bond_turtle', visitorType: 'turtle', title: 'Slow and Steady', description: 'Visit Shelby and share two peaceful snack breaks.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 500, rewardPearls: 1, thankYou: 'Shelby trusts you enough to share one of her oldest pond memories.' },
+  { id: 'bond_duck', visitorType: 'duck', title: 'A Quacking Good Friend', description: 'Bring Quackers two snacks and listen to his latest story.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 450, rewardPearls: 1, thankYou: 'Quackers has officially added you to his very exclusive crumb club.' },
+  { id: 'bond_otter', visitorType: 'otter', title: 'River-Ripple Pals', description: 'Spend time with Ollie and share two favorite treats.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 600, rewardPearls: 1, thankYou: 'Ollie celebrates your friendship with a spectacular splash.' },
+  { id: 'bond_crab', visitorType: 'crab', title: 'Official Dock Helpers', description: 'Earn Pinchy’s trust by bringing two snacks to the shoreline.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 500, rewardPearls: 1, thankYou: 'Pinchy grants you honorary deputy dock-keeper status.' },
+  { id: 'bond_raccoon', visitorType: 'raccoon', title: 'A Shiny Arrangement', description: 'Share two snacks with Bandit and hear about his latest find.', targetFeeds: 2, targetFriendship: 24, rewardCoins: 650, rewardPearls: 1, thankYou: 'Bandit gives you a shiny button. He insists it is a rare antique.' },
 ];
 
 export const JOURNAL_PAGES: JournalPageDef[] = [

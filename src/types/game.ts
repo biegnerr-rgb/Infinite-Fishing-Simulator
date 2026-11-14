@@ -206,5 +206,6 @@ export interface GameSaveState {
   selectedCastZone?: PondZone;
   lastVisitorArrival?: number;
   boatTier?: number;
+  maxBoatTier?: number;
   storyState?: import('./story').StoryState;
 }

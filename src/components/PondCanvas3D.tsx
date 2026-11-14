@@ -54,6 +54,7 @@ import {
 import { Fisherman } from './pond/PondFishermanMesh';
 import { PondFish } from './pond/PondFishMesh';
 import { getBoatLayout, PlayerBoat } from './pond/PondBoatMesh';
+import { PondVisitor } from './pond/PondVisitorMesh';
 import {
   clampInsideLakeXZ,
   createLakeBasinGeometry,
@@ -1258,162 +1259,6 @@ function FishSchool({ fish, aquariumFish, isAquariumMode }: {
   return <group>{visibleFish.map((item, index) => <PondFish key={`${item.species.id}-${index}`} species={item.species} variant={item.variant} index={index} />)}</group>;
 }
 
-function Visitor({ visitor, name, onClick }: { visitor: ActiveVisitorScene; name?: string; onClick: (event: ThreeEvent<MouseEvent>) => void }) {
-  const root = useRef<Group>(null);
-  const aquaticVisitors: VisitorType[] = ['frog', 'turtle', 'duck', 'otter'];
-  const isAquaticVisitor = aquaticVisitors.includes(visitor.type);
-  const landAngle = visitor.x * Math.PI * 2;
-  const [x, z] = isAquaticVisitor
-    ? clampInsideLakeXZ((visitor.x - 0.5) * 14.5, (visitor.y - 0.5) * 9.0, 0.84)
-    : getLakeShorePoint(landAngle, 1, 2.0, 1.5);
-  const groundHeight = isAquaticVisitor ? 0.44 : 0.08;
-  const colors = {
-    frog: '#75bd4f',
-    duck: '#f4cf68',
-    otter: '#a87550',
-    raccoon: '#858b89',
-    crab: '#e98261',
-    turtle: '#72965c',
-  };
-  const animalColor = colors[visitor.type] || '#72965c';
-  const darkColor = visitor.type === 'raccoon' ? '#343d3e' : visitor.type === 'frog' ? '#4b873e' : '#76503b';
-  const eyeWhite = '#fff8e9';
-  const pupil = '#24312c';
-
-  useFrame(({ clock }) => {
-    if (root.current) {
-      const t = clock.getElapsedTime();
-      root.current.position.y = groundHeight + Math.sin(t * (isAquaticVisitor ? 2.1 : 1.45)) * (isAquaticVisitor ? 0.025 : 0.012);
-      root.current.rotation.y = Math.sin(t * 0.7) * 0.045;
-    }
-  });
-
-  const eyes = (eyeX: number, eyeY: number, eyeZ: number, size = 0.052) => (
-    <>
-      <mesh position={[eyeX, eyeY, eyeZ]}><sphereGeometry args={[size, 12, 10]} /><meshStandardMaterial color={eyeWhite} /></mesh>
-      <mesh position={[eyeX + 0.018, eyeY - 0.003, eyeZ + size * 0.48]}><sphereGeometry args={[size * 0.56, 10, 8]} /><meshStandardMaterial color={pupil} /></mesh>
-      <mesh position={[eyeX + 0.026, eyeY + size * 0.22, eyeZ + size * 0.82]}><sphereGeometry args={[size * 0.17, 8, 6]} /><meshBasicMaterial color="white" /></mesh>
-    </>
-  );
-
-  return (
-    <group ref={root} position={[x, groundHeight, z]} onClick={(event) => { event.stopPropagation(); onClick(event); }}>
-      {visitor.type === 'frog' && (
-        <>
-          <mesh position={[-0.04, 0.13, 0]} scale={[1.28, 0.78, 0.92]} castShadow>
-            <sphereGeometry args={[0.27, 18, 14]} /><meshStandardMaterial color={animalColor} roughness={0.68} />
-          </mesh>
-          <mesh position={[0.23, 0.22, 0]} scale={[0.9, 0.78, 0.9]} castShadow>
-            <sphereGeometry args={[0.2, 16, 12]} /><meshStandardMaterial color={animalColor} />
-          </mesh>
-          {[ -0.12, 0.19 ].map((eyeZ) => (
-            <group key={eyeZ}>
-              <mesh position={[0.16, 0.39, eyeZ]}><sphereGeometry args={[0.085, 12, 10]} /><meshStandardMaterial color={animalColor} /></mesh>
-              {eyes(0.19, 0.4, eyeZ + 0.035, 0.046)}
-            </group>
-          ))}
-          <mesh position={[0.39, 0.18, 0.015]} scale={[0.72, 0.42, 0.55]}><sphereGeometry args={[0.1, 12, 8]} /><meshStandardMaterial color="#a9d96f" /></mesh>
-          {[[-0.2, -0.08, -0.2],[-0.2, -0.08, 0.2],[0.22, -0.08, -0.2],[0.22, -0.08, 0.2]].map((p, i) => (
-            <mesh key={i} position={p as [number, number, number]} scale={[0.9, 0.62, 0.75]}><sphereGeometry args={[0.105, 10, 8]} /><meshStandardMaterial color={animalColor} /></mesh>
-          ))}
-        </>
-      )}
-
-      {visitor.type === 'duck' && (
-        <>
-          <mesh position={[-0.06, 0.13, 0]} scale={[1.28, 0.88, 0.88]} castShadow>
-            <sphereGeometry args={[0.28, 18, 14]} /><meshStandardMaterial color={animalColor} roughness={0.7} />
-          </mesh>
-          <mesh position={[0.2, 0.32, 0]} scale={[0.78, 0.95, 0.78]} castShadow>
-            <sphereGeometry args={[0.17, 16, 12]} /><meshStandardMaterial color={animalColor} />
-          </mesh>
-          {eyes(0.29, 0.36, 0.105, 0.035)}
-          <mesh position={[0.42, 0.26, 0.015]} rotation={[0, 0, -0.12]} scale={[1, 0.42, 0.55]}><coneGeometry args={[0.105, 0.22, 8]} /><meshStandardMaterial color="#e58a3e" /></mesh>
-          <mesh position={[-0.1, 0.2, 0.22]} rotation={[0.08, 0, -0.12]} scale={[0.8, 0.35, 0.25]}><sphereGeometry args={[0.19, 14, 10]} /><meshStandardMaterial color="#ffe49a" /></mesh>
-          <mesh position={[-0.1, 0.2, -0.22]} rotation={[-0.08, 0, -0.12]} scale={[0.8, 0.35, 0.25]}><sphereGeometry args={[0.19, 14, 10]} /><meshStandardMaterial color="#ffe49a" /></mesh>
-          {[-0.13, 0.12].map((zPos) => <mesh key={zPos} position={[0.02, -0.13, zPos]}><boxGeometry args={[0.055, 0.08, 0.045]} /><meshStandardMaterial color="#e58a3e" /></mesh>)}
-        </>
-      )}
-
-      {visitor.type === 'otter' && (
-        <>
-          <mesh position={[-0.08, 0.11, 0]} scale={[1.55, 0.68, 0.78]} castShadow>
-            <sphereGeometry args={[0.25, 18, 14]} /><meshStandardMaterial color={animalColor} roughness={0.78} />
-          </mesh>
-          <mesh position={[0.25, 0.25, 0]} scale={[0.92, 0.86, 0.82]} castShadow>
-            <sphereGeometry args={[0.18, 16, 12]} /><meshStandardMaterial color={animalColor} />
-          </mesh>
-          <mesh position={[0.4, 0.17, 0.02]} scale={[0.8, 0.55, 0.68]}><sphereGeometry args={[0.105, 12, 10]} /><meshStandardMaterial color="#e5c5a0" /></mesh>
-          {eyes(0.31, 0.29, 0.13, 0.033)}
-          <mesh position={[0.48, 0.19, 0.03]}><sphereGeometry args={[0.035, 10, 8]} /><meshStandardMaterial color="#352b27" /></mesh>
-          {[-0.1, 0.12].map((zPos) => <mesh key={zPos} position={[0.31, 0.37, zPos]}><sphereGeometry args={[0.055, 10, 8]} /><meshStandardMaterial color={animalColor} /></mesh>)}
-          <mesh position={[-0.42, 0.07, 0]} rotation={[0, 0, -0.28]} scale={[1.8, 0.42, 0.5]}><sphereGeometry args={[0.14, 14, 10]} /><meshStandardMaterial color={animalColor} /></mesh>
-          {[[-0.2, -0.06, -0.15],[0.13, -0.06, 0.15]].map((p, i) => <mesh key={i} position={p as [number, number, number]}><sphereGeometry args={[0.075, 10, 8]} /><meshStandardMaterial color="#e5c5a0" /></mesh>)}
-        </>
-      )}
-
-      {visitor.type === 'raccoon' && (
-        <>
-          <mesh position={[-0.05, 0.13, 0]} scale={[1.25, 0.82, 0.88]} castShadow>
-            <sphereGeometry args={[0.26, 18, 14]} /><meshStandardMaterial color={animalColor} roughness={0.82} />
-          </mesh>
-          <mesh position={[0.23, 0.28, 0]} scale={[0.92, 0.9, 0.9]} castShadow>
-            <sphereGeometry args={[0.18, 16, 12]} /><meshStandardMaterial color="#9da19d" />
-          </mesh>
-          {[-0.11, 0.13].map((zPos) => <mesh key={zPos} position={[0.12, 0.43, zPos]} rotation={[0, 0, -0.18]}><coneGeometry args={[0.075, 0.18, 8]} /><meshStandardMaterial color="#747b79" /></mesh>)}
-          <mesh position={[0.37, 0.29, 0.015]} scale={[0.55, 0.32, 1.15]}><sphereGeometry args={[0.1, 12, 10]} /><meshStandardMaterial color={darkColor} /></mesh>
-          {eyes(0.4, 0.31, 0.13, 0.035)}
-          <mesh position={[0.45, 0.18, 0.04]} scale={[0.72, 0.5, 0.72]}><sphereGeometry args={[0.09, 12, 10]} /><meshStandardMaterial color="#d7d0c4" /></mesh>
-          <mesh position={[0.52, 0.2, 0.045]}><sphereGeometry args={[0.027, 8, 8]} /><meshStandardMaterial color="#252a29" /></mesh>
-          <mesh position={[-0.43, 0.12, 0]} rotation={[0, 0, -0.18]} scale={[1.8, 0.42, 0.5]}><cylinderGeometry args={[0.055, 0.09, 0.42, 10]} /><meshStandardMaterial color="#737b79" /></mesh>
-          {[-0.12, 0.04, 0.2].map((zPos, i) => <mesh key={zPos} position={[-0.52 + i * 0.09, 0.12, 0.015]} rotation={[0, 0, -0.18]}><torusGeometry args={[0.075, 0.018, 6, 12]} /><meshStandardMaterial color="#343b3b" /></mesh>)}
-        </>
-      )}
-
-      {visitor.type === 'crab' && (
-        <>
-          <mesh position={[0, 0.08, 0]} scale={[1.18, 0.58, 1.05]} castShadow>
-            <sphereGeometry args={[0.27, 18, 12]} /><meshStandardMaterial color={animalColor} roughness={0.62} />
-          </mesh>
-          <mesh position={[0, 0.22, 0]} scale={[1.05, 0.28, 0.92]}><sphereGeometry args={[0.25, 16, 10]} /><meshStandardMaterial color="#f49b78" /></mesh>
-          {[-0.13, 0.13].map((zPos) => (
-            <group key={zPos}>
-              <mesh position={[0.17, 0.36, zPos]}><cylinderGeometry args={[0.018, 0.025, 0.16, 8]} /><meshStandardMaterial color="#d96d53" /></mesh>
-              {eyes(0.19, 0.45, zPos, 0.035)}
-              <mesh position={[0.24, 0.16, zPos * 2.2]} rotation={[0, 0, -0.55]}><capsuleGeometry args={[0.055, 0.12, 4, 8]} /><meshStandardMaterial color={animalColor} /></mesh>
-              <mesh position={[0.34, 0.25, zPos * 2.35]}><sphereGeometry args={[0.095, 12, 10]} /><meshStandardMaterial color="#f39a76" /></mesh>
-            </group>
-          ))}
-          {[-0.22, -0.08, 0.08, 0.22].flatMap((zPos, i) => [-1, 1].map((side) => (
-            <mesh key={`${zPos}-${side}`} position={[-0.02 + (i % 2) * 0.04, -0.03, zPos * side]} rotation={[side * 0.12, 0, side * (i < 2 ? -0.42 : 0.42)]}>
-              <capsuleGeometry args={[0.025, 0.17, 3, 6]} /><meshStandardMaterial color="#d96d53" />
-            </mesh>
-          )))}
-        </>
-      )}
-
-      {visitor.type === 'turtle' && (
-        <>
-          <mesh position={[-0.07, 0.15, 0]} scale={[1.12, 0.62, 0.92]} castShadow>
-            <sphereGeometry args={[0.27, 18, 14]} /><meshStandardMaterial color="#6f985c" roughness={0.8} />
-          </mesh>
-          <mesh position={[-0.08, 0.29, 0]} scale={[1.12, 0.58, 0.96]} castShadow>
-            <sphereGeometry args={[0.25, 18, 14]} /><meshStandardMaterial color="#8a6948" roughness={0.88} />
-          </mesh>
-          <mesh position={[-0.08, 0.43, 0]} scale={[0.82, 0.12, 0.72]}><sphereGeometry args={[0.22, 14, 10]} /><meshStandardMaterial color="#b28b5d" roughness={0.9} /></mesh>
-          <mesh position={[0.3, 0.2, 0]} scale={[0.92, 0.78, 0.78]} castShadow><sphereGeometry args={[0.16, 14, 10]} /><meshStandardMaterial color="#80a963" /></mesh>
-          {eyes(0.39, 0.25, 0.11, 0.03)}
-          <mesh position={[0.45, 0.16, 0.03]}><sphereGeometry args={[0.025, 8, 8]} /><meshStandardMaterial color="#496d42" /></mesh>
-          {[[-0.23, 0.02, -0.2],[-0.23, 0.02, 0.2],[0.13, 0.02, -0.2],[0.13, 0.02, 0.2]].map((p, i) => <mesh key={i} position={p as [number, number, number]} scale={[0.82, 0.7, 0.82]}><sphereGeometry args={[0.095, 10, 8]} /><meshStandardMaterial color="#71965a" /></mesh>)}
-          <mesh position={[-0.4, 0.08, 0]} rotation={[0, 0, -0.5]}><coneGeometry args={[0.06, 0.18, 8]} /><meshStandardMaterial color="#71965a" /></mesh>
-        </>
-      )}
-
-      {name && <mesh position={[0, 0.78, 0]}><sphereGeometry args={[0.035, 8, 8]} /><meshStandardMaterial color="#f7e7b4" emissive="#f7e7b4" emissiveIntensity={0.5} /></mesh>}
-    </group>
-  );
-}
-
 function Collectible({ type, position, onCollect }: {
   type: 'chest' | 'relic' | 'bottle';
   position: [number, number, number];
@@ -1688,7 +1533,14 @@ function PondScene({
       {hasFloatingBottle && onCollectBottle && <Collectible type="bottle" position={[5.3, 0.48, 0.3]} onCollect={onCollectBottle} />}
       {hasEvent('treasure_chest') && onCollectChest && <Collectible type="chest" position={[6.9, 0.66, -1.78]} onCollect={onCollectChest} />}
       {hasEvent('sunken_relic') && onCollectRelic && <Collectible type="relic" position={[-5.37, 0.64, -2.14]} onCollect={onCollectRelic} />}
-      {activeVisitor && onInteractVisitor && <Visitor visitor={activeVisitor} name={visitorName} onClick={() => onInteractVisitor(activeVisitor.type)} />}
+      {activeVisitor && onInteractVisitor && (
+        <PondVisitor
+          visitor={activeVisitor}
+          name={visitorName}
+          locationId={location.id}
+          onClick={() => onInteractVisitor(activeVisitor.type)}
+        />
+      )}
       {onInteractBubbles && <Bubbles onClick={onInteractBubbles} />}
       {hasEvent('traveling_merchant') && (
         <PlayerBoat
