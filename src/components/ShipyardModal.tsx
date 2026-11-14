@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { BOAT_TIERS } from '../data/storyData';
 import { BoatTierDef } from '../types/story';
 import { X, CheckCircle2, Anchor, Sparkles, Zap, Package, ArrowUpRight } from 'lucide-react';
@@ -19,8 +20,11 @@ export const ShipyardModal: React.FC<ShipyardModalProps> = ({
 }) => {
   const currentDef = BOAT_TIERS.find(b => b.tier === currentBoatTier) || BOAT_TIERS[0];
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-md animate-fadeIn">
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-5 bg-black/90 backdrop-blur-md"
+      style={{ position: 'fixed', inset: 0, zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px', background: 'rgba(2, 6, 23, 0.94)', backdropFilter: 'blur(8px)' }}
+    >
       <div className="relative w-full max-w-4xl h-[88vh] max-h-[760px] bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border border-cyan-500/40 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-white font-sans">
         
         {/* Header */}
@@ -204,6 +208,7 @@ export const ShipyardModal: React.FC<ShipyardModalProps> = ({
           })}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
