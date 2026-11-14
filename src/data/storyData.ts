@@ -19,6 +19,7 @@ export const INITIAL_STORY_STATE: StoryState = {
   bubblesAffection: 10,
   storyCompleted: false,
   seenStoryEventIds: [],
+  foundHiddenDiscoveryIds: [],
 };
 
 export const BOAT_TIERS: BoatTierDef[] = [
@@ -101,6 +102,97 @@ export const BOAT_TIERS: BoatTierDef[] = [
     capacityBonus: 100,
     autoSpeedBonus: 100,
     features: ['Multi-tier gold & marble decks', 'Panoramic luxury sky bridge', 'Golden champagne bar & helipad', '+100 Inventory Slots'],
+  },
+];
+
+export interface HiddenDiscoveryDef {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+  lore: string;
+  hint: string;
+  locationId: string;
+  zone: 'lily_pads' | 'deep_water' | 'rocks_reef' | 'reeds';
+  chapterRequired: number;
+  timeOfDay?: 'dawn' | 'day' | 'dusk' | 'night';
+  chance: number;
+  rewardCoins: number;
+  rewardPearls: number;
+}
+
+export const HIDDEN_DISCOVERIES: HiddenDiscoveryDef[] = [
+  {
+    id: 'secret_willow_thimble',
+    name: 'The Willow Thimble',
+    icon: '🧵',
+    description: 'A tiny silver thimble with a willow leaf engraved on its rim.',
+    lore: 'Arthur wrote that his wife used to mend fishing nets beneath the old willow. She always carried this little thimble, and he kept looking for it long after it was lost.',
+    hint: 'Try the lily pads at Little Pond. Something small may be resting beneath the leaves.',
+    locationId: 'little_pond', zone: 'lily_pads', chapterRequired: 1, chance: 0.13, rewardCoins: 350, rewardPearls: 1,
+  },
+  {
+    id: 'secret_riverglass_marble',
+    name: 'Riverglass Marble',
+    icon: '🔵',
+    description: 'A smooth blue marble, cloudy at its center like a tiny captured sky.',
+    lore: 'Children once traded riverglass marbles on the dock. Arthur kept this one because it reminded him of the first clear morning after a long storm.',
+    hint: 'Cast into the deep water at Little Pond and keep an eye out for a cool blue glimmer.',
+    locationId: 'little_pond', zone: 'deep_water', chapterRequired: 1, chance: 0.12, rewardCoins: 300, rewardPearls: 0,
+  },
+  {
+    id: 'secret_old_coin_pouch',
+    name: 'The Old Coin Pouch',
+    icon: '👛',
+    description: 'A weathered leather pouch holding a few unusually old pond tokens.',
+    lore: 'The tokens were made for the little summer fair Arthur helped run. He called them “the currency of good afternoons.”',
+    hint: 'Search the rocky shallows at Little Pond, where the current slows around the stones.',
+    locationId: 'little_pond', zone: 'rocks_reef', chapterRequired: 1, chance: 0.12, rewardCoins: 650, rewardPearls: 0,
+  },
+  {
+    id: 'secret_copper_lure',
+    name: 'The Copper Firefly Lure',
+    icon: '🪝',
+    description: 'A hand-shaped copper lure with a tiny firefly stamped into its side.',
+    lore: 'Arthur made this lure for night fishing. He said it was lucky, though he suspected the real magic was simply being patient.',
+    hint: 'The reeds at Little Pond are worth exploring after sunset.',
+    locationId: 'little_pond', zone: 'reeds', chapterRequired: 1, timeOfDay: 'night', chance: 0.16, rewardCoins: 450, rewardPearls: 1,
+  },
+  {
+    id: 'secret_crystal_chime',
+    name: 'The Crystal Chime',
+    icon: '💎',
+    description: 'A clear crystal shard that gives off a gentle ringing sound when lifted.',
+    lore: 'A fragment from the old lake guardian’s shrine. Its quiet note matches the rhythm of the ripples around Crystal Lake.',
+    hint: 'At Crystal Lake, listen to the deep water. The chime is easiest to find at dawn.',
+    locationId: 'crystal_lake', zone: 'deep_water', chapterRequired: 2, timeOfDay: 'dawn', chance: 0.14, rewardCoins: 1200, rewardPearls: 2,
+  },
+  {
+    id: 'secret_coral_cameo',
+    name: 'The Coral Cameo',
+    icon: '🐚',
+    description: 'A small cameo carved from pink coral, showing a smiling sea turtle.',
+    lore: 'The cameo belonged to a keeper of the Sunken Kingdom. It was carried as a reminder that every traveler deserves a safe way home.',
+    hint: 'Explore the rocky reef at Tropical Reef once its story has begun.',
+    locationId: 'tropical_reef', zone: 'rocks_reef', chapterRequired: 3, chance: 0.14, rewardCoins: 3500, rewardPearls: 3,
+  },
+  {
+    id: 'secret_abyssal_lantern',
+    name: 'The Abyssal Lantern',
+    icon: '🏮',
+    description: 'A miniature lantern whose blue flame glows without heat or fuel.',
+    lore: 'Vespera’s old signal lantern. It was used to guide lost creatures through the quietest part of the trench.',
+    hint: 'Search the Midnight Deep reeds during the night.',
+    locationId: 'midnight_deep', zone: 'reeds', chapterRequired: 4, timeOfDay: 'night', chance: 0.16, rewardCoins: 9000, rewardPearls: 5,
+  },
+  {
+    id: 'secret_star_compass_case',
+    name: 'The Star Compass Case',
+    icon: '🧭',
+    description: 'An empty silver case with a constellation etched around its edge.',
+    lore: 'The case once held a compass used by the first celestial anglers. Its needle is gone, but the stars still gather around its markings.',
+    hint: 'In Alien Waters, cast into the deep at dusk. The stars may point toward what was lost.',
+    locationId: 'alien_waters', zone: 'deep_water', chapterRequired: 5, timeOfDay: 'dusk', chance: 0.18, rewardCoins: 25000, rewardPearls: 8,
   },
 ];
 
