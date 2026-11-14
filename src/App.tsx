@@ -371,7 +371,10 @@ export default function App() {
       const availableMoments = RANDOM_STORY_EVENTS.filter(event =>
         event.chapterRequired <= story.currentChapter &&
         !seenIds.includes(event.id) &&
-        (!event.eveningOnly || isEvening)
+        (!event.eveningOnly || isEvening) &&
+        (!event.seasonRequired || event.seasonRequired === season) &&
+        (!event.weatherRequired || event.weatherRequired === weather) &&
+        (!event.timeRequired || event.timeRequired === timeOfDay)
       );
 
       if (availableMoments.length === 0) return;
@@ -415,6 +418,8 @@ export default function App() {
     isMenuOpen,
     fishingState,
     timeOfDay,
+    weather,
+    season,
     gameState.storyState,
   ]);
 
