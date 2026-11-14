@@ -1445,3 +1445,83 @@ button {
     justify-content: space-between;
   }
 }
+
+
+/* Rebalanced immersive HUD: distribute corner controls and keep the pond uncluttered. */
+.immersive-menu-toggle { top: 16px; left: 16px; right: auto; }
+.immersive-menu-panel {
+  top: 64px;
+  left: 16px;
+  right: auto;
+  width: min(820px, calc(100vw - 32px));
+  max-height: calc(100dvh - 80px);
+  padding: 14px;
+}
+.immersive-menu-panel .game-header { min-height: 0; }
+.aquarium-toggle {
+  top: auto !important;
+  right: 20px !important;
+  bottom: 20px !important;
+  left: auto !important;
+  z-index: 20;
+}
+.aquarium-toggle button {
+  min-height: 38px;
+  padding-inline: 12px;
+  border-radius: 13px;
+  background: rgba(11, 31, 34, .68);
+  backdrop-filter: blur(10px);
+}
+.pond-menu { display: grid; gap: 12px; color: #f5efd9; }
+.pond-menu-heading, .pond-menu-brand, .pond-menu-resources, .pond-menu-status,
+.pond-menu-location, .pond-menu-group h2, .pond-menu-item { display: flex; align-items: center; }
+.pond-menu-heading { justify-content: space-between; gap: 14px; padding: 4px 4px 10px; }
+.pond-menu-brand { gap: 11px; min-width: 0; }
+.pond-menu-brand-icon { display: grid; width: 42px; height: 42px; flex: 0 0 auto; place-items: center; border: 1px solid rgba(230,210,157,.3); border-radius: 14px; color: #e9d18e; background: rgba(215,190,123,.1); }
+.pond-menu-brand h1 { margin: 0; color: #fff0cb; font-size: 18px; font-weight: 800; letter-spacing: -.03em; }
+.pond-menu-brand p { margin: 2px 0 0; color: #a9c0a9; font-size: 11px; }
+.pond-menu-resources { gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+.pond-menu-resources > span, .pond-menu-resources > button { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 10px; border: 1px solid rgba(226,197,125,.22); border-radius: 11px; color: #f3d68d; background: rgba(7,24,25,.4); font-size: 12px; font-weight: 700; }
+.pond-menu-resources > button { cursor: pointer; }
+.pond-menu-status { justify-content: space-between; gap: 10px; padding: 9px 11px; border: 1px solid rgba(178,199,156,.14); border-radius: 13px; background: rgba(7,25,26,.32); }
+.pond-menu-location { gap: 8px; border: 0; color: #d9e5cb; background: transparent; text-align: left; cursor: pointer; }
+.pond-menu-location span { display: grid; gap: 1px; }
+.pond-menu-location small { color: #92ae99; font-size: 8px; font-weight: 800; letter-spacing: .12em; }
+.pond-menu-location strong { font-size: 12px; }
+.pond-menu-event { display: flex; align-items: center; gap: 7px; color: #e7d49e; font-size: 11px; }
+.pond-menu-event small { color: #b7a879; font-family: ui-monospace, monospace; }
+.pond-menu-status-dot { width: 7px; height: 7px; border-radius: 50%; background: #e6c46f; box-shadow: 0 0 9px rgba(230,196,111,.55); }
+.pond-menu-status-dot.is-quiet { background: #8ab99a; box-shadow: none; }
+.pond-menu-groups { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+.pond-menu-group { min-width: 0; padding: 10px; border: 1px solid rgba(184,204,161,.13); border-radius: 15px; background: rgba(5,22,24,.28); }
+.pond-menu-group h2 { gap: 7px; margin: 0 0 8px; color: #c8d5b5; font-size: 9px; font-weight: 900; letter-spacing: .13em; }
+.pond-menu-group h2 svg { color: #e4c67e; }
+.pond-menu-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 7px; }
+.pond-menu-item { min-width: 0; min-height: 54px; gap: 8px; padding: 7px 8px; border: 1px solid rgba(182,202,159,.12); border-radius: 11px; color: #e6ead7; background: rgba(37,65,57,.43); text-align: left; cursor: pointer; transition: background .15s ease, border-color .15s ease, transform .15s ease; }
+.pond-menu-item:hover { border-color: rgba(224,205,147,.4); background: rgba(68,91,67,.55); transform: translateY(-1px); }
+.pond-menu-item.is-featured { border-color: rgba(226,202,133,.42); background: linear-gradient(120deg, rgba(118,100,54,.32), rgba(53,83,59,.52)); }
+.pond-menu-item-icon { display: grid; width: 32px; height: 32px; flex: 0 0 auto; place-items: center; border-radius: 9px; color: #e7d08c; background: rgba(211,190,128,.1); }
+.pond-menu-item-copy { display: grid; min-width: 0; gap: 2px; }
+.pond-menu-item-copy strong { overflow: hidden; color: #f3efd9; font-size: 11px; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+.pond-menu-item-copy small { overflow: hidden; color: #a8bda8; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.pond-menu-item-arrow { margin-left: auto; color: #b9c89d; font-size: 19px; }
+.pond-menu-item:focus-visible, .pond-menu-resources button:focus-visible, .pond-menu-location:focus-visible { outline: 2px solid #f1d991; outline-offset: 2px; }
+.upgrade-modal-overlay { display: flex; align-items: center; justify-content: center; overflow: auto; }
+.upgrade-modal-content { position: relative; width: min(1120px, 96vw); max-height: 92dvh; overflow: auto; padding: 38px 12px 12px; border: 1px solid rgba(215,195,139,.38); border-radius: 22px; background: linear-gradient(155deg,#294b43,#172f31); box-shadow: 0 28px 80px rgba(0,12,14,.6); }
+.upgrade-modal-close { position: absolute; top: 10px; right: 12px; z-index: 5; display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid rgba(230,215,170,.25); border-radius: 10px; color: #f6e8c2; background: rgba(7,24,25,.55); cursor: pointer; }
+.upgrade-modal-content .upgrade-shop { min-height: 0; }
+.upgrade-modal-content .upgrade-scroll { max-height: 58dvh; overflow: auto; }
+@media (max-width: 760px) {
+  .immersive-menu-toggle { top: 10px; left: 10px; right: auto; }
+  .immersive-menu-panel { top: 56px; left: 8px; right: 8px; width: auto; max-height: calc(100dvh - 64px); padding: 9px; }
+  .pond-menu-groups { grid-template-columns: 1fr; gap: 8px; }
+  .pond-menu-group { padding: 8px; }
+  .pond-menu-item { min-height: 48px; }
+  .aquarium-toggle { right: 12px !important; bottom: 12px !important; }
+  .upgrade-modal-content { width: calc(100vw - 12px); max-height: 96dvh; padding: 38px 7px 7px; }
+}
+@media (max-width: 420px) {
+  .pond-menu-heading { align-items: flex-start; flex-direction: column; }
+  .pond-menu-resources { justify-content: flex-start; }
+  .pond-menu-grid { grid-template-columns: 1fr; }
+}
