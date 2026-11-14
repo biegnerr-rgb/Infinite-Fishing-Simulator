@@ -18,6 +18,7 @@ export const INITIAL_STORY_STATE: StoryState = {
   readDialogueIds: [],
   bubblesAffection: 10,
   storyCompleted: false,
+  seenStoryEventIds: [],
 };
 
 export const BOAT_TIERS: BoatTierDef[] = [
@@ -163,6 +164,122 @@ export const STORY_CHAPTERS: StoryChapterDef[] = [
     icon: '✨',
     rewardPearls: 100,
     summaryWhenComplete: 'You have solved the greatest mystery of the Infinite Pond! Your name is etched alongside Grandfather Arthur into the stars.',
+  },
+];
+
+export interface RandomStoryEventDef {
+  id: string;
+  chapterRequired: number;
+  title: string;
+  subtitle: string;
+  avatar: string;
+  color: string;
+  text: string;
+  bubblesMessage?: string;
+  eveningOnly?: boolean;
+  rewardPageId?: string;
+  responseOptions: {
+    label: string;
+    replyText: string;
+    rewardCoins?: number;
+    rewardPearls?: number;
+  }[];
+}
+
+// Small, optional scenes that make the pond feel inhabited between main quests.
+export const RANDOM_STORY_EVENTS: RandomStoryEventDef[] = [
+  {
+    id: 'moment_reed_bottle',
+    chapterRequired: 1,
+    title: 'A Note in the Reeds',
+    subtitle: 'A message carried by the quiet current',
+    avatar: '📜',
+    color: '#fbbf24',
+    text: 'A little bottle bumps against the reeds. Inside is a note in Arthur’s handwriting: “If the pond ever feels lonely, sit quietly. It always has another story.” A folded page is tucked behind it.',
+    rewardPageId: 'page_2',
+    bubblesMessage: '📜 Something from Arthur has surfaced...',
+    responseOptions: [{ label: 'Keep the note safe', replyText: 'You tuck the note into your journal. The familiar handwriting makes the old pond feel a little more like home.', rewardCoins: 125 }],
+  },
+  {
+    id: 'moment_barnaby_dewdrop',
+    chapterRequired: 1,
+    title: 'Barnaby’s Dewdrop',
+    subtitle: 'A tiny favor on a lily pad',
+    avatar: '🐸',
+    color: '#34d399',
+    text: 'Barnaby is studying a dewdrop balanced on a lily pad. “I believe this is the largest tiny thing I have ever seen. Would you help me keep watch until it falls?”',
+    bubblesMessage: '🐸 Barnaby has spotted something...',
+    responseOptions: [{ label: 'Stay and watch', replyText: 'The dewdrop slips into the pond with the tiniest plip. Barnaby nods solemnly. “A very good use of a minute.”', rewardCoins: 175 }],
+  },
+  {
+    id: 'moment_shelby_memory',
+    chapterRequired: 1,
+    title: 'Shelby’s Old Story',
+    subtitle: 'A memory from another spring',
+    avatar: '🐢',
+    color: '#2dd4bf',
+    text: 'Shelby rests near the shore. “Arthur used to leave a little lantern here at dusk. He said the warm light helped visitors find their way home. I think the pond still remembers it.”',
+    eveningOnly: true,
+    bubblesMessage: '🐢 Shelby is remembering the old days...',
+    responseOptions: [{ label: 'Listen a little longer', replyText: 'Shelby shares a quiet story about the first spring she met Arthur. You leave feeling that the pond is full of old friends.', rewardPearls: 1 }],
+  },
+  {
+    id: 'moment_quackers_festival',
+    chapterRequired: 1,
+    title: 'Quackers’ Festival Plan',
+    subtitle: 'An important announcement (probably)',
+    avatar: '🦆',
+    color: '#fbbf24',
+    text: 'Quackers waddles over with a feather tucked behind one wing. “Urgent news! I have declared today a festival. We only need to decide what it celebrates. I was thinking... friendship?”',
+    bubblesMessage: '🦆 Quackers has an announcement!',
+    responseOptions: [{ label: 'Friendship sounds perfect', replyText: 'Quackers gives a triumphant quack. The festival lasts exactly as long as it takes him to eat a snack, but he declares it a huge success.', rewardCoins: 200 }],
+  },
+  {
+    id: 'moment_ollie_pebble',
+    chapterRequired: 1,
+    title: 'Ollie’s Special Pebble',
+    subtitle: 'A very important discovery',
+    avatar: '🦦',
+    color: '#7dd3fc',
+    text: 'Ollie appears beside the dock, proudly holding a smooth blue-gray pebble. “I found this under the old roots. It is not magic, I don’t think. But it is a really good skipping stone.”',
+    bubblesMessage: '🦦 Ollie found something interesting...',
+    responseOptions: [{ label: 'Admire the pebble', replyText: 'Ollie shows you the perfect skipping motion. The pebble makes three gentle hops before settling into the water.', rewardCoins: 150 }],
+  },
+  {
+    id: 'moment_pinchy_marker',
+    chapterRequired: 1,
+    title: 'Pinchy’s Shoreline Clue',
+    subtitle: 'A pebble that marks an old secret',
+    avatar: '🦀',
+    color: '#fb7185',
+    text: 'Pinchy has placed a neat line of pebbles beside the dock. “Inspection markers,” he explains. One stone is different: it has a tiny carved star on its underside. Beneath it is a scrap from Arthur’s log.',
+    rewardPageId: 'page_3',
+    bubblesMessage: '🦀 Pinchy has found a curious clue...',
+    responseOptions: [{ label: 'Add the scrap to the journal', replyText: 'The scrap is weathered, but one sentence remains clear: “The pond’s best treasures are the memories we leave for one another.”', rewardCoins: 100 }],
+  },
+  {
+    id: 'moment_bandit_button',
+    chapterRequired: 2,
+    title: 'Bandit’s Brass Button',
+    subtitle: 'A treasure with a mysterious past',
+    avatar: '🦝',
+    color: '#cbd5e1',
+    text: 'Bandit trots over with a brass button balanced on his paws. “Found it by the old willow. It has a star scratched into the back. Definitely belongs in the treasure collection. Would you like to help me polish it?”',
+    bubblesMessage: '🦝 Bandit has uncovered a shiny mystery...',
+    responseOptions: [{ label: 'Polish it together', replyText: 'The star shines through the tarnish. Bandit decides it must have belonged to one of Arthur’s old friends and lets you keep a rubbing for your journal.', rewardPearls: 1 }],
+  },
+  {
+    id: 'moment_lantern_evening',
+    chapterRequired: 2,
+    title: 'The Lantern at Dusk',
+    subtitle: 'A familiar light returns',
+    avatar: '🏮',
+    color: '#f59e0b',
+    text: 'As evening settles over the pond, a warm lantern glow appears near the old shack. There is nobody there, only a fresh little note: “Some lights are kept burning for the people who are still finding their way.”',
+    eveningOnly: true,
+    rewardPageId: 'page_4',
+    bubblesMessage: '🏮 A warm light has appeared by the shack...',
+    responseOptions: [{ label: 'Read the note', replyText: 'You place the note beside Arthur’s other pages. For a moment, the pond feels as welcoming as it did in his stories.', rewardCoins: 250 }],
   },
 ];
 
