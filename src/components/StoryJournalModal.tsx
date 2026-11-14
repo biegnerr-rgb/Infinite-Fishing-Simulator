@@ -9,6 +9,8 @@ import {
 import { StoryState, JournalPageDef, StoryCharacterDef } from '../types/story';
 import { LOCATIONS } from '../data/locationsData';
 import { VISITORS_CONFIG } from '../data/visitorsData';
+import { VISITOR_BOND_QUESTS } from '../data/storyData';
+import { BefriendedVisitor } from '../types/game';
 import { 
   BookOpen, 
   Scroll, 
@@ -34,8 +36,10 @@ interface StoryJournalModalProps {
   unlockedLocations: string[];
   coins: number;
   starPearls: number;
+  befriendedVisitors: Record<string, BefriendedVisitor>;
+  onClaimVisitorBondQuest: (questId: string) => void;
   onClose: () => void;
-  onTalkToCharacter: (charId: 'old_finn' | 'bubbles' | 'milo' | 'keeper') => void;
+  onTalkToCharacter: (charId: StoryCharacterDef['id']) => void;
   onClaimQuestReward?: (questId: string) => void;
   onReadPage?: (pageId: string) => void;
 }
@@ -442,27 +446,55 @@ export const StoryJournalModal: React.FC<StoryJournalModalProps> = ({
               <div className="md:col-span-12 mt-2 space-y-3">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <h4 className="text-sm font-black text-emerald-100">The pond’s animal visitors</h4>
-                    <p className="mt-1 text-xs text-slate-400">Six familiar faces, each with their own habits and favorite things.</p>
+                    <h4 className="text-sm font-black text-emerald-100">Little friendship quests</h4>
+                    <p className="mt-1 text-xs text-slate-400">Get to know each visitor by sharing snacks and spending time together. These are optional and never block the main story.</p>
                   </div>
-                  <span className="rounded-full border border-emerald-300/20 bg-emerald-950/30 px-3 py-1 text-[10px] font-bold text-emerald-200">6 pond friends</span>
+                  <span className="rounded-full border border-emerald-300/20 bg-emerald-950/30 px-3 py-1 text-[10px] font-bold text-emerald-200">
+                    {VISITOR_BOND_QUESTS.filter(q => storyState.completedQuestIds.includes(q.id)).length}/6 complete
+                  </span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {Object.values(VISITORS_CONFIG).map(visitor => {
-                    const isWaterVisitor = ['frog', 'turtle', 'duck', 'otter'].includes(visitor.type);
+                  {VISITOR_BOND_QUESTS.map(quest => {
+                    const visitor = befriendedVisitors[quest.visitorType];
+                    const config = VISITORS_CONFIG[quest.visitorType];
+                    const isDone = storyState.completedQuestIds.includes(quest.id);
+                    const feeds = visitor?.timesFed || 0;
+                    const friendship = visitor?.friendship || 0;
+                    const progress = Math.min(100, Math.round(Math.min(feeds / quest.targetFeeds, friendship / quest.targetFriendship) * 100));
+                    const isReady = feeds >= quest.targetFeeds && friendship >= quest.targetFriendship;
                     return (
-                      <div key={visitor.type} className="rounded-2xl border border-emerald-200/15 bg-slate-950/30 p-3">
-                        <div className="flex items-center gap-3">
-                          <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-white/10 bg-emerald-900/40 text-2xl">{visitor.emoji}</div>
-                          <div className="min-w-0">
-                            <h5 className="truncate text-sm font-extrabold text-slate-100">{visitor.defaultName}</h5>
-                            <p className="text-[10px] text-emerald-200">{visitor.speciesTitle}</p>
+                      <div key={quest.id} className={`rounded-2xl border p-3 ${isDone ? 'border-emerald-400/40 bg-emerald-950/30' : 'border-emerald-200/15 bg-slate-950/30'}`}>
+                        <div className="flex items-center gap-2">
+                          <span className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-emerald-900/40 text-2xl">{config.emoji}</span>
+                          <div className="min-w-0 flex-1">
+                            <h5 className="truncate text-xs font-extrabold text-slate-100">{quest.title}</h5>
+                            <p className="text-[10px] text-emerald-200">{visitor?.name || config.defaultName}</p>
                           </div>
+                          {isDone && <CheckCircle className="h-4 w-4 shrink-0 text-emerald-400" />}
                         </div>
-                        <p className="mt-3 text-xs leading-relaxed text-slate-300">{visitor.description}</p>
-                        <p className="mt-2 text-[11px] text-slate-400"><span className="font-bold text-slate-300">Personality:</span> {visitor.personality}</p>
-                        <p className="mt-2 text-[11px] text-slate-400"><span className="font-bold text-slate-300">Favorite snack:</span> {visitor.favoriteFood}</p>
-                        <div className={`mt-3 inline-flex rounded-full border px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider ${isWaterVisitor ? 'border-sky-300/20 bg-sky-950/30 text-sky-200' : 'border-amber-300/20 bg-amber-950/30 text-amber-200'}`}>{isWaterVisitor ? 'Water visitor' : 'Shore visitor'}</div>
+                        <p className="mt-2 text-[11px] leading-relaxed text-slate-300">{quest.description}</p>
+                        <div className="mt-3 flex items-center justify-between text-[10px] text-slate-400">
+                          <span>Snacks {Math.min(feeds, quest.targetFeeds)}/{quest.targetFeeds}</span>
+                          <span>Friendship {Math.min(friendship, quest.targetFriendship)}/{quest.targetFriendship}</span>
+                        </div>
+                        <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-slate-800">
+                          <div className="h-full rounded-full bg-emerald-400 transition-all" style={{ width: `${progress}%` }} />
+                        </div>
+                        <div className="mt-3 flex items-center justify-between gap-2">
+                          <span className="text-[10px] font-bold text-amber-200">+{quest.rewardCoins} 🪙 · +{quest.rewardPearls} 🔮</span>
+                          {isDone ? (
+                            <span className="rounded-lg border border-emerald-700/60 bg-emerald-950/70 px-2.5 py-1 text-[10px] font-bold text-emerald-300">Friendship made</span>
+                          ) : (
+                            <button
+                              type="button"
+                              disabled={!isReady}
+                              onClick={() => onClaimVisitorBondQuest(quest.id)}
+                              className={`rounded-lg px-2.5 py-1 text-[10px] font-black transition-colors ${isReady ? 'bg-emerald-500 text-emerald-950 hover:bg-emerald-400' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}
+                            >
+                              {isReady ? 'Collect gift' : 'Keep visiting'}
+                            </button>
+                          )}
+                        </div>
                       </div>
                     );
                   })}
